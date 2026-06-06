@@ -52,7 +52,7 @@ export async function POST(request) {
 
 
         const mailResult = await sendMail(
-            'Email Verification request from Developer Goswami',
+            'Email Verification – ELOIR',
             email,
             emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
         )

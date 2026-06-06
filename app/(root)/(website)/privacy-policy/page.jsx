@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
             <div className='lg:px-40 px-5 py-20 text-white/70'>
                 <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-5'>Privacy Policy</h1>
                 <p>
-                    At E-store, we are committed to protecting your privacy and ensuring that your personal information is handled in a safe and responsible manner.
+                    At ELOIR, we are committed to protecting your privacy and ensuring that your personal information is handled in a safe and responsible manner.
                 </p>
 
                 <p className='mt-3'>
@@ -50,7 +50,7 @@ const PrivacyPolicy = () => {
                 </p>
 
                 <p className='mt-3'>
-                    Thank you for trusting E-store. Your privacy is important to us.
+                    Thank you for trusting ELOIR. Your privacy is important to us.
                 </p>
             </div>
         </div>

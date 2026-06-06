@@ -26,6 +26,21 @@ import { useForm } from 'react-hook-form'
 import { FiTag } from 'react-icons/fi'
 import slugify from 'slugify'
 
+const Section = ({ title, description, action, children }) => (
+    <Card className='py-0 rounded shadow-sm'>
+        <CardHeader className='pt-3 px-3 border-b [.border-b]:pb-2'>
+            <div className='flex items-center justify-between gap-3 flex-wrap'>
+                <div>
+                    <h4 className='text-lg font-semibold'>{title}</h4>
+                    {description && <p className='text-xs text-gray-500'>{description}</p>}
+                </div>
+                {action}
+            </div>
+        </CardHeader>
+        <CardContent className='pb-5 pt-4'>{children}</CardContent>
+    </Card>
+)
+
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -182,21 +197,6 @@ const EditProductPage = ({ params }) => {
 
     const product = getProduct?.data
     const publicId = product?.publicId
-
-    const Section = ({ title, description, action, children }) => (
-        <Card className='py-0 rounded shadow-sm'>
-            <CardHeader className='pt-3 px-3 border-b [.border-b]:pb-2'>
-                <div className='flex items-center justify-between gap-3 flex-wrap'>
-                    <div>
-                        <h4 className='text-lg font-semibold'>{title}</h4>
-                        {description && <p className='text-xs text-gray-500'>{description}</p>}
-                    </div>
-                    {action}
-                </div>
-            </CardHeader>
-            <CardContent className='pb-5 pt-4'>{children}</CardContent>
-        </Card>
-    )
 
     return (
         <div>

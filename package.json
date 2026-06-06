@@ -48,6 +48,7 @@
     "input-otp": "^1.4.2",
     "jose": "^6.0.11",
     "lucide-react": "^0.509.0",
+    "marked": "^18.0.5",
     "material-react-table": "^3.2.1",
     "mongoose": "^8.14.2",
     "next": "15.3.2",

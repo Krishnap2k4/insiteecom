@@ -47,7 +47,7 @@ export async function POST(request) {
                 .sign(secret)
 
 
-            await sendMail('Email Verification request from Developer Goswami', email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`))
+            await sendMail('Email Verification – ELOIR', email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`))
 
             return response(false, 401, 'Your email is not verified. We have sent a verification link to your registered email address.')
         }

@@ -268,7 +268,7 @@ const Checkout = () => {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: Math.round(amount * 100),
                 currency: 'INR',
-                name: 'E-store',
+                name: process.env.NEXT_PUBLIC_BRAND_NAME || 'ELOIR',
                 description: 'Payment for order',
                 image: 'https://res.cloudinary.com/dg7efdu9o/image/upload/v1750052410/logo-black_mb1rve.webp',
                 order_id: rzOrderId,

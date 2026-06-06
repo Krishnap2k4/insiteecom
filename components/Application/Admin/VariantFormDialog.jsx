@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Select from '@/components/Application/Select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import Image from 'next/image'
@@ -171,12 +171,18 @@ const VariantFormDialog = ({
                                 <div key={opt.name}>
                                     <Label className='mb-2 block'>{opt.name} <span className='text-red-500'>*</span></Label>
                                     <Select
-                                        options={(opt.values || []).map((v) => ({ value: v, label: v }))}
-                                        selected={optionValues[opt.name] || ''}
-                                        setSelected={(v) => setOptionValue(opt.name, v)}
-                                        isMulti={false}
-                                        placeholder={`Pick ${opt.name.toLowerCase()}`}
-                                    />
+                                        value={optionValues[opt.name] || ''}
+                                        onValueChange={(v) => setOptionValue(opt.name, v)}
+                                    >
+                                        <SelectTrigger className='w-full'>
+                                            <SelectValue placeholder={`Pick ${opt.name.toLowerCase()}`} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {(opt.values || []).map((v) => (
+                                                <SelectItem key={v} value={v}>{v}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                             ))}
                             <div>

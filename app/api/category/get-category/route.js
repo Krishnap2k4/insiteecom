@@ -8,7 +8,7 @@ export async function GET() {
 
         await connectDB()
 
-        const getCategory = await CategoryModel.find({ deletedAt: null }).lean()
+        const getCategory = await CategoryModel.find({ deletedAt: null, isActive: true }).lean()
 
         if (!getCategory) {
             return response(false, 404, 'Category not found.')

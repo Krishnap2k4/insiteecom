@@ -78,7 +78,7 @@ function Select({
         : safeSelected !== null && safeSelected !== undefined && safeSelected !== ''
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={setOpen} modal={false}>
             <PopoverTrigger className='w-full' asChild>
                 <Button
                     variant='outline'
@@ -133,6 +133,10 @@ function Select({
                                         key={option.value}
                                         value={option.label}
                                         onSelect={() => handleSelect(option)}
+                                        onMouseDown={(e) => {
+                                            e.preventDefault()
+                                            handleSelect(option)
+                                        }}
                                     >
                                         {option.label}
                                         <CheckIcon

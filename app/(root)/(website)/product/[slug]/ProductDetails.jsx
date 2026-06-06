@@ -12,7 +12,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
-import { decode, encode } from "entities";
+import { renderDescription } from "@/lib/renderDescription"
 import { Minus, Plus, ShoppingBag, Loader2, Star, ChevronRight, Truck, ShieldCheck, RotateCcw } from 'lucide-react'
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "@/store/reducer/cartReducer";
@@ -258,7 +258,7 @@ const ProductDetails = ({
                         </div>
 
                         {/* Description snippet */}
-                        <div className="mt-5 text-white/65 text-sm leading-relaxed line-clamp-3 [&>*]:text-white/65" dangerouslySetInnerHTML={{ __html: decode(product.description) }}></div>
+                        <div className="mt-5 text-white/65 text-sm leading-relaxed line-clamp-3 [&>*]:text-white/65" dangerouslySetInnerHTML={{ __html: renderDescription(product.description) }}></div>
 
                         <div className='h-px w-full bg-gradient-to-r from-transparent via-[#C9A24B]/30 to-transparent my-6'></div>
 
@@ -403,7 +403,7 @@ const ProductDetails = ({
                         <h2 className="text-[11px] tracking-[0.4em] uppercase text-[#F0D77C] font-semibold">Product Description</h2>
                         <span className='h-px w-4 bg-[#C9A24B]/50'></span>
                     </div>
-                    <div className="p-5 text-white/70 text-sm leading-relaxed [&>*]:text-white/70 [&_strong]:text-white/90 [&_b]:text-white/90" dangerouslySetInnerHTML={{ __html: decode(product.description) }}></div>
+                    <div className="p-5 text-white/70 text-sm leading-relaxed [&>*]:text-white/70 [&_strong]:text-white/90 [&_b]:text-white/90 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded" dangerouslySetInnerHTML={{ __html: renderDescription(product.description) }}></div>
                 </div>
             </div>
 

@@ -21,7 +21,7 @@ const layout = ({ children }) => {
                     </div>
 
                     <div className='border-t h-[40px] flex justify-center items-center bg-gray-50 dark:bg-background text-sm'>
-                        © 2025 Developer Goswami™. All Rights Reserved.
+                        © 2025 ELOIR™. All Rights Reserved.
                     </div>
                 </main>
             </SidebarProvider>

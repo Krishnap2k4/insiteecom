@@ -44,16 +44,28 @@ export async function GET(request) {
             categoryId = categoryData.map(category => category._id)
         }
 
-        // match stage  
-        let matchStage = {}
-        if (categoryId.length > 0) matchStage.category = { $in: categoryId }  // filter by category   
-
-        if (search) {
-            matchStage.name = { $regex: search, $options: 'i' }
+        // match stage — product-level filters
+        const matchStage = {
+            deletedAt: null,
+            status: { $in: ['published', null, undefined] },
         }
+        if (categoryId.length > 0) matchStage.category = { $in: categoryId }
+        if (search) matchStage.name = { $regex: search, $options: 'i' }
+
+        // Color / size filter against product.options[] so the sidebar and
+        // the results stay consistent (both read from option definitions,
+        // not from the legacy variant.color / variant.size fields).
+        const optionConditions = []
+        if (color) optionConditions.push({
+            options: { $elemMatch: { name: { $regex: /^colou?r$/i }, values: { $in: color.split(',') } } }
+        })
+        if (size) optionConditions.push({
+            options: { $elemMatch: { name: { $regex: /^size$/i }, values: { $in: size.split(',') } } }
+        })
+        if (optionConditions.length > 0) matchStage['$and'] = optionConditions
 
 
-        // aggregation pipeline  
+        // aggregation pipeline
         const products = await ProductModel.aggregate([
             { $match: matchStage },
             { $sort: sortquery },
@@ -71,25 +83,20 @@ export async function GET(request) {
                 $addFields: {
                     variants: {
                         $filter: {
-                            input: "$variants",
+                            input: '$variants',
                             as: 'variant',
                             cond: {
                                 $and: [
-                                    size ? { $in: ["$$variant.size", size.split(',')] } : { $literal: true },
-                                    color ? { $in: ["$$variant.color", color.split(',')] } : { $literal: true },
-                                    { $gte: ["$$variant.sellingPrice", minPrice] },
-                                    { $lte: ["$$variant.sellingPrice", maxPrice] },
+                                    { $eq: [{ $ifNull: ['$$variant.deletedAt', null] }, null] },
+                                    { $gte: ['$$variant.sellingPrice', minPrice] },
+                                    { $lte: ['$$variant.sellingPrice', maxPrice] },
                                 ]
                             }
                         }
                     }
                 }
             },
-            {
-                $match: {
-                    variants: { $ne: [] }
-                }
-            },
+            { $match: { variants: { $ne: [] } } },
             {
                 $lookup: {
                     from: 'medias',

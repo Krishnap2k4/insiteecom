@@ -15,7 +15,7 @@ const TermsAndConditions = () => {
             <div className='lg:px-40 px-5 py-20 text-white/70'>
                 <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-5'>Terms & Conditions</h1>
 
-                <p>Welcome to E-store. By accessing or using our website, you agree to be bound by the following terms and conditions. Please read them carefully.</p>
+                <p>Welcome to ELOIR. By accessing or using our website, you agree to be bound by the following terms and conditions. Please read them carefully.</p>
 
                 <p className='mt-3'>If you do not agree with any part of these terms, please do not use our website.</p>
 
@@ -44,7 +44,7 @@ const TermsAndConditions = () => {
 
                 <p className='mt-8'><b className='text-white'>5. Intellectual Property:</b></p>
                 <ul className='list-disc ps-10 mt-3 space-y-2'>
-                    <li>All content on E-store, including logos, images, and text, is the property of E-store and protected by copyright laws.</li>
+                    <li>All content on ELOIR, including logos, images, and text, is the property of ELOIR and protected by copyright laws.</li>
                     <li>You may not use, copy, or reproduce any material without our written consent.</li>
                 </ul>
 
@@ -63,7 +63,7 @@ const TermsAndConditions = () => {
                 </p>
 
                 <p className='mt-3'>
-                    Thank you for choosing E-store. We value your trust and are committed to delivering a secure and reliable shopping experience.
+                    Thank you for choosing ELOIR. We value your trust and are committed to delivering a secure and reliable shopping experience.
                 </p>
             </div>
         </div>

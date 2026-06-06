@@ -25,6 +25,16 @@ import { useForm } from 'react-hook-form'
 import { FiInfo, FiTag } from 'react-icons/fi'
 import slugify from 'slugify'
 
+const Section = ({ title, description, children }) => (
+    <Card className='py-0 rounded shadow-sm'>
+        <CardHeader className='pt-3 px-3 border-b [.border-b]:pb-2'>
+            <h4 className='text-lg font-semibold'>{title}</h4>
+            {description && <p className='text-xs text-gray-500'>{description}</p>}
+        </CardHeader>
+        <CardContent className='pb-5 pt-4'>{children}</CardContent>
+    </Card>
+)
+
 const breadcrumbData = [
     { href: ADMIN_DASHBOARD, label: 'Home' },
     { href: ADMIN_PRODUCT_SHOW, label: 'Products' },
@@ -168,16 +178,6 @@ const AddProductPage = () => {
             setLoading(false)
         }
     }
-
-    const Section = ({ title, description, children }) => (
-        <Card className='py-0 rounded shadow-sm'>
-            <CardHeader className='pt-3 px-3 border-b [.border-b]:pb-2'>
-                <h4 className='text-lg font-semibold'>{title}</h4>
-                {description && <p className='text-xs text-gray-500'>{description}</p>}
-            </CardHeader>
-            <CardContent className='pb-5 pt-4'>{children}</CardContent>
-        </Card>
-    )
 
     return (
         <div>

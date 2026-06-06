@@ -48,9 +48,11 @@ export async function GET(request, { params }) {
         let getProduct = null
         let canonicalSlugMismatch = false
 
+        const statusFilter = { $in: ['published', null, undefined] }
+
         if (publicId) {
             getProduct = await ProductModel
-                .findOne({ deletedAt: null, publicId })
+                .findOne({ deletedAt: null, publicId, status: statusFilter })
                 .populate('media', 'secure_url')
                 .populate('brand', '_id name slug')
                 .lean()
@@ -61,7 +63,7 @@ export async function GET(request, { params }) {
 
         if (!getProduct) {
             getProduct = await ProductModel
-                .findOne({ deletedAt: null, slug: raw })
+                .findOne({ deletedAt: null, slug: raw, status: statusFilter })
                 .populate('media', 'secure_url')
                 .populate('brand', '_id name slug')
                 .lean()
