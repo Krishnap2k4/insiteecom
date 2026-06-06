@@ -17,13 +17,13 @@ const breadCrumb = {
 
 const statusChip = (status) => {
     const palette = {
-        open: 'bg-emerald-100 text-emerald-700',
-        pending: 'bg-amber-100 text-amber-700',
-        resolved: 'bg-sky-100 text-sky-700',
-        closed: 'bg-gray-100 text-gray-600',
+        open: 'bg-emerald-500/20 text-emerald-400',
+        pending: 'bg-amber-500/20 text-amber-400',
+        resolved: 'bg-sky-500/20 text-sky-400',
+        closed: 'bg-white/10 text-white/50',
     }
     return (
-        <span className={`text-xs px-2.5 py-1 rounded-full capitalize ${palette[status] || 'bg-gray-100 text-gray-600'}`}>
+        <span className={`text-xs px-2.5 py-1 rounded-full capitalize ${palette[status] || 'bg-white/10 text-white/50'}`}>
             {status}
         </span>
     )
@@ -82,7 +82,7 @@ const MessageDetail = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-10 text-center text-gray-500'>Loading…</div>
+                    <div className='border border-[#C9A24B]/20 rounded p-10 text-center text-white/50 bg-[#0a0805]'>Loading…</div>
                 </UserPanelLayout>
             </div>
         )
@@ -92,7 +92,7 @@ const MessageDetail = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-10 text-center text-red-500 font-semibold'>Conversation not found.</div>
+                    <div className='border border-[#C9A24B]/20 rounded p-10 text-center text-red-400 font-semibold bg-[#0a0805]'>Conversation not found.</div>
                 </UserPanelLayout>
             </div>
         )
@@ -106,38 +106,38 @@ const MessageDetail = ({ params }) => {
         <div>
             <WebsiteBreadcrumb props={breadCrumb} />
             <UserPanelLayout>
-                <div className='border rounded shadow-sm flex flex-col h-[calc(100vh-260px)] min-h-[400px]'>
-                    <div className='px-5 py-3 border-b flex items-start justify-between gap-3'>
+                <div className='border border-[#C9A24B]/20 rounded bg-[#0a0805] flex flex-col h-[calc(100vh-260px)] min-h-[400px]'>
+                    <div className='px-5 py-3 border-b border-[#C9A24B]/20 flex items-start justify-between gap-3'>
                         <div className='min-w-0'>
-                            <h1 className='text-lg font-semibold truncate'>{conv.subject || 'Conversation'}</h1>
+                            <h1 className='text-lg font-semibold truncate text-[#F0D77C]'>{conv.subject || 'Conversation'}</h1>
                             {conv.relatedOrder?.orderNumber && (
-                                <p className='text-xs text-gray-500 mt-0.5'>
-                                    Linked to order <Link href={WEBSITE_ORDER_DETAILS(conv.relatedOrder.orderNumber)} className='text-primary hover:underline'>{conv.relatedOrder.orderNumber}</Link>
+                                <p className='text-xs text-white/50 mt-0.5'>
+                                    Linked to order <Link href={WEBSITE_ORDER_DETAILS(conv.relatedOrder.orderNumber)} className='text-[#C9A24B] hover:text-[#F0D77C] hover:underline transition-colors'>{conv.relatedOrder.orderNumber}</Link>
                                 </p>
                             )}
                         </div>
                         {statusChip(conv.status)}
                     </div>
 
-                    <div ref={listRef} className='flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50'>
+                    <div ref={listRef} className='flex-1 overflow-y-auto p-5 space-y-4 bg-[#0a0805]'>
                         {messages.length === 0 && (
-                            <p className='text-center text-sm text-gray-500'>No messages yet.</p>
+                            <p className='text-center text-sm text-white/50'>No messages yet.</p>
                         )}
                         {messages.map((m) => {
                             const mine = m.authorRole === 'customer'
                             return (
                                 <div key={m._id} className={`flex gap-2 ${mine ? 'justify-end' : 'justify-start'}`}>
                                     {!mine && (
-                                        <div className='w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0'>
+                                        <div className='w-8 h-8 rounded-full bg-white/10 text-[#F0D77C] flex items-center justify-center shrink-0'>
                                             <FiUserCheck size={14} />
                                         </div>
                                     )}
-                                    <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? 'bg-primary text-white rounded-tr-sm' : 'bg-white border rounded-tl-sm'}`}>
+                                    <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${mine ? 'bg-[#C9A24B] text-[#0a0805] rounded-tr-sm' : 'bg-[#15110a] border border-[#C9A24B]/20 text-white rounded-tl-sm'}`}>
                                         <p className='text-sm whitespace-pre-wrap break-words'>{m.body}</p>
-                                        <p className={`text-[10px] mt-1 ${mine ? 'text-white/70' : 'text-gray-400'}`}>{formatTime(m.createdAt)}</p>
+                                        <p className={`text-[10px] mt-1 ${mine ? 'text-[#0a0805]/70' : 'text-white/40'}`}>{formatTime(m.createdAt)}</p>
                                     </div>
                                     {mine && (
-                                        <div className='w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0'>
+                                        <div className='w-8 h-8 rounded-full bg-[#C9A24B]/20 text-[#C9A24B] flex items-center justify-center shrink-0'>
                                             <FiUser size={14} />
                                         </div>
                                     )}
@@ -146,9 +146,9 @@ const MessageDetail = ({ params }) => {
                         })}
                     </div>
 
-                    <div className='border-t p-3 bg-white'>
+                    <div className='border-t border-[#C9A24B]/20 p-3 bg-[#15110a]'>
                         {isClosed ? (
-                            <p className='text-sm text-center text-gray-500'>
+                            <p className='text-sm text-center text-white/50'>
                                 This conversation is {conv.status}. Send a reply below to re-open it.
                             </p>
                         ) : null}
@@ -157,15 +157,15 @@ const MessageDetail = ({ params }) => {
                                 value={reply}
                                 onChange={(e) => setReply(e.target.value)}
                                 placeholder='Write a message…'
-                                className='resize-none'
+                                className='resize-none bg-[#0a0805] border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]'
                                 rows={2}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send()
                                 }}
                             />
-                            <ButtonLoading type='button' text='Send' loading={sending} onClick={send} disabled={!reply.trim()} />
+                            <ButtonLoading type='button' text='Send' loading={sending} onClick={send} disabled={!reply.trim()} className='btn-dark-gold py-2 px-6 uppercase tracking-widest text-xs font-semibold' />
                         </div>
-                        <p className='text-[11px] text-gray-400 mt-1'>Press ⌘/Ctrl + Enter to send</p>
+                        <p className='text-[11px] text-white/40 mt-1'>Press ⌘/Ctrl + Enter to send</p>
                     </div>
                 </div>
             </UserPanelLayout>

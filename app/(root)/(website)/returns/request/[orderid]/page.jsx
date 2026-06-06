@@ -115,7 +115,7 @@ const ReturnRequestPage = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-10 text-center text-gray-500'>Loading…</div>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-10 text-center text-white/50'>Loading…</div>
                 </UserPanelLayout>
             </div>
         )
@@ -126,7 +126,7 @@ const ReturnRequestPage = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-10 text-center text-red-500 font-semibold'>Order not found.</div>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-10 text-center text-red-400 font-semibold'>Order not found.</div>
                 </UserPanelLayout>
             </div>
         )
@@ -137,9 +137,11 @@ const ReturnRequestPage = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-6 text-center'>
-                        <p className='text-gray-600'>You can request a return only after an order is delivered.</p>
-                        <Button asChild className='mt-3'><Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)}>Back to order</Link></Button>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-6 text-center'>
+                        <p className='text-white/60'>You can request a return only after an order is delivered.</p>
+                        <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)} className='btn-dark-gold inline-block mt-4 px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                            Back to order
+                        </Link>
                     </div>
                 </UserPanelLayout>
             </div>
@@ -153,16 +155,20 @@ const ReturnRequestPage = ({ params }) => {
             <div>
                 <WebsiteBreadcrumb props={breadCrumb} />
                 <UserPanelLayout>
-                    <div className='border rounded p-6 text-center space-y-3'>
-                        <p className='text-gray-700 font-medium'>No items left to return.</p>
-                        <p className='text-sm text-gray-500'>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-6 text-center space-y-3'>
+                        <p className='text-white font-medium'>No items left to return.</p>
+                        <p className='text-sm text-white/50'>
                             {activeReturns.length > 0
                                 ? 'All eligible items already have an active return request. Check the Returns section.'
                                 : 'This order has already been fully refunded.'}
                         </p>
-                        <div className='flex justify-center gap-2'>
-                            <Button asChild variant='outline'><Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)}>Back to order</Link></Button>
-                            <Button asChild><Link href={WEBSITE_RETURNS}>View my returns</Link></Button>
+                        <div className='flex justify-center gap-2 mt-4'>
+                            <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                                Back to order
+                            </Link>
+                            <Link href={WEBSITE_RETURNS} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                                View my returns
+                            </Link>
                         </div>
                     </div>
                 </UserPanelLayout>
@@ -175,21 +181,21 @@ const ReturnRequestPage = ({ params }) => {
             <WebsiteBreadcrumb props={breadCrumb} />
             <UserPanelLayout>
                 <div className='space-y-6'>
-                    <div className='border rounded p-5'>
-                        <h1 className='text-xl font-semibold'>Request return or exchange</h1>
-                        <p className='text-sm text-gray-500 mt-1'>For order <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)} className='text-primary hover:underline'>{order.orderNumber}</Link></p>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-5'>
+                        <h1 className='text-xl font-serif-display text-[#F0D77C]'>Request return or exchange</h1>
+                        <p className='text-sm text-white/50 mt-1'>For order <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)} className='text-[#C9A24B] hover:text-[#F0D77C] hover:underline transition-colors'>{order.orderNumber}</Link></p>
                     </div>
 
                     {activeReturns.length > 0 && (
-                        <div className='rounded-md border border-amber-200 bg-amber-50 p-4 flex items-start gap-3'>
-                            <FiInfo className='mt-0.5 shrink-0 text-amber-700' />
+                        <div className='rounded-md border border-amber-500/30 bg-amber-500/10 p-4 flex items-start gap-3'>
+                            <FiInfo className='mt-0.5 shrink-0 text-amber-500' />
                             <div className='min-w-0'>
-                                <p className='text-sm font-medium text-amber-900'>You already have a return in progress for some items.</p>
-                                <p className='text-xs text-amber-800 mt-1'>You can request a new return for the remaining items below. Active requests:</p>
-                                <ul className='mt-1 text-xs text-amber-800 space-y-0.5'>
+                                <p className='text-sm font-medium text-amber-400'>You already have a return in progress for some items.</p>
+                                <p className='text-xs text-amber-500 mt-1'>You can request a new return for the remaining items below. Active requests:</p>
+                                <ul className='mt-1 text-xs text-amber-500/80 space-y-0.5'>
                                     {activeReturns.map((r) => (
                                         <li key={r._id}>
-                                            <Link href={WEBSITE_RETURN_DETAILS(r.returnNumber)} className='underline'>{r.returnNumber}</Link> — {r.type}, {String(r.status).replace('_', ' ')}
+                                            <Link href={WEBSITE_RETURN_DETAILS(r.returnNumber)} className='underline hover:text-amber-400 transition-colors'>{r.returnNumber}</Link> — {r.type}, {String(r.status).replace('_', ' ')}
                                         </li>
                                     ))}
                                 </ul>
@@ -197,9 +203,9 @@ const ReturnRequestPage = ({ params }) => {
                         </div>
                     )}
 
-                    <div className='border rounded p-5 space-y-4'>
+                    <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded p-5 space-y-4'>
                         <div>
-                            <Label className='block mb-2 text-sm font-medium'>What do you want?</Label>
+                            <Label className='block mb-2 text-sm font-medium text-white/80'>What do you want?</Label>
                             <div className='flex gap-3 flex-wrap'>
                                 {[
                                     { key: 'return', label: 'Refund', sub: 'Send the item back and get your money back' },
@@ -209,13 +215,13 @@ const ReturnRequestPage = ({ params }) => {
                                     return (
                                         <label
                                             key={opt.key}
-                                            className={`flex-1 min-w-[200px] p-3 border rounded-md cursor-pointer transition ${active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-gray-400'}`}
+                                            className={`flex-1 min-w-[200px] p-3 border rounded-md cursor-pointer transition-all ${active ? 'border-[#C9A24B] ring-1 ring-[#C9A24B] bg-[#C9A24B]/5' : 'border-[#C9A24B]/20 hover:border-[#C9A24B]/50 bg-white/5'}`}
                                         >
                                             <div className='flex items-start gap-3'>
-                                                <input type='radio' name='return-type' value={opt.key} checked={active} onChange={() => setType(opt.key)} className='mt-1 accent-primary' />
+                                                <input type='radio' name='return-type' value={opt.key} checked={active} onChange={() => setType(opt.key)} className='mt-1 accent-[#C9A24B]' />
                                                 <div>
-                                                    <p className='font-medium text-sm'>{opt.label}</p>
-                                                    <p className='text-xs text-gray-500'>{opt.sub}</p>
+                                                    <p className={`font-medium text-sm ${active ? 'text-[#F0D77C]' : 'text-white'}`}>{opt.label}</p>
+                                                    <p className='text-xs text-white/50'>{opt.sub}</p>
                                                 </div>
                                             </div>
                                         </label>
@@ -225,51 +231,53 @@ const ReturnRequestPage = ({ params }) => {
                         </div>
 
                         <div>
-                            <Label className='block mb-2 text-sm font-medium'>Pick the items</Label>
+                            <Label className='block mb-2 text-sm font-medium text-white/80'>Pick the items</Label>
                             <div className='space-y-3'>
                                 {selectableItems.map((it) => {
                                     const selected = Boolean(picks[it.sku])
                                     return (
-                                        <div key={it.sku || it.name} className={`p-3 border rounded-md transition ${selected ? 'border-primary bg-primary/5' : ''}`}>
+                                        <div key={it.sku || it.name} className={`p-3 border rounded-md transition-all ${selected ? 'border-[#C9A24B] bg-[#C9A24B]/5' : 'border-[#C9A24B]/20 bg-white/5'}`}>
                                             <label className='flex items-start gap-3 cursor-pointer'>
                                                 <input
                                                     type='checkbox'
                                                     checked={selected}
                                                     onChange={() => togglePick(it.sku, it.name, it.available)}
-                                                    className='mt-1 accent-primary'
+                                                    className='mt-1 accent-[#C9A24B]'
                                                 />
                                                 <div className='flex-1 min-w-0'>
-                                                    <p className='text-sm font-medium'>{it.name}</p>
+                                                    <p className={`text-sm font-medium ${selected ? 'text-[#F0D77C]' : 'text-white'}`}>{it.name}</p>
                                                     {(it.optionValuesSnapshot || []).length > 0 && (
-                                                        <p className='text-xs text-gray-500'>
+                                                        <p className='text-xs text-white/60'>
                                                             {it.optionValuesSnapshot.map((ov) => `${ov.name}: ${ov.value}`).join(' · ')}
                                                         </p>
                                                     )}
-                                                    <p className='text-xs text-gray-400'>
+                                                    <p className='text-xs text-white/40'>
                                                         SKU: {it.sku} · Ordered {it.ordered}
-                                                        {it.inActive > 0 && <span className='ml-1 text-amber-700'>· {it.inActive} already in return</span>}
-                                                        <span className='ml-1'>· Available to return: <strong>{it.available}</strong></span>
+                                                        {it.inActive > 0 && <span className='ml-1 text-amber-500'>· {it.inActive} already in return</span>}
+                                                        <span className='ml-1'>· Available to return: <strong className='text-white/80'>{it.available}</strong></span>
                                                     </p>
                                                 </div>
                                             </label>
                                             {selected && (
                                                 <div className='mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 pl-7'>
                                                     <div>
-                                                        <Label className='text-xs block mb-1 text-gray-500'>Qty to return (max {it.available})</Label>
+                                                        <Label className='text-xs block mb-1 text-white/50'>Qty to return (max {it.available})</Label>
                                                         <Input
                                                             type='number'
                                                             min={1}
                                                             max={it.available}
                                                             value={picks[it.sku].qty}
                                                             onChange={(e) => setPickQty(it.sku, Math.min(it.available, Math.max(1, Number(e.target.value) || 1)))}
+                                                            className='bg-[#0a0805] border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]'
                                                         />
                                                     </div>
                                                     <div>
-                                                        <Label className='text-xs block mb-1 text-gray-500'>Reason</Label>
+                                                        <Label className='text-xs block mb-1 text-white/50'>Reason</Label>
                                                         <Input
                                                             value={picks[it.sku].reason}
                                                             onChange={(e) => setPickReason(it.sku, e.target.value)}
                                                             placeholder='e.g. Wrong size'
+                                                            className='bg-[#0a0805] border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]'
                                                         />
                                                     </div>
                                                 </div>
@@ -281,24 +289,26 @@ const ReturnRequestPage = ({ params }) => {
                         </div>
 
                         <div>
-                            <Label className='block mb-2 text-sm font-medium'>Anything else?</Label>
+                            <Label className='block mb-2 text-sm font-medium text-white/80'>Anything else?</Label>
                             <Textarea
                                 value={requestNote}
                                 onChange={(e) => setRequestNote(e.target.value)}
                                 placeholder={type === 'exchange' ? 'Tell us which size/color you want instead.' : 'Optional note for our team'}
+                                className='bg-white/5 border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]'
                             />
                         </div>
 
-                        <div className='flex justify-end gap-2'>
-                            <Button asChild variant='outline'>
-                                <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)}>Cancel</Link>
-                            </Button>
+                        <div className='flex justify-end gap-2 pt-2'>
+                            <Link href={WEBSITE_ORDER_DETAILS(order.orderNumber)} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                                Cancel
+                            </Link>
                             <ButtonLoading
                                 type='button'
                                 text='Submit request'
                                 loading={submitting}
                                 disabled={Object.keys(picks).length === 0}
                                 onClick={submit}
+                                className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'
                             />
                         </div>
                     </div>

@@ -631,16 +631,15 @@ Customer ↔ support conversations with internal admin notes, public contact for
 - **Contact → ticket needs an account** — clear "reply by email instead" message when the email doesn't match.
 - **DB template hot-swap** — toggling active/inactive immediately changes what the next outbound email uses. The hardcoded file templates are the safety net.
 
-## Module 5 — Reviews & Q&A (shipped)
+## Module 5 — Reviews (shipped)
 
-Moderated product reviews with verified-buyer detection, helpful votes, customer-driven reports with an auto-flip-to-pending threshold, admin replies rendered inline, and a paired Q&A system with staff-flagged answers.
+Moderated product reviews with verified-buyer detection, helpful votes, customer-driven reports with an auto-flip-to-pending threshold, admin replies rendered inline, and customer-side photo uploads via a direct Cloudinary signed-upload widget.
 
 ### Models
 
 | Model | Purpose |
 |---|---|
 | `Review` (extended) | `order` (the verifying order, snapshotted), `mediaUrls[]`, `verifiedBuyer`, `status` (`pending` / `approved` / `rejected`), `rejectionReason`, `helpfulCount` + `helpfulVoters[]`, `reportedCount` + `reportedBy[]`, `reply{ by, byName, text, at }`. Indexes on `(product, status, createdAt)` and `(user, product)`. |
-| `QnA` (NEW) | `product`, `askedBy` + `askedByName` snapshot, `question`, `status`, `answers[]` (subdoc with `by`, `byName`, `text`, `isStaff`, per-answer `status` + helpful votes), `reportedCount`/`reportedBy[]`. Each answer goes through moderation independently. |
 
 ### Server-side helpers
 
@@ -648,40 +647,27 @@ Moderated product reviews with verified-buyer detection, helpful votes, customer
 
 ### Endpoints
 
-**Reviews — public**
+**Public**
 - `GET /api/review/get?productId=&page=&sort=` — returns approved + the caller's own (any status) so users see their pending/rejected moderation state. Sort: `most_helpful` (default), `newest`, `highest`, `lowest`, `with_photos`, `verified`. Each row includes `isMine` + `helpfulByMe`.
 - `GET /api/review/details?productId=` — summary: count, average, per-star distribution + percentage, `withPhotos` count, `verifiedCount`. Approved only.
 - `GET /api/review/can-review?productId=` — `{ authed: false }` for guests, `{ existingReview }` when the customer already has one (so the CTA flips to Edit), or `{ canReview: true, verified }`.
 - `POST /api/review/[id]/helpful` — toggles vote (auth required), dedupes via `$addToSet`/`$pull`, count derived from array length so it can never drift.
 - `POST /api/review/[id]/report` — auth required. Crossing `REVIEW_REPORT_THRESHOLD` (env, default 3) flips an approved review back to `pending` and broadcasts a notification to admins.
 
-**Reviews — auth + admin**
+**Auth + admin**
 - `POST /api/review/create` — sets `verifiedBuyer` automatically via the helper. One-review-per-(user, product); resubmits update the existing row and flip status to `pending`. Broadcasts a moderation notification.
 - `GET /api/review` (admin list) — extended projection: `status`, `verifiedBuyer`, `reportedCount`, `helpfulCount`, `hasReply`.
 - `GET /api/admin/reviews/[id]` — full detail with populated user + product.
 - `PUT /api/admin/reviews/[id]` — single endpoint with `{ action: 'approve' | 'reject' | 'reply', rejectionReason?, replyText? }`. Each action sends a customer email (uses `email/_layout.js` for consistency with the rest of the lifecycle emails) AND emits an in-app notification.
 
-**Q&A — public**
-- `GET /api/qna?productId=&page=` — approved questions + caller's own. Each question's `answers[]` is filtered to approved + caller's own pending. Questions WITH approved answers bubble to the top (more useful for shoppers).
-- `POST /api/qna/ask` — auth required.
-- `POST /api/qna/[id]/answer` — accepts either a user or admin token. Admin answers are auto-approved + carry `isStaff: true`. Customer answers go through moderation; once approved, the original asker gets a "your question was answered" notification.
-- `POST /api/qna/[id]/answer/[answerId]/helpful` — toggle vote on an individual answer.
-
-**Q&A — admin**
-- `GET /api/admin/qna` — datatable feed with `pendingAnswers` count denormalised so the row can show an "X pending" badge.
-- `GET /api/admin/qna/[id]` — populated detail.
-- `PUT /api/admin/qna/[id]` — multi-purpose patch: `{ questionStatus, rejectionReason }` for question moderation, `{ answerUpdates: [{answerId, status}] }` for per-answer moderation, `{ answerReply: { text } }` to post a staff answer.
-
 ### Frontend
 
 - **Storefront `ProductReveiw` rebuilt** — summary card with avg rating, per-star distribution bars (using existing `Progress` component), verified-buyer count, and a context-aware CTA that flips between "Log in" / "Write a review" / "Edit your review" with pending/rejected hints. Sort dropdown above the list. Infinite-scroll via "Load more" (TanStack `useInfiniteQuery`). Each `ReviewList` row shows a verified-buyer chip when applicable, a photo grid, the admin reply card (left-border block), a Helpful button that highlights the user's own vote, and a Report button (hidden on own reviews). The customer's own pending/rejected reviews show an inline moderation pill.
-- **Write review dialog** — 5-star clickable rating, title + body, photo picker reusing the existing `MediaModal`. Submits to `/api/review/create`; success goes back to pending moderation.
-- **Storefront `ProductQnA` (new)** — list of questions with answers nested below each. Staff answers carry a primary-coloured "Staff" chip; pending answers from other customers stay hidden from the asker's view but their own pending shows with a "Awaiting moderation" note. Helpful vote on every approved answer. Ask + Answer dialogs gated by auth (with login fallback links).
-- **Product detail page** mounts both `ProductReveiw` and `ProductQnA` below the Specifications section.
+- **Write review dialog** — 5-star clickable rating, title + body, and the `ImageUploader` component. Submits to `/api/review/create`; success goes back to pending moderation.
+- **`ImageUploader` (new, reusable)** — customer-facing widget. Uses a native `<input type="file">` + direct signed POST to `https://api.cloudinary.com/v1_1/<cloud>/image/upload`. Bypasses `CldUploadWidget` entirely because its portal conflicts with Radix Dialog's outside-click handling. Per-file progress UI, 5-photo cap, PNG/JPG/WebP only, 8 MB each, removable thumbnails. Reusable for any future customer-facing form that needs photos (returns, support, CMS).
 - **Admin `/admin/review` list** — new chips: rating stars, status, Verified, Reports count, Replied. View action goes to the per-review detail.
 - **Admin `/admin/review/[id]` detail** — full review with media, audit chips at the top (Status / Verified / Reports / Helpful), 3-button moderation panel: Approve (one-click), Reject (opens a dialog with required reason), Reply (opens a dialog with the staff-response body). Each action notifies the customer via email + in-app bell.
-- **Admin `/admin/qna` list + `/admin/qna/[id]` detail** — answer-by-answer moderation with Approve/Reject per pending answer + a "Post a staff answer" textarea that auto-approves + a question-level Approve/Reject with optional reason.
-- **Admin sidebar** entry **Reviews & Q&A** with two children: Reviews / Q&A (replaces the old standalone "Rating & Review" link).
+- **Admin sidebar** — single **Reviews** entry.
 
 ### Edge cases handled
 
@@ -690,9 +676,8 @@ Moderated product reviews with verified-buyer detection, helpful votes, customer
 - **Customer sees their own moderation state** — pending and rejected reviews are returned to the caller only, never to others. Rejected reviews carry the admin's reason in the inline pill (and were sent by email at reject time).
 - **Helpful vote idempotent** — `helpfulVoters[]` is the source of truth; `helpfulCount` is rebuilt from `length` on every toggle, so the counter can never drift.
 - **Report threshold safety valve** — once `REVIEW_REPORT_THRESHOLD` distinct users (env, default 3) report a review, it flips back to `pending` and the admins get a bell broadcast.
-- **Q&A bubbling** — questions with at least one approved answer sort above unanswered ones, matching Shopify's pattern (other shoppers want answers, not unanswered questions).
-- **Staff answers auto-approved** — admin token detected via the existing `isAuthenticated('admin')` path; the answer is created with `isStaff: true` + `status: 'approved'`. Customer answers from non-admins go through the queue.
-- **Photo uploads** reuse the existing `MediaModal` + Cloudinary flow, so no new upload pipeline is needed.
+- **Photo uploads bypass the admin Media library** — the admin's `MediaModal` is library-picker UI for admin-managed assets only; customers don't have access. `ImageUploader` does its own signed upload so review media is owned by the review itself, not promoted to the admin library.
+- **Dialog + upload coexistence** — direct file input avoids the portal collision that `CldUploadWidget` has with Radix Dialog (where clicking inside the widget was being interpreted as "outside the dialog" and dismissing the parent).
 
 ## Known, deliberately deferred (need external services or per-module work)
 

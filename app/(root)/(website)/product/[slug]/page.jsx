@@ -33,8 +33,11 @@ const ProductPage = async ({ params, searchParams }) => {
 
     if (!getProduct.success) {
         return (
-            <div className='flex justify-center items-center py-10 h-[300px]'>
-                <h1 className='text-4xl font-semibold'>Data not found.</h1>
+            <div className='flex justify-center items-center py-10 min-h-[400px] bg-dark-gold pt-[120px]'>
+                <div className='text-center'>
+                    <h1 className='font-serif-display text-4xl gold-shine'>Product Not Found</h1>
+                    <p className='text-white/50 mt-3 text-sm'>The fragrance you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+                </div>
             </div>
         )
     }

@@ -11,13 +11,13 @@ const breadCrumb = { title: 'Messages', links: [{ label: 'Messages' }] }
 
 const statusChip = (status) => {
     const palette = {
-        open: 'bg-emerald-100 text-emerald-700',
-        pending: 'bg-amber-100 text-amber-700',
-        resolved: 'bg-sky-100 text-sky-700',
-        closed: 'bg-gray-100 text-gray-600',
+        open: 'bg-emerald-500/20 text-emerald-400',
+        pending: 'bg-amber-500/20 text-amber-400',
+        resolved: 'bg-sky-500/20 text-sky-400',
+        closed: 'bg-white/10 text-white/50',
     }
     return (
-        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${palette[status] || 'bg-gray-100 text-gray-600'}`}>
+        <span className={`text-xs px-2 py-0.5 capitalize ${palette[status] || 'bg-white/10 text-white/50'}`}>
             {status}
         </span>
     )
@@ -43,49 +43,47 @@ const Messages = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumb} />
             <UserPanelLayout>
-                <div className='shadow rounded'>
-                    <div className='p-5 flex items-center justify-between border-b'>
-                        <h2 className='text-xl font-semibold'>Messages</h2>
-                        <Button asChild size='sm'>
-                            <Link href={WEBSITE_MESSAGES_NEW()} className='inline-flex items-center gap-1'>
-                                <FiPlus /> New conversation
-                            </Link>
-                        </Button>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805]'>
+                    <div className='p-5 flex items-center justify-between border-b border-[#C9A24B]/20'>
+                        <h2 className='text-xl font-serif-display text-[#F0D77C]'>Messages</h2>
+                        <Link href={WEBSITE_MESSAGES_NEW()} className='btn-dark-gold inline-flex items-center gap-1 px-4 py-2 text-xs font-semibold uppercase tracking-widest'>
+                            <FiPlus /> New conversation
+                        </Link>
                     </div>
                     <div>
                         {loading ? (
-                            <div className='p-10 text-center text-gray-500'>Loading…</div>
+                            <div className='p-10 text-center text-white/50'>Loading…</div>
                         ) : list.length === 0 ? (
-                            <div className='p-10 text-center text-gray-500'>
-                                <FiMessageSquare className='mx-auto mb-3 text-3xl text-gray-300' />
+                            <div className='p-10 text-center text-white/50'>
+                                <FiMessageSquare className='mx-auto mb-3 text-3xl text-[#C9A24B]/30' />
                                 <p>You haven&apos;t started any conversations yet.</p>
-                                <Button asChild className='mt-4'>
-                                    <Link href={WEBSITE_MESSAGES_NEW()}>Start one</Link>
-                                </Button>
+                                <Link href={WEBSITE_MESSAGES_NEW()} className='btn-dark-gold inline-block mt-4 px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                                    Start one
+                                </Link>
                             </div>
                         ) : (
-                            <ul className='divide-y'>
+                            <ul className='divide-y divide-[#C9A24B]/10'>
                                 {list.map((c) => (
                                     <li key={c._id}>
                                         <Link
                                             href={WEBSITE_MESSAGE_DETAILS(c._id)}
-                                            className={`flex items-start justify-between gap-4 px-5 py-4 hover:bg-gray-50 transition ${c.customerUnread ? 'bg-emerald-50/40' : ''}`}
+                                            className={`flex items-start justify-between gap-4 px-5 py-4 hover:bg-white/5 transition-colors ${c.customerUnread ? 'bg-[#C9A24B]/10' : ''}`}
                                         >
                                             <div className='min-w-0 flex-1'>
                                                 <div className='flex items-center gap-2'>
-                                                    {c.customerUnread && <span className='w-2 h-2 rounded-full bg-emerald-500 shrink-0' />}
-                                                    <p className='font-medium truncate'>{c.subject || 'Conversation'}</p>
+                                                    {c.customerUnread && <span className='w-2 h-2 rounded-full bg-[#C9A24B] shrink-0' />}
+                                                    <p className='font-medium truncate text-white'>{c.subject || 'Conversation'}</p>
                                                     {statusChip(c.status)}
                                                 </div>
-                                                <p className='text-sm text-gray-500 truncate mt-1'>
+                                                <p className='text-sm text-white/60 truncate mt-1'>
                                                     {c.lastMessageBy === 'customer' ? 'You: ' : 'Support: '}
                                                     {c.lastMessagePreview || '—'}
                                                 </p>
                                                 {c.relatedOrder?.orderNumber && (
-                                                    <p className='text-xs text-gray-400 mt-1'>Order {c.relatedOrder.orderNumber}</p>
+                                                    <p className='text-xs text-white/40 mt-1'>Order {c.relatedOrder.orderNumber}</p>
                                                 )}
                                             </div>
-                                            <span className='text-xs text-gray-400 shrink-0'>{fromTime(c.lastMessageAt)}</span>
+                                            <span className='text-xs text-white/40 shrink-0'>{fromTime(c.lastMessageAt)}</span>
                                         </Link>
                                     </li>
                                 ))}

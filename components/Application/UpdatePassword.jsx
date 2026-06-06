@@ -15,8 +15,7 @@ import { Input } from "@/components/ui/input"
 import { useForm } from 'react-hook-form'
 import ButtonLoading from '@/components/Application/ButtonLoading'
 import { z } from 'zod'
-import { FaRegEyeSlash } from "react-icons/fa";
-import { FaRegEye } from "react-icons/fa6";
+import { Eye, EyeOff } from 'lucide-react'
 
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
@@ -66,8 +65,8 @@ const UpdatePassword = ({ email }) => {
 
         <div>
             <div className='text-center'>
-                <h1 className='text-3xl font-bold'>Update Password</h1>
-                <p>Create new password by filling below form.</p>
+                <h1 className='text-2xl font-serif-display text-white mb-2'>Update Password</h1>
+                <p className='text-white/60 text-sm'>Create new password by filling below form.</p>
             </div>
             <div className='mt-5'>
                 <Form {...form}>
@@ -81,7 +80,7 @@ const UpdatePassword = ({ email }) => {
                                     <FormItem className="relative">
                                         <FormLabel>Password</FormLabel>
                                         <FormControl>
-                                            <Input type="password" placeholder="***********" {...field} />
+                                            <Input type="password" placeholder="••••••••" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -96,13 +95,13 @@ const UpdatePassword = ({ email }) => {
                                     <FormItem className="relative">
                                         <FormLabel>Confirm Password</FormLabel>
                                         <FormControl>
-                                            <Input type={isTypePassword ? 'password' : 'text'} placeholder="***********" {...field} />
+                                            <Input type={isTypePassword ? 'password' : 'text'} placeholder="••••••••" className="pr-10" {...field} />
                                         </FormControl>
-                                        <button className='absolute top-1/2 right-2 cursor-pointer' type='button' onClick={() => setIsTypePassword(!isTypePassword)}>
+                                        <button className='absolute top-[34px] right-3 cursor-pointer text-white/50 hover:text-[#F0D77C] transition-colors' type='button' onClick={() => setIsTypePassword(!isTypePassword)}>
                                             {isTypePassword ?
-                                                <FaRegEyeSlash />
+                                                <EyeOff size={16} />
                                                 :
-                                                <FaRegEye />
+                                                <Eye size={16} />
                                             }
                                         </button>
                                         <FormMessage />
@@ -110,8 +109,10 @@ const UpdatePassword = ({ email }) => {
                                 )}
                             />
                         </div>
-                        <div className='mb-3'>
-                            <ButtonLoading loading={loading} type="submit" text="Update Password" className="w-full cursor-pointer" />
+                        <div className='mb-6 mt-6'>
+                            <button disabled={loading} type="submit" className="btn-dark-gold w-full py-3 uppercase tracking-widest text-xs font-semibold cursor-pointer disabled:opacity-50">
+                                {loading ? 'Updating...' : 'Update Password'}
+                            </button>
                         </div>
                     </form>
                 </Form>

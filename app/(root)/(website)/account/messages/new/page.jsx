@@ -56,31 +56,31 @@ const NewMessageInner = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumb} />
             <UserPanelLayout>
-                <div className='border rounded shadow-sm p-5 max-w-2xl'>
-                    <h1 className='text-xl font-semibold mb-1'>Start a new conversation</h1>
-                    <p className='text-sm text-gray-500 mb-5'>Our team typically replies within 24 hours.</p>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805] rounded shadow-sm p-5 max-w-2xl'>
+                    <h1 className='text-xl font-serif-display text-[#F0D77C] mb-1'>Start a new conversation</h1>
+                    <p className='text-sm text-white/50 mb-5'>Our team typically replies within 24 hours.</p>
 
                     {order && (
-                        <div className='mb-5 rounded-md bg-gray-50 border p-3 text-sm'>
-                            <p className='text-xs text-gray-500'>Linked to order</p>
-                            <p className='font-medium'>{order.orderNumber}</p>
+                        <div className='mb-5 rounded-md bg-[#15110a] border border-[#C9A24B]/20 p-3 text-sm'>
+                            <p className='text-xs text-white/50'>Linked to order</p>
+                            <p className='font-medium text-white/80'>{order.orderNumber}</p>
                         </div>
                     )}
 
                     <div className='space-y-4'>
                         <div>
-                            <Label className='mb-1.5 block'>Subject</Label>
-                            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder='What is this about?' />
+                            <Label className='mb-1.5 block text-white/70'>Subject</Label>
+                            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder='What is this about?' className='bg-white/5 border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]' />
                         </div>
                         <div>
-                            <Label className='mb-1.5 block'>Message</Label>
-                            <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={6} placeholder='Tell us how we can help…' />
+                            <Label className='mb-1.5 block text-white/70'>Message</Label>
+                            <Textarea value={body} onChange={(e) => setBody(e.target.value)} rows={6} placeholder='Tell us how we can help…' className='bg-white/5 border-[#C9A24B]/30 text-white placeholder:text-white/30 focus:border-[#C9A24B] focus:ring-1 focus:ring-[#C9A24B]' />
                         </div>
                         <div className='flex justify-end gap-2'>
-                            <Button asChild variant='outline'>
-                                <Link href={WEBSITE_MESSAGES}>Cancel</Link>
-                            </Button>
-                            <ButtonLoading type='button' text='Send' loading={loading} onClick={submit} />
+                            <Link href={WEBSITE_MESSAGES} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                                Cancel
+                            </Link>
+                            <ButtonLoading type='button' text='Send' loading={loading} onClick={submit} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest' />
                         </div>
                     </div>
                 </div>

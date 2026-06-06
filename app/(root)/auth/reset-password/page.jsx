@@ -1,8 +1,7 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
 import React, { useState } from 'react'
-import Logo from '@/public/assets/images/logo-black.png'
-import Image from 'next/image'
+import { Eye, EyeOff } from 'lucide-react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from '@/lib/zodSchema'
 import {
@@ -75,18 +74,18 @@ const ResetPassword = () => {
     }
 
     return (
-        <Card className="w-[400px]">
-            <CardContent>
-                <div className='flex justify-center'>
-                    <Image src={Logo.src} width={Logo.width} height={Logo.height} alt='logo' className='max-w-[150px]' />
+        <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
+            <CardContent className="pt-8">
+                <div className='flex justify-center mb-6'>
+                    <div className='font-serif-display gold-shine text-4xl tracking-widest'>ELOIR</div>
                 </div>
 
                 {!otpEmail
                     ?
                     <>
                         <div className='text-center'>
-                            <h1 className='text-3xl font-bold'>Reset Password</h1>
-                            <p>Enter your email for password reset.</p>
+                            <h1 className='text-2xl font-serif-display text-white mb-2'>Reset Password</h1>
+                            <p className='text-white/60 text-sm'>Enter your email for password reset.</p>
                         </div>
                         <div className='mt-5'>
                             <Form {...form}>
@@ -107,15 +106,15 @@ const ResetPassword = () => {
                                         />
                                     </div>
 
-                                    <div className='mb-3'>
-                                        <ButtonLoading loading={emailVerificationLoading} type="submit" text="Send OTP" className="w-full cursor-pointer" />
+                                    <div className='mb-6 mt-6'>
+                                        <button disabled={emailVerificationLoading} type="submit" className="btn-dark-gold w-full py-3 uppercase tracking-widest text-xs font-semibold cursor-pointer disabled:opacity-50">
+                                            {emailVerificationLoading ? 'Sending OTP...' : 'Send OTP'}
+                                        </button>
                                     </div>
-                                    <div className='text-center'>
-                                        <div className='flex justify-center items-center gap-1'>
-
-                                            <Link href={WEBSITE_LOGIN} className='text-primary underline'>Back To Login</Link>
+                                    <div className='text-center text-sm text-white/60'>
+                                        <div className='flex justify-center items-center gap-2'>
+                                            <Link href={WEBSITE_LOGIN} className='text-[#C9A24B] hover:text-[#F0D77C] hover:underline transition-colors'>Back To Sign In</Link>
                                         </div>
-
                                     </div>
                                 </form>
                             </Form>

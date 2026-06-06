@@ -18,18 +18,18 @@ const BrandPage = async ({ params }) => {
 
     if (!res?.success) {
         return (
-            <div className='min-h-[60vh] flex items-center justify-center px-4'>
+            <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
                 <div className='max-w-md text-center'>
-                    <p className='text-7xl font-semibold text-primary mb-2'>404</p>
-                    <h1 className='text-2xl font-semibold mb-3'>Brand not found</h1>
-                    <p className='text-gray-500 mb-8'>We couldn&apos;t find a brand at <span className='font-mono'>/b/{slug}</span>.</p>
+                    <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
+                    <h1 className='text-2xl font-serif-display text-white mb-3'>Brand not found</h1>
+                    <p className='text-white/50 mb-8'>We couldn&apos;t find a brand at <span className='font-mono text-[#F0D77C]'>/b/{slug}</span>.</p>
                     <div className='flex gap-3 justify-center'>
-                        <Button asChild className='rounded-full px-6'>
-                            <Link href={WEBSITE_SHOP}>Browse shop</Link>
-                        </Button>
-                        <Button asChild variant='outline' className='rounded-full px-6'>
-                            <Link href={WEBSITE_HOME}>Go home</Link>
-                        </Button>
+                        <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                            Browse shop
+                        </Link>
+                        <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                            Go home
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -40,36 +40,38 @@ const BrandPage = async ({ params }) => {
     const logoUrl = brand.logo?.secure_url
 
     return (
-        <div>
+        <div className="bg-dark-gold min-h-screen pt-[120px]">
+            <div className='h-px w-full bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent'></div>
+
             {/* Brand hero */}
-            <section className='bg-gradient-to-b from-gray-50 to-white border-b'>
-                <div className='lg:px-32 px-4 py-12'>
-                    <nav className='text-sm text-gray-500 mb-6 flex items-center gap-1 flex-wrap'>
-                        <Link href={WEBSITE_HOME} className='hover:text-primary'>Home</Link>
-                        <FiChevronRight size={14} />
-                        <Link href={WEBSITE_SHOP} className='hover:text-primary'>Brands</Link>
-                        <FiChevronRight size={14} />
-                        <span className='font-medium text-gray-700'>{brand.name}</span>
+            <section className='bg-gradient-to-b from-[#0e0e0e] to-[#0a0805] border-b border-[#C9A24B]/20'>
+                <div className='max-w-7xl mx-auto px-4 lg:px-8 py-12'>
+                    <nav className='text-xs tracking-wider uppercase text-white/50 mb-6 flex items-center gap-2 flex-wrap'>
+                        <Link href={WEBSITE_HOME} className='hover:text-[#F0D77C] transition-colors'>Home</Link>
+                        <FiChevronRight size={12} className="text-[#C9A24B]/50" />
+                        <Link href={WEBSITE_SHOP} className='hover:text-[#F0D77C] transition-colors'>Brands</Link>
+                        <FiChevronRight size={12} className="text-[#C9A24B]/50" />
+                        <span className='font-semibold text-[#F0D77C]'>{brand.name}</span>
                     </nav>
 
                     <div className='flex items-center gap-6 flex-wrap'>
                         {logoUrl && (
-                            <div className='w-24 h-24 lg:w-32 lg:h-32 border rounded-xl overflow-hidden bg-white shrink-0 p-2'>
+                            <div className='w-24 h-24 lg:w-32 lg:h-32 border border-[#C9A24B]/30 rounded-full overflow-hidden bg-[#15110a] shrink-0 p-4 shadow-lg shadow-[#C9A24B]/10'>
                                 <Image
                                     src={logoUrl}
                                     width={128}
                                     height={128}
                                     alt={brand.name}
-                                    className='w-full h-full object-contain'
+                                    className='w-full h-full object-contain filter drop-shadow-md brightness-110'
                                 />
                             </div>
                         )}
                         <div>
-                            <h1 className='text-3xl lg:text-4xl font-semibold mb-2'>{brand.name}</h1>
+                            <h1 className='text-4xl lg:text-5xl font-serif-display gold-shine mb-2'>{brand.name}</h1>
                             {brand.description && (
-                                <p className='text-gray-600 max-w-2xl'>{brand.description}</p>
+                                <p className='text-white/60 max-w-2xl text-sm leading-relaxed'>{brand.description}</p>
                             )}
-                            <p className='text-sm text-gray-500 mt-2'>
+                            <p className='text-xs tracking-widest uppercase text-[#C9A24B] mt-4'>
                                 {products.length} product{products.length === 1 ? '' : 's'}
                             </p>
                         </div>
@@ -77,11 +79,11 @@ const BrandPage = async ({ params }) => {
                 </div>
             </section>
 
-            <div className='lg:px-32 px-4 py-10'>
+            <div className='max-w-7xl mx-auto px-4 lg:px-8 py-12'>
                 {products.length === 0 ? (
-                    <div className='py-20 text-center'>
-                        <h3 className='text-xl font-semibold mb-2'>No products yet</h3>
-                        <p className='text-gray-500'>
+                    <div className='py-20 text-center border border-[#C9A24B]/20 bg-[#0a0805]'>
+                        <h3 className='text-xl font-serif-display text-[#F0D77C] mb-2'>No products yet</h3>
+                        <p className='text-white/50 text-sm'>
                             We haven&apos;t listed any products for this brand yet — check back soon.
                         </p>
                     </div>

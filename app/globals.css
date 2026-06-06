@@ -293,3 +293,161 @@
 .animate-marquee { animation: marquee 35s linear infinite; }
 .animate-sparkle { animation: float-sparkle 5s ease-in-out infinite; }
 .animate-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+/* ===================================================================
+   STOREFRONT THEME SCOPE
+   All storefront & auth pages are wrapped in .storefront class.
+   This overrides shadcn's CSS variables so every component inside
+   .storefront automatically uses the ELOIR gold/dark palette.
+   Admin dashboard is NOT wrapped → stays default purple/white.
+   
+   CMS-READY: A future CMS only needs to override these variables
+   (e.g. from a database config) and the entire storefront updates.
+   =================================================================== */
+
+.storefront {
+  /* Core palette */
+  --background: #070707;
+  --foreground: #ffffff;
+
+  /* Card */
+  --card: #0a0805;
+  --card-foreground: #ffffff;
+
+  /* Popover / dropdown */
+  --popover: #0a0805;
+  --popover-foreground: #ffffff;
+
+  /* Primary (gold instead of purple) */
+  --primary: #C9A24B;
+  --primary-foreground: #0a0a0a;
+
+  /* Secondary */
+  --secondary: #1a1208;
+  --secondary-foreground: #F0D77C;
+
+  /* Muted */
+  --muted: #1a1208;
+  --muted-foreground: rgba(255, 255, 255, 0.5);
+
+  /* Accent */
+  --accent: rgba(201, 162, 75, 0.15);
+  --accent-foreground: #F0D77C;
+
+  /* Destructive */
+  --destructive: #ef4444;
+
+  /* Border / Input / Ring — the key ones that fix the purple flash */
+  --border: rgba(201, 162, 75, 0.3);
+  --input: rgba(201, 162, 75, 0.4);
+  --ring: rgba(240, 215, 124, 0.5);
+
+  /* Sharp edges for luxury feel */
+  --radius: 0px;
+}
+
+/* ===== Storefront-scoped shadcn/radix component overrides ===== */
+
+/* Select dropdown content */
+.storefront [data-slot="select-content"] {
+  background: #0a0805 !important;
+  border-color: rgba(201, 162, 75, 0.3) !important;
+  color: #fff !important;
+}
+.storefront [data-slot="select-item"] {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.storefront [data-slot="select-item"]:focus,
+.storefront [data-slot="select-item"][data-highlighted] {
+  background: rgba(201, 162, 75, 0.15) !important;
+  color: #fff !important;
+}
+.storefront [data-slot="select-item"] span svg {
+  color: #F0D77C !important;
+}
+
+/* Dialog */
+.storefront [data-slot="dialog-overlay"] {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Accordion chevron */
+.storefront [data-slot="accordion-trigger"] svg {
+  color: #C9A24B !important;
+}
+
+/* Slider */
+.storefront [data-slot="slider-track"] {
+  background: rgba(201, 162, 75, 0.15) !important;
+  border-radius: 0 !important;
+}
+.storefront [data-slot="slider-range"] {
+  background: linear-gradient(90deg, #C9A24B, #F0D77C) !important;
+}
+.storefront [data-slot="slider-thumb"] {
+  background: #F0D77C !important;
+  border-color: #C9A24B !important;
+  border-radius: 0 !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+.storefront [data-slot="slider-thumb"]:hover,
+.storefront [data-slot="slider-thumb"]:focus-visible {
+  box-shadow: 0 0 0 4px rgba(201, 162, 75, 0.3) !important;
+}
+
+/* Checkbox */
+.storefront [data-slot="checkbox"] {
+  border-color: rgba(201, 162, 75, 0.5) !important;
+  border-radius: 0 !important;
+}
+.storefront [data-slot="checkbox"][data-state="checked"] {
+  background: #C9A24B !important;
+  border-color: #C9A24B !important;
+}
+
+/* Input fields — dark background */
+.storefront [data-slot="input"] {
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+.storefront [data-slot="input"]::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Sheet (mobile filter sidebar) */
+.storefront [data-slot="sheet-content"] {
+  background: #0a0805 !important;
+  border-color: rgba(201, 162, 75, 0.2) !important;
+  color: #fff !important;
+}
+.storefront [data-slot="sheet-title"] {
+  color: #F0D77C !important;
+}
+
+/* Form labels */
+.storefront [data-slot="form-item-label"] {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Form error messages */
+.storefront [data-slot="form-item-message"] {
+  color: #ef4444 !important;
+}
+
+/* Toast container overrides (Toasts portal outside .storefront, so keep global) */
+.Toastify__toast-container .Toastify__toast {
+  background: #0a0805 !important;
+  border: 1px solid rgba(201, 162, 75, 0.3) !important;
+  color: #fff !important;
+}
+.Toastify__progress-bar {
+  background: linear-gradient(90deg, #C9A24B, #F0D77C) !important;
+}
+.Toastify__close-button {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.Toastify__close-button:hover {
+  color: #F0D77C !important;
+}

@@ -28,34 +28,34 @@ const UserPanelNavigation = () => {
         }
     }
     return (
-        <div className='border shadow-sm p-4 rounded'>
+        <div className='border border-[#C9A24B]/20 bg-[#0a0805] p-4'>
             <ul>
-                <li className='mb-2'>
-                    <Link href={USER_DASHBOARD} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_DASHBOARD) ? 'bg-primary text-white' : ''}`} >Dashboard</Link>
+                <li className='mb-1'>
+                    <Link href={USER_DASHBOARD} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_DASHBOARD) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Dashboard</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_PROFILE} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_PROFILE) ? 'bg-primary text-white' : ''}`} >Profile</Link>
+                <li className='mb-1'>
+                    <Link href={USER_PROFILE} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_PROFILE) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Profile</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_ORDERS} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_ORDERS) ? 'bg-primary text-white' : ''}`} >Orders</Link>
+                <li className='mb-1'>
+                    <Link href={USER_ORDERS} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_ORDERS) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Orders</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_RETURNS} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_RETURNS) ? 'bg-primary text-white' : ''}`} >Returns</Link>
+                <li className='mb-1'>
+                    <Link href={USER_RETURNS} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_RETURNS) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Returns</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_MESSAGES} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_MESSAGES) ? 'bg-primary text-white' : ''}`} >Messages</Link>
+                <li className='mb-1'>
+                    <Link href={USER_MESSAGES} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_MESSAGES) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Messages</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_ADDRESSES} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_ADDRESSES) ? 'bg-primary text-white' : ''}`} >Addresses</Link>
+                <li className='mb-1'>
+                    <Link href={USER_ADDRESSES} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_ADDRESSES) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Addresses</Link>
                 </li>
-                <li className='mb-2'>
-                    <Link href={USER_WISHLIST} className={`block p-3 text-sm rounded hover:bg-primary hover:text-white ${pathname.startsWith(USER_WISHLIST) ? 'bg-primary text-white' : ''}`} >Wishlist</Link>
+                <li className='mb-1'>
+                    <Link href={USER_WISHLIST} className={`block p-3 text-sm transition-colors ${pathname.startsWith(USER_WISHLIST) ? 'bg-[#C9A24B]/15 text-[#F0D77C] border-l-2 border-[#C9A24B]' : 'text-white/70 hover:text-[#F0D77C] hover:bg-white/5'}`} >Wishlist</Link>
                 </li>
 
-                <li className='mb-2'>
-                    <Button type="button" onClick={handleLogout} variant="destructive" className="w-full">
+                <li className='mt-4 pt-4 border-t border-[#C9A24B]/10'>
+                    <button type="button" onClick={handleLogout} className="w-full text-left p-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors cursor-pointer">
                         Logout
-                    </Button>
+                    </button>
                 </li>
 
             </ul>

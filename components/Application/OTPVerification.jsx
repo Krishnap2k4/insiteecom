@@ -50,25 +50,25 @@ const OTPVerification = ({ email, onSubmit, loading }) => {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleOtpVerification)} >
                     <div className='text-center' >
-                        <h1 className='text-2xl font-bold mb-2'>Please complete verification</h1>
-                        <p className='text-md'>We have sent an One-time Password (OTP) to your registered email address. The OTP is valid for 10 minutes only.</p>
+                        <h1 className='text-2xl font-serif-display text-white mb-2'>Verification Required</h1>
+                        <p className='text-white/60 text-sm max-w-sm mx-auto'>We have sent a One-time Password (OTP) to your registered email address. Valid for 10 minutes.</p>
                     </div>
-                    <div className='mb-5 mt-5 flex justify-center'>
+                    <div className='mb-6 mt-8 flex justify-center'>
                         <FormField
                             control={form.control}
                             name="otp"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="font-semibold">One-time Password (OTP)</FormLabel>
+                                    <FormLabel className="text-white/80 sr-only">One-time Password (OTP)</FormLabel>
                                     <FormControl>
                                         <InputOTP maxLength={6} {...field}>
                                             <InputOTPGroup>
-                                                <InputOTPSlot className="text-xl size-10" index={0} />
-                                                <InputOTPSlot className="text-xl size-10" index={1} />
-                                                <InputOTPSlot className="text-xl size-10" index={2} />
-                                                <InputOTPSlot className="text-xl size-10" index={3} />
-                                                <InputOTPSlot className="text-xl size-10" index={4} />
-                                                <InputOTPSlot className="text-xl size-10" index={5} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={0} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={1} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={2} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={3} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={4} />
+                                                <InputOTPSlot className="text-xl size-12 bg-black/40 border-[#C9A24B]/30 text-[#F0D77C] focus:ring-[#C9A24B]/50 transition-all font-serif-display" index={5} />
                                             </InputOTPGroup>
                                         </InputOTP>
                                     </FormControl>
@@ -79,12 +79,14 @@ const OTPVerification = ({ email, onSubmit, loading }) => {
                     </div>
 
                     <div className='mb-3'>
-                        <ButtonLoading loading={loading} type="submit" text="Verify" className="w-full cursor-pointer" />
-                        <div className='text-center mt-5'>
+                        <button disabled={loading} type="submit" className="btn-dark-gold w-full py-3 uppercase tracking-widest text-xs font-semibold cursor-pointer disabled:opacity-50">
+                            {loading ? 'Verifying...' : 'Verify Email'}
+                        </button>
+                        <div className='text-center mt-6 text-sm'>
                             {!isResendingOtp ?
-                                <button onClick={resendOTP} type='button' className='text-blue-500 cursor-pointer hover:underline'>Resend OTP</button>
+                                <button onClick={resendOTP} type='button' className='text-[#C9A24B] hover:text-[#F0D77C] hover:underline transition-colors cursor-pointer'>Resend OTP</button>
                                 :
-                                <span className='text-md'>Resending....</span>
+                                <span className='text-white/50'>Resending...</span>
                             }
 
                         </div>

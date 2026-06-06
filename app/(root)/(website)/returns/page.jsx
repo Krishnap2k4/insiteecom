@@ -9,16 +9,16 @@ const breadCrumbData = { title: 'Returns', links: [{ label: 'Returns' }] }
 
 const statusChip = (status) => {
     const palette = {
-        requested: 'bg-amber-100 text-amber-700',
-        approved: 'bg-sky-100 text-sky-700',
-        received: 'bg-indigo-100 text-indigo-700',
-        refunded: 'bg-emerald-100 text-emerald-700',
-        replaced: 'bg-emerald-100 text-emerald-700',
-        rejected: 'bg-red-100 text-red-700',
-        cancelled: 'bg-gray-100 text-gray-600',
+        requested: 'bg-amber-500/20 text-amber-400',
+        approved: 'bg-sky-500/20 text-sky-400',
+        received: 'bg-indigo-500/20 text-indigo-400',
+        refunded: 'bg-emerald-500/20 text-emerald-400',
+        replaced: 'bg-emerald-500/20 text-emerald-400',
+        rejected: 'bg-red-500/20 text-red-400',
+        cancelled: 'bg-white/10 text-white/50',
     }
     return (
-        <span className={`text-xs px-2 py-0.5 rounded-full capitalize ${palette[status] || 'bg-gray-100 text-gray-600'}`}>
+        <span className={`text-xs px-2 py-0.5 capitalize ${palette[status] || 'bg-white/10 text-white/50'}`}>
             {String(status || '—').replace('_', ' ')}
         </span>
     )
@@ -32,45 +32,45 @@ const Returns = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumbData} />
             <UserPanelLayout>
-                <div className='shadow rounded'>
-                    <div className='p-5 text-xl font-semibold border-b flex items-center justify-between'>
-                        <span>Returns &amp; exchanges</span>
-                        <Link href={USER_ORDERS} className='text-sm font-normal text-primary hover:underline'>Go to Orders</Link>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805]'>
+                    <div className='p-5 text-xl font-serif-display border-b border-[#C9A24B]/20 flex items-center justify-between'>
+                        <span className='text-[#F0D77C]'>Returns &amp; exchanges</span>
+                        <Link href={USER_ORDERS} className='text-sm font-normal text-[#C9A24B] hover:text-[#F0D77C] transition-colors'>Go to Orders</Link>
                     </div>
                     <div className='p-5'>
                         {loading ? (
-                            <div className='text-center py-10'>Loading…</div>
+                            <div className='text-center py-10 text-white/50'>Loading…</div>
                         ) : list.length === 0 ? (
-                            <div className='text-center py-10 text-gray-500'>
+                            <div className='text-center py-10 text-white/40'>
                                 You haven&apos;t requested any returns yet. Open one of your delivered orders to start a return or exchange.
                             </div>
                         ) : (
                             <div className='overflow-auto'>
                                 <table className='w-full'>
                                     <thead>
-                                        <tr className='text-left text-xs uppercase tracking-wide text-gray-500'>
-                                            <th className='p-2 border-b'>Request #</th>
-                                            <th className='p-2 border-b'>Order #</th>
-                                            <th className='p-2 border-b'>Type</th>
-                                            <th className='p-2 border-b'>Items</th>
-                                            <th className='p-2 border-b'>Requested</th>
-                                            <th className='p-2 border-b'>Status</th>
+                                        <tr className='text-left text-[11px] uppercase tracking-[0.2em] text-white/50'>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Request #</th>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Order #</th>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Type</th>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Items</th>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Requested</th>
+                                            <th className='p-2 border-b border-[#C9A24B]/20'>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {list.map((r) => (
-                                            <tr key={r._id} className='hover:bg-gray-50'>
+                                            <tr key={r._id} className='hover:bg-white/5 transition-colors border-b border-[#C9A24B]/10'>
                                                 <td className='p-2 text-sm'>
-                                                    <Link href={WEBSITE_RETURN_DETAILS(r.returnNumber)} className='font-medium text-primary hover:underline'>{r.returnNumber}</Link>
+                                                    <Link href={WEBSITE_RETURN_DETAILS(r.returnNumber)} className='font-medium text-[#C9A24B] hover:text-[#F0D77C] underline-offset-2 hover:underline transition-colors'>{r.returnNumber}</Link>
                                                 </td>
-                                                <td className='p-2 text-sm'>
+                                                <td className='p-2 text-sm text-white/80'>
                                                     {r.order?.orderNumber ? (
-                                                        <Link href={WEBSITE_ORDER_DETAILS(r.order.orderNumber)} className='hover:underline'>{r.order.orderNumber}</Link>
+                                                        <Link href={WEBSITE_ORDER_DETAILS(r.order.orderNumber)} className='hover:text-[#F0D77C] hover:underline transition-colors'>{r.order.orderNumber}</Link>
                                                     ) : '—'}
                                                 </td>
-                                                <td className='p-2 text-sm capitalize'>{r.type}</td>
-                                                <td className='p-2 text-sm'>{r.itemCount}</td>
-                                                <td className='p-2 text-sm text-gray-500'>
+                                                <td className='p-2 text-sm capitalize text-white/70'>{r.type}</td>
+                                                <td className='p-2 text-sm text-white/70'>{r.itemCount}</td>
+                                                <td className='p-2 text-sm text-white/50'>
                                                     {new Date(r.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                                                 </td>
                                                 <td className='p-2'>{statusChip(r.status)}</td>

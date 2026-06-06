@@ -12,53 +12,53 @@ const TermsAndConditions = () => {
     return (
         <div>
             <WebsiteBreadcrumb props={breadcrumb} />
-            <div className='lg:px-40 px-5 py-20'>
-                <h1 className='text-xl font-semibold mb-3'>Terms & Conditions</h1>
+            <div className='lg:px-40 px-5 py-20 text-white/70'>
+                <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-5'>Terms & Conditions</h1>
 
                 <p>Welcome to E-store. By accessing or using our website, you agree to be bound by the following terms and conditions. Please read them carefully.</p>
 
                 <p className='mt-3'>If you do not agree with any part of these terms, please do not use our website.</p>
 
-                <p className='mt-5'><b>1. Use of Our Website:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>1. Use of Our Website:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>You must be at least 18 years old or visiting under the supervision of a parent or guardian.</li>
                     <li>You agree to use our website for lawful purposes only and not for any fraudulent or harmful activity.</li>
                 </ul>
 
-                <p className='mt-5'><b>2. Product Information:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>2. Product Information:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>We strive to display accurate product details, prices, and availability, but errors may occur.</li>
                     <li>We reserve the right to correct any inaccuracies and update information at any time without prior notice.</li>
                 </ul>
 
-                <p className='mt-5'><b>3. Orders & Payments:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>3. Orders & Payments:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>Placing an order does not guarantee product availability. Orders may be canceled or adjusted if stock is unavailable.</li>
                     <li>All payments must be made through our secure payment gateways. We do not store card information.</li>
                 </ul>
 
-                <p className='mt-5'><b>4. Returns & Refunds:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>4. Returns & Refunds:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>Please refer to our Return Policy for detailed information on returns, exchanges, and refund eligibility.</li>
                 </ul>
 
-                <p className='mt-5'><b>5. Intellectual Property:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>5. Intellectual Property:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>All content on E-store, including logos, images, and text, is the property of E-store and protected by copyright laws.</li>
                     <li>You may not use, copy, or reproduce any material without our written consent.</li>
                 </ul>
 
-                <p className='mt-5'><b>6. Limitation of Liability:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>6. Limitation of Liability:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>We are not liable for any damages resulting from the use or inability to use our website or products.</li>
                 </ul>
 
-                <p className='mt-5'><b>7. Changes to Terms:</b></p>
-                <ul className='list-disc ps-10 mt-3'>
+                <p className='mt-8'><b className='text-white'>7. Changes to Terms:</b></p>
+                <ul className='list-disc ps-10 mt-3 space-y-2'>
                     <li>We may update these Terms & Conditions at any time. Continued use of the website implies acceptance of the new terms.</li>
                 </ul>
 
-                <p className='mt-5'>
+                <p className='mt-8'>
                     If you have any questions regarding these terms, please contact our customer support team.
                 </p>
 

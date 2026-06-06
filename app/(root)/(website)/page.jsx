@@ -16,7 +16,7 @@ const Home = () => {
     return (
         <>
             {/* ===== HERO SECTION ===== */}
-            <section id="top" className='relative min-h-[100vh] flex items-center justify-center overflow-hidden'>
+            <section id="top" className='relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-[110px]'>
                 <div className='absolute inset-0'>
                     <img
                         src="https://images.unsplash.com/photo-1544006593-1a0b9255782d?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200"

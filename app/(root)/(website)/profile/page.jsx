@@ -92,8 +92,8 @@ const Profile = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumbData} />
             <UserPanelLayout>
-                <div className='shadow rounded'>
-                    <div className='p-5 text-xl font-semibold border-b'>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805]'>
+                    <div className='p-5 text-xl font-serif-display text-[#F0D77C] border-b border-[#C9A24B]/20'>
                         Profile
                     </div>
                     <div className='p-5'>
@@ -104,12 +104,12 @@ const Profile = () => {
                                         {({ getRootProps, getInputProps }) => (
                                             <div {...getRootProps()}>
                                                 <input {...getInputProps()} />
-                                                <Avatar className="w-28 h-28 relative group border border-gray-100">
+                                                <Avatar className="w-28 h-28 relative group border border-[#C9A24B]/30">
                                                     <AvatarImage src={preview ? preview : userIcon.src} />
                                                     <div className='absolute z-50 w-full h-full top-1/2
                                                      left-1/2 -translate-x-1/2 -translate-y-1/2
-                                                      justify-center items-center border-2 border-violet-500 rounded-full group-hover:flex hidden cursor-pointer bg-black/20'>
-                                                        <FaCamera color='#7c3aed' />
+                                                      justify-center items-center border-2 border-[#C9A24B] rounded-full group-hover:flex hidden cursor-pointer bg-black/40'>
+                                                        <FaCamera color='#C9A24B' />
                                                     </div>
                                                 </Avatar>
                                             </div>
@@ -164,7 +164,7 @@ const Profile = () => {
                                 </div>
 
                                 <div className='mb-3 md:col-span-2 col-span-1'>
-                                    <ButtonLoading loading={loading} type="submit" text="Save Changes" className="cursor-pointer" />
+                                    <ButtonLoading loading={loading} type="submit" text="Save Changes" className="btn-dark-gold py-2.5 px-6 uppercase tracking-widest text-xs font-semibold cursor-pointer" />
                                 </div>
 
                             </form>

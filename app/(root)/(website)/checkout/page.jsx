@@ -56,14 +56,14 @@ const PaymentMethodPicker = ({ value, onChange }) => {
     ]
     return (
         <div>
-            <p className='font-semibold mb-2'>Payment method</p>
+            <p className='font-semibold mb-2 text-white/90'>Payment method</p>
             <div className='space-y-2'>
                 {options.map(({ key, Icon, title, sub }) => {
                     const active = value === key
                     return (
                         <label
                             key={key}
-                            className={`flex items-center gap-3 p-3 border rounded-md cursor-pointer transition ${active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-gray-400'}`}
+                            className={`flex items-center gap-3 p-3 border cursor-pointer transition ${active ? 'border-[#C9A24B] bg-[#C9A24B]/10' : 'border-[#C9A24B]/20 hover:border-[#C9A24B]/40'}`}
                         >
                             <input
                                 type='radio'
@@ -71,12 +71,12 @@ const PaymentMethodPicker = ({ value, onChange }) => {
                                 value={key}
                                 checked={active}
                                 onChange={() => onChange(key)}
-                                className='accent-primary'
+                                className='accent-[#C9A24B]'
                             />
-                            <Icon size={20} className='text-gray-500 shrink-0' />
+                            <Icon size={20} className='text-white/50 shrink-0' />
                             <div className='min-w-0'>
-                                <p className='font-medium text-sm'>{title}</p>
-                                <p className='text-xs text-gray-500'>{sub}</p>
+                                <p className='font-medium text-sm text-white'>{title}</p>
+                                <p className='text-xs text-white/40'>{sub}</p>
                             </div>
                         </label>
                     )
@@ -293,7 +293,7 @@ const Checkout = () => {
                     }
                 },
                 prefill,
-                theme: { color: '#7c3aed' },
+                theme: { color: '#C9A24B' },
             }
 
             const rzp = new Razorpay(razOption)
@@ -309,10 +309,10 @@ const Checkout = () => {
     return (
         <div>
             {savingOrder && (
-                <div className='h-screen w-screen fixed top-0 left-0 z-50 bg-black/10'>
-                    <div className='h-screen flex justify-center items-center'>
+                <div className='h-screen w-screen fixed top-0 left-0 z-50 bg-black/60 backdrop-blur-sm'>
+                    <div className='h-screen flex flex-col gap-4 justify-center items-center'>
                         <Image src={loading.src} height={80} width={80} alt='Loading' />
-                        <h4 className='font-semibold'>Confirming your order…</h4>
+                        <h4 className='font-semibold text-[#F0D77C]'>Confirming your order…</h4>
                     </div>
                 </div>
             )}
@@ -320,20 +320,18 @@ const Checkout = () => {
             <WebsiteBreadcrumb props={breadCrumb} />
 
             {cart.count === 0 ? (
-                <div className='w-screen h-[500px] flex justify-center items-center py-32'>
+                <div className='w-full h-[500px] flex justify-center items-center py-32'>
                     <div className='text-center'>
-                        <h4 className='text-4xl font-semibold mb-5'>Your cart is empty!</h4>
-                        <Button type='button' asChild>
-                            <Link href={WEBSITE_SHOP}>Continue Shopping</Link>
-                        </Button>
+                        <h4 className='text-4xl font-serif-display gold-text mb-5'>Your cart is empty</h4>
+                        <Link href={WEBSITE_SHOP} className='btn-dark-gold px-8 py-3 uppercase tracking-widest text-xs font-semibold'>Continue Shopping</Link>
                     </div>
                 </div>
             ) : (
                 <div className='flex lg:flex-nowrap flex-wrap gap-10 my-20 lg:px-32 px-4'>
                     <div className='lg:w-[60%] w-full space-y-6'>
                         <div>
-                            <div className='flex font-semibold gap-2 items-center'>
-                                <FaShippingFast size={22} /> Shipping address
+                            <div className='flex font-semibold gap-2 items-center text-[#F0D77C]'>
+                                <FaShippingFast size={22} /> Shipping Address
                             </div>
 
                             {isLoggedIn && addresses.length > 0 && !showInlineForm && (
@@ -345,23 +343,23 @@ const Checkout = () => {
                                                 key={addr._id}
                                                 type='button'
                                                 onClick={() => setSelectedAddressId(addr._id)}
-                                                className={`w-full text-left p-4 border rounded-md transition ${active ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'hover:border-gray-400'}`}
+                                                className={`w-full text-left p-4 border transition ${active ? 'border-[#C9A24B] bg-[#C9A24B]/10' : 'border-[#C9A24B]/20 hover:border-[#C9A24B]/40'}`}
                                             >
                                                 <div className='flex justify-between items-start gap-3'>
                                                     <div className='min-w-0'>
-                                                        <p className='font-medium'>
+                                                        <p className='font-medium text-white'>
                                                             {addr.label} · {addr.fullName || '—'}
                                                         </p>
-                                                        <p className='text-sm text-gray-600 mt-0.5'>
+                                                        <p className='text-sm text-white/50 mt-0.5'>
                                                             {[addr.line1, addr.line2, addr.landmark].filter(Boolean).join(', ')}
                                                         </p>
-                                                        <p className='text-sm text-gray-600'>
+                                                        <p className='text-sm text-white/50'>
                                                             {addr.city}, {addr.state} {addr.pincode}, {addr.country}
                                                         </p>
-                                                        <p className='text-sm text-gray-500 mt-0.5'>{addr.phone}</p>
+                                                        <p className='text-sm text-white/40 mt-0.5'>{addr.phone}</p>
                                                     </div>
                                                     {addr.isDefault && (
-                                                        <span className='text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700'>
+                                                        <span className='text-xs px-2 py-0.5 bg-[#C9A24B]/20 text-[#F0D77C]'>
                                                             Default
                                                         </span>
                                                     )}
@@ -372,7 +370,7 @@ const Checkout = () => {
                                     <button
                                         type='button'
                                         onClick={() => setShowInlineForm(true)}
-                                        className='inline-flex items-center gap-1 text-sm text-primary hover:underline'
+                                        className='inline-flex items-center gap-1 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors'
                                     >
                                         <FiPlus /> Use a different address
                                     </button>
@@ -382,15 +380,15 @@ const Checkout = () => {
                             {(!isLoggedIn || showInlineForm || addresses.length === 0) && (
                                 <div className='mt-4'>
                                     {!isLoggedIn && (
-                                        <div className='mb-4 text-sm rounded-md bg-blue-50 border border-blue-200 text-blue-900 p-3'>
-                                            Have an account? <Link href={WEBSITE_LOGIN} className='underline'>Log in</Link> to use a saved address and access your order history.
+                                        <div className='mb-4 text-sm bg-[#C9A24B]/10 border border-[#C9A24B]/30 text-white/80 p-3'>
+                                            Have an account? <Link href={WEBSITE_LOGIN} className='text-[#F0D77C] underline'>Log in</Link> to use a saved address and access your order history.
                                         </div>
                                     )}
                                     {isLoggedIn && addresses.length > 0 && (
                                         <button
                                             type='button'
                                             onClick={() => setShowInlineForm(false)}
-                                            className='mb-2 text-sm text-primary hover:underline'
+                                            className='mb-2 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors'
                                         >
                                             ← Use a saved address
                                         </button>
@@ -447,7 +445,7 @@ const Checkout = () => {
                                                     text={paymentMethod === 'cod' ? 'Place order (Cash on delivery)' : 'Pay & place order'}
                                                     loading={placingOrder}
                                                     disabled={hasUnavailable}
-                                                    className='bg-black rounded-full px-5 cursor-pointer'
+                                                    className='btn-dark-gold px-5 py-2.5 uppercase tracking-widest text-xs font-semibold cursor-pointer disabled:opacity-50'
                                                 />
                                             </div>
                                         </form>
@@ -472,7 +470,7 @@ const Checkout = () => {
                                         loading={placingOrder}
                                         disabled={hasUnavailable || !selectedAddressId}
                                         onClick={() => submitOrder({ customerNote: savedAddrNote })}
-                                        className='bg-black rounded-full px-5 cursor-pointer'
+                                        className='btn-dark-gold px-5 py-2.5 uppercase tracking-widest text-xs font-semibold cursor-pointer disabled:opacity-50'
                                     />
                                 </div>
                             )}
@@ -480,10 +478,10 @@ const Checkout = () => {
                     </div>
 
                     <div className='lg:w-[40%] w-full'>
-                        <div className='rounded bg-gray-50 p-5 sticky top-5'>
-                            <h4 className='text-lg font-semibold mb-5'>Order Summary</h4>
+                        <div className='bg-[#0a0805] border border-[#C9A24B]/20 p-5 sticky top-5'>
+                            <h4 className='text-lg font-serif-display text-[#F0D77C] mb-5'>Order Summary</h4>
 
-                            <table className='w-full border'>
+                            <table className='w-full border border-[#C9A24B]/20'>
                                 <tbody>
                                     {cart.products?.map((product) => (
                                         <tr key={product.variantId} className={product.unavailable ? 'opacity-60' : ''}>
@@ -503,7 +501,7 @@ const Checkout = () => {
                                                             </Link>
                                                         </h4>
                                                         {(product.optionValues || []).length > 0 && (
-                                                            <p className='text-xs text-gray-500'>
+                                                            <p className='text-xs text-white/40'>
                                                                 {product.optionValues.map((ov) => `${ov.name}: ${ov.value}`).join(' · ')}
                                                             </p>
                                                         )}
@@ -523,21 +521,21 @@ const Checkout = () => {
 
                             <table className='w-full mt-3'>
                                 <tbody>
-                                    <tr>
-                                        <td className='font-medium py-1.5'>Subtotal</td>
+                                    <tr className='border-b border-[#C9A24B]/10'>
+                                        <td className='font-medium py-1.5 text-white/70'>Subtotal</td>
                                         <td className='text-end py-1.5'>{subtotal.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
                                     </tr>
-                                    <tr>
-                                        <td className='font-medium py-1.5'>Item discount</td>
+                                    <tr className='border-b border-[#C9A24B]/10'>
+                                        <td className='font-medium py-1.5 text-white/70'>Item discount</td>
                                         <td className='text-end py-1.5'>- {discount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
                                     </tr>
-                                    <tr>
-                                        <td className='font-medium py-1.5'>Coupon</td>
+                                    <tr className='border-b border-[#C9A24B]/10'>
+                                        <td className='font-medium py-1.5 text-white/70'>Coupon</td>
                                         <td className='text-end py-1.5'>- {couponDiscountAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
                                     </tr>
                                     <tr>
-                                        <td className='font-semibold py-2 text-lg'>Total</td>
-                                        <td className='text-end py-2 text-lg font-semibold'>{totalAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
+                                        <td className='font-semibold py-2 text-lg text-white'>Total</td>
+                                        <td className='text-end py-2 text-lg font-semibold text-[#F0D77C]'>{totalAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -564,7 +562,7 @@ const Checkout = () => {
                                         </form>
                                     </Form>
                                 ) : (
-                                    <div className='flex justify-between items-center py-1 px-4 rounded-lg bg-gray-200'>
+                                    <div className='flex justify-between items-center py-1 px-4 bg-[#C9A24B]/10 border border-[#C9A24B]/30'>
                                         <div>
                                             <span className='text-xs'>Coupon:</span>
                                             <p className='text-sm font-semibold'>{couponCode}</p>

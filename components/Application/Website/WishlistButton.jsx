@@ -1,12 +1,11 @@
 'use client'
-import { Button } from '@/components/ui/button'
+import { Heart } from 'lucide-react'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import { WEBSITE_LOGIN } from '@/routes/WebsiteRoute'
 import { bumpWishlistChange } from '@/store/reducer/wishlistReducer'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiHeart } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
 
 /**
@@ -84,17 +83,20 @@ const WishlistButton = ({ productId, variantId, className = '' }) => {
     }
 
     return (
-        <Button
+        <button
             type="button"
-            variant="outline"
             onClick={handleToggle}
             disabled={busy}
-            className={`rounded-full py-6 text-md cursor-pointer ${savedItemId ? 'border-red-500 text-red-500 hover:bg-red-50' : ''} ${className}`}
+            className={`inline-flex items-center justify-center gap-2 border py-4 px-6 text-sm cursor-pointer transition disabled:opacity-50 ${
+                savedItemId
+                    ? 'border-[#C9A24B] bg-[#C9A24B]/10 text-[#F0D77C] hover:bg-[#C9A24B]/20'
+                    : 'border-[#C9A24B]/40 text-white/70 hover:border-[#F0D77C] hover:text-[#F0D77C]'
+            } ${className}`}
             aria-label={savedItemId ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-            <FiHeart size={18} className={savedItemId ? 'fill-red-500' : ''} />
-            <span>{savedItemId ? 'In Wishlist' : 'Add to Wishlist'}</span>
-        </Button>
+            <Heart size={18} className={savedItemId ? 'fill-[#F0D77C] text-[#F0D77C]' : ''} />
+            <span>{savedItemId ? 'In Wishlist' : 'Wishlist'}</span>
+        </button>
     )
 }
 

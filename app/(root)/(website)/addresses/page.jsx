@@ -114,20 +114,20 @@ const AddressBookPage = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumbData} />
             <UserPanelLayout>
-                <div className='shadow rounded'>
-                    <div className='p-5 flex items-center justify-between border-b gap-3'>
-                        <h2 className='text-xl font-semibold'>Saved Addresses</h2>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805]'>
+                    <div className='p-5 flex items-center justify-between border-b border-[#C9A24B]/20 gap-3'>
+                        <h2 className='text-xl font-serif-display text-[#F0D77C]'>Saved Addresses</h2>
                         {isLoggedIn && (
                             <Dialog open={formOpen} onOpenChange={(open) => {
                                 setFormOpen(open)
                                 if (!open) setEditing(null)
                             }}>
                                 <DialogTrigger asChild>
-                                    <Button type="button" onClick={openAddDialog} className='cursor-pointer'>
+                                    <Button type="button" onClick={openAddDialog} className='cursor-pointer btn-dark-gold py-2 px-4 uppercase tracking-widest text-xs font-semibold'>
                                         <FiPlus className='mr-1' /> Add address
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
+                                <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0805] border-[#C9A24B]/30'>
                                     <DialogHeader>
                                         <DialogTitle>{editing ? 'Edit address' : 'Add a new address'}</DialogTitle>
                                         <DialogDescription>
@@ -148,22 +148,20 @@ const AddressBookPage = () => {
                     <div className='p-5'>
                         {!isLoggedIn && (
                             <div className='py-10 text-center'>
-                                <FiMapPin className='mx-auto text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600 mb-4'>Sign in to manage your saved addresses.</p>
-                                <Button asChild className='cursor-pointer'>
-                                    <Link href={WEBSITE_LOGIN}>Sign in</Link>
-                                </Button>
+                                <FiMapPin className='mx-auto text-[#C9A24B]/30 mb-3' size={48} />
+                                <p className='text-white/50 mb-4'>Sign in to manage your saved addresses.</p>
+                                <Link href={WEBSITE_LOGIN} className='btn-dark-gold px-6 py-2.5 uppercase tracking-widest text-xs font-semibold'>Sign in</Link>
                             </div>
                         )}
 
                         {isLoggedIn && loading && (
                             <div className='grid md:grid-cols-2 gap-4'>
                                 {[0, 1].map((i) => (
-                                    <div key={i} className='border rounded-lg p-5 animate-pulse'>
-                                        <div className='h-4 w-24 bg-gray-200 rounded mb-3'></div>
-                                        <div className='h-3 w-full bg-gray-100 rounded mb-2'></div>
-                                        <div className='h-3 w-3/4 bg-gray-100 rounded mb-2'></div>
-                                        <div className='h-3 w-1/2 bg-gray-100 rounded'></div>
+                                    <div key={i} className='border border-[#C9A24B]/20 p-5 animate-pulse'>
+                                        <div className='h-4 w-24 bg-white/10 rounded mb-3'></div>
+                                        <div className='h-3 w-full bg-white/5 rounded mb-2'></div>
+                                        <div className='h-3 w-3/4 bg-white/5 rounded mb-2'></div>
+                                        <div className='h-3 w-1/2 bg-white/5 rounded'></div>
                                     </div>
                                 ))}
                             </div>
@@ -171,11 +169,11 @@ const AddressBookPage = () => {
 
                         {isLoggedIn && !loading && addresses.length === 0 && (
                             <div className='py-10 text-center'>
-                                <FiMapPin className='mx-auto text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600 mb-4'>You have no saved addresses yet.</p>
-                                <Button type='button' onClick={openAddDialog} className='cursor-pointer'>
-                                    <FiPlus className='mr-1' /> Add your first address
-                                </Button>
+                                <FiMapPin className='mx-auto text-[#C9A24B]/30 mb-3' size={48} />
+                                <p className='text-white/50 mb-4'>You have no saved addresses yet.</p>
+                                <button type='button' onClick={openAddDialog} className='btn-dark-gold px-6 py-2.5 uppercase tracking-widest text-xs font-semibold cursor-pointer'>
+                                    <FiPlus className='mr-1 inline' /> Add your first address
+                                </button>
                             </div>
                         )}
 
@@ -198,7 +196,7 @@ const AddressBookPage = () => {
             </UserPanelLayout>
 
             <Dialog open={Boolean(deleting)} onOpenChange={(open) => !open && setDeleting(null)}>
-                <DialogContent className='max-w-md'>
+                <DialogContent className='max-w-md bg-[#0a0805] border-[#C9A24B]/30'>
                     <DialogHeader>
                         <DialogTitle>Delete this address?</DialogTitle>
                         <DialogDescription>

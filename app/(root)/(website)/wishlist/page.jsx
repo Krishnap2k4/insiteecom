@@ -91,11 +91,11 @@ const WishlistPage = () => {
         <div>
             <WebsiteBreadcrumb props={breadCrumbData} />
             <UserPanelLayout>
-                <div className='shadow rounded'>
-                    <div className='p-5 flex items-center justify-between border-b gap-3'>
-                        <h2 className='text-xl font-semibold'>Saved Items</h2>
+                <div className='border border-[#C9A24B]/20 bg-[#0a0805]'>
+                    <div className='p-5 flex items-center justify-between border-b border-[#C9A24B]/20 gap-3'>
+                        <h2 className='text-xl font-serif-display text-[#F0D77C]'>Saved Items</h2>
                         {isLoggedIn && items.length > 0 && (
-                            <span className='text-sm text-gray-500'>
+                            <span className='text-sm text-white/50'>
                                 {items.length} item{items.length === 1 ? '' : 's'}
                             </span>
                         )}
@@ -104,22 +104,20 @@ const WishlistPage = () => {
                     <div className='p-5'>
                         {!isLoggedIn && (
                             <div className='py-10 text-center'>
-                                <FiHeart className='mx-auto text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600 mb-4'>Sign in to view items you&apos;ve saved.</p>
-                                <Button asChild className='cursor-pointer'>
-                                    <Link href={WEBSITE_LOGIN}>Sign in</Link>
-                                </Button>
+                                <FiHeart className='mx-auto text-[#C9A24B]/30 mb-3' size={48} />
+                                <p className='text-white/50 mb-4'>Sign in to view items you&apos;ve saved.</p>
+                                <Link href={WEBSITE_LOGIN} className='btn-dark-gold px-6 py-2.5 uppercase tracking-widest text-xs font-semibold'>Sign in</Link>
                             </div>
                         )}
 
                         {isLoggedIn && loading && (
                             <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
                                 {[0, 1, 2, 3].map((i) => (
-                                    <div key={i} className='border rounded-lg overflow-hidden animate-pulse'>
-                                        <div className='aspect-square bg-gray-100'></div>
+                                    <div key={i} className='border border-[#C9A24B]/20 overflow-hidden animate-pulse'>
+                                        <div className='aspect-square bg-white/5'></div>
                                         <div className='p-3'>
-                                            <div className='h-3 w-3/4 bg-gray-100 rounded mb-2'></div>
-                                            <div className='h-3 w-1/2 bg-gray-100 rounded'></div>
+                                            <div className='h-3 w-3/4 bg-white/5 rounded mb-2'></div>
+                                            <div className='h-3 w-1/2 bg-white/5 rounded'></div>
                                         </div>
                                     </div>
                                 ))}
@@ -128,13 +126,11 @@ const WishlistPage = () => {
 
                         {isLoggedIn && !loading && items.length === 0 && (
                             <div className='py-10 text-center'>
-                                <FiHeart className='mx-auto text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600 mb-4'>
+                                <FiHeart className='mx-auto text-[#C9A24B]/30 mb-3' size={48} />
+                                <p className='text-white/50 mb-4'>
                                     Your wishlist is empty. Tap the heart icon on any product to save it for later.
                                 </p>
-                                <Button asChild className='cursor-pointer'>
-                                    <Link href={WEBSITE_SHOP}>Browse shop</Link>
-                                </Button>
+                                <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 uppercase tracking-widest text-xs font-semibold'>Browse shop</Link>
                             </div>
                         )}
 
@@ -150,8 +146,8 @@ const WishlistPage = () => {
                                     const mrp = variant?.mrp ?? product?.mrp ?? 0
                                     const hasDiscount = mrp > sellingPrice
                                     return (
-                                        <div key={item._id} className='border rounded-lg overflow-hidden flex flex-col hover:shadow-md transition'>
-                                            <Link href={WEBSITE_PRODUCT_DETAILS(product.slug)} className='block aspect-square bg-gray-50 relative'>
+                                        <div key={item._id} className='border border-[#C9A24B]/20 overflow-hidden flex flex-col hover:border-[#C9A24B]/40 transition'>
+                                            <Link href={WEBSITE_PRODUCT_DETAILS(product.slug)} className='block aspect-square bg-[#15110a] relative'>
                                                 <Image
                                                     src={media}
                                                     width={400}
@@ -161,18 +157,18 @@ const WishlistPage = () => {
                                                 />
                                             </Link>
                                             <div className='p-3 flex flex-col flex-1'>
-                                                <Link href={WEBSITE_PRODUCT_DETAILS(product.slug)} className='font-medium line-clamp-2 mb-1 hover:text-primary'>
+                                                <Link href={WEBSITE_PRODUCT_DETAILS(product.slug)} className='font-medium line-clamp-2 mb-1 text-white hover:text-[#F0D77C] transition-colors'>
                                                     {product.name || 'Product'}
                                                 </Link>
                                                 {variant && (variant.color || variant.size) && (
-                                                    <p className='text-xs text-gray-500 mb-2'>
+                                                    <p className='text-xs text-white/40 mb-2'>
                                                         {[variant.color, variant.size].filter(Boolean).join(' · ')}
                                                     </p>
                                                 )}
                                                 <p className='flex gap-2 items-baseline text-sm mb-3'>
-                                                    <span className='font-semibold'>{formatINR(sellingPrice)}</span>
+                                                    <span className='font-semibold text-[#F0D77C]'>{formatINR(sellingPrice)}</span>
                                                     {hasDiscount && (
-                                                        <span className='line-through text-gray-400 text-xs'>{formatINR(mrp)}</span>
+                                                        <span className='line-through text-white/30 text-xs'>{formatINR(mrp)}</span>
                                                     )}
                                                 </p>
                                                 <div className='mt-auto flex flex-col gap-1.5'>
@@ -180,7 +176,7 @@ const WishlistPage = () => {
                                                         type='button'
                                                         size='sm'
                                                         onClick={() => handleAddToCart(item)}
-                                                        className='w-full cursor-pointer'
+                                                        className='w-full cursor-pointer btn-dark-gold py-2 uppercase tracking-widest text-xs font-semibold'
                                                     >
                                                         <BsCart2 size={14} className='mr-1' /> Add to cart
                                                     </Button>
@@ -190,7 +186,7 @@ const WishlistPage = () => {
                                                         size='sm'
                                                         onClick={() => handleRemove(item)}
                                                         disabled={busyId === item._id}
-                                                        className='w-full text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer'
+                                                        className='w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 cursor-pointer'
                                                     >
                                                         <FiTrash2 size={14} className='mr-1' /> Remove
                                                     </Button>

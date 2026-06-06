@@ -20,7 +20,7 @@ const inter = Inter({
 
 const layout = ({ children }) => {
     return (
-        <div className={`${cormorant.variable} ${inter.variable} font-sans bg-[#070707] text-white min-h-screen`}
+        <div className={`storefront ${cormorant.variable} ${inter.variable} font-sans bg-[#070707] text-white min-h-screen`}
              style={{ fontFamily: 'var(--font-inter), system-ui, -apple-system, sans-serif' }}>
             <CartHydrator />
             <Header />

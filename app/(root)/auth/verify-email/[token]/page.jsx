@@ -22,16 +22,17 @@ const EmailVerification = ({ params }) => {
         verify()
     }, [token])
     return (
-        <Card className="w-[400px]">
-            <CardContent>
+        <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
+            <CardContent className="pt-8">
                 {isVerified ?
                     <div >
                         <div className='flex justify-center items-center'>
                             <Image src={verifiedImg.src} height={verifiedImg.height} width={verifiedImg.width} className='h-[100px] w-auto' alt='Verification success' />
                         </div>
                         <div className='text-center'>
-                            <h1 className='text-2xl font-bold text-green-500 my-5'>Email verification success!</h1>
-                            <Button asChild>
+                            <h1 className='text-2xl font-serif-display text-white mt-6 mb-4'>Verification Success!</h1>
+                            <p className='text-white/60 text-sm mb-8'>Your email has been successfully verified.</p>
+                            <Button asChild className="btn-dark-gold w-full py-6 uppercase tracking-widest text-xs font-semibold rounded-none h-auto">
                                 <Link href={WEBSITE_HOME}>Continue Shopping</Link>
                             </Button>
                         </div>
@@ -42,8 +43,9 @@ const EmailVerification = ({ params }) => {
                             <Image src={verificationFailedImg.src} height={verificationFailedImg.height} width={verificationFailedImg.width} className='h-[100px] w-auto' alt='Verification Failed' />
                         </div>
                         <div className='text-center'>
-                            <h1 className='text-2xl font-bold text-red-500 my-5'>Email verification failed!</h1>
-                            <Button asChild>
+                            <h1 className='text-2xl font-serif-display text-red-400 mt-6 mb-4'>Verification Failed</h1>
+                            <p className='text-white/60 text-sm mb-8'>The verification link is invalid or has expired.</p>
+                            <Button asChild className="btn-dark-gold w-full py-6 uppercase tracking-widest text-xs font-semibold rounded-none h-auto">
                                 <Link href={WEBSITE_HOME}>Continue Shopping</Link>
                             </Button>
                         </div>

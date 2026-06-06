@@ -22,18 +22,18 @@ const CategoryPage = async ({ params }) => {
 
     if (!res?.success) {
         return (
-            <div className='min-h-[60vh] flex items-center justify-center px-4'>
+            <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
                 <div className='max-w-md text-center'>
-                    <p className='text-7xl font-semibold text-primary mb-2'>404</p>
-                    <h1 className='text-2xl font-semibold mb-3'>Category not found</h1>
-                    <p className='text-gray-500 mb-8'>We couldn&apos;t find a category at <span className='font-mono'>/c/{path}</span>.</p>
+                    <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
+                    <h1 className='text-2xl font-serif-display text-white mb-3'>Category not found</h1>
+                    <p className='text-white/50 mb-8'>We couldn&apos;t find a category at <span className='font-mono text-[#F0D77C]'>/c/{path}</span>.</p>
                     <div className='flex gap-3 justify-center'>
-                        <Button asChild className='rounded-full px-6'>
-                            <Link href={WEBSITE_SHOP}>Browse shop</Link>
-                        </Button>
-                        <Button asChild variant='outline' className='rounded-full px-6'>
-                            <Link href={WEBSITE_HOME}>Go home</Link>
-                        </Button>
+                        <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                            Browse shop
+                        </Link>
+                        <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                            Go home
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -43,32 +43,34 @@ const CategoryPage = async ({ params }) => {
     const { category, ancestors = [], children = [], products = [], meta } = res.data
 
     return (
-        <div>
+        <div className="bg-dark-gold min-h-screen pt-[120px]">
+            <div className='h-px w-full bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent'></div>
+
             {/* Hero / header */}
-            <section className='bg-gradient-to-b from-gray-50 to-white border-b'>
-                <div className='lg:px-32 px-4 py-10'>
+            <section className='bg-gradient-to-b from-[#0e0e0e] to-[#0a0805] border-b border-[#C9A24B]/20'>
+                <div className='max-w-7xl mx-auto px-4 lg:px-8 py-10'>
                     {/* Breadcrumb */}
-                    <nav className='text-sm text-gray-500 mb-4 flex items-center gap-1 flex-wrap'>
-                        <Link href={WEBSITE_HOME} className='hover:text-primary'>Home</Link>
+                    <nav className='text-xs tracking-wider uppercase text-white/50 mb-4 flex items-center gap-2 flex-wrap'>
+                        <Link href={WEBSITE_HOME} className='hover:text-[#F0D77C] transition-colors'>Home</Link>
                         {ancestors.map((a) => (
-                            <span key={a._id} className='flex items-center gap-1'>
-                                <FiChevronRight size={14} />
-                                <Link href={WEBSITE_CATEGORY(a.path)} className='hover:text-primary'>{a.name}</Link>
+                            <span key={a._id} className='flex items-center gap-2'>
+                                <FiChevronRight size={12} className="text-[#C9A24B]/50" />
+                                <Link href={WEBSITE_CATEGORY(a.path)} className='hover:text-[#F0D77C] transition-colors'>{a.name}</Link>
                             </span>
                         ))}
-                        <span className='flex items-center gap-1 text-gray-700'>
-                            <FiChevronRight size={14} />
-                            <span className='font-medium'>{category.name}</span>
+                        <span className='flex items-center gap-2 text-[#F0D77C]'>
+                            <FiChevronRight size={12} className="text-[#C9A24B]/50" />
+                            <span className='font-semibold'>{category.name}</span>
                         </span>
                     </nav>
 
                     <div className='flex items-center justify-between gap-4 flex-wrap'>
                         <div>
-                            <h1 className='text-3xl lg:text-4xl font-semibold mb-1'>{category.name}</h1>
+                            <h1 className='text-4xl lg:text-5xl font-serif-display gold-shine mb-2'>{category.name}</h1>
                             {category.description && (
-                                <p className='text-gray-600 max-w-2xl'>{category.description}</p>
+                                <p className='text-white/60 max-w-2xl text-sm leading-relaxed'>{category.description}</p>
                             )}
-                            <p className='text-sm text-gray-500 mt-2'>
+                            <p className='text-xs tracking-widest uppercase text-[#C9A24B] mt-4'>
                                 {meta?.total ?? 0} product{meta?.total === 1 ? '' : 's'}
                             </p>
                         </div>
@@ -76,17 +78,21 @@ const CategoryPage = async ({ params }) => {
                 </div>
             </section>
 
-            <div className='lg:px-32 px-4 py-10'>
+            <div className='max-w-7xl mx-auto px-4 lg:px-8 py-12'>
                 {/* Sub-categories */}
                 {children.length > 0 && (
-                    <div className='mb-10'>
-                        <h2 className='text-lg font-semibold mb-4'>Shop by sub-category</h2>
+                    <div className='mb-12'>
+                        <div className="flex items-center gap-3 mb-6">
+                            <span className='h-px w-4 bg-[#C9A24B]/50'></span>
+                            <h2 className='text-[11px] tracking-[0.4em] uppercase text-[#F0D77C] font-semibold'>Shop by Sub-category</h2>
+                            <span className='h-px flex-1 bg-gradient-to-r from-[#C9A24B]/20 to-transparent'></span>
+                        </div>
                         <div className='flex gap-3 flex-wrap'>
                             {children.map((c) => (
                                 <Link
                                     key={c._id}
                                     href={WEBSITE_CATEGORY(c.path)}
-                                    className='border rounded-full px-4 py-2 text-sm hover:border-primary hover:text-primary transition'
+                                    className='border border-[#C9A24B]/30 bg-white/5 hover:bg-[#C9A24B]/10 px-5 py-2.5 text-xs font-semibold uppercase tracking-widest text-white/80 hover:text-[#F0D77C] hover:border-[#F0D77C]/50 transition-all'
                                 >
                                     {c.name}
                                 </Link>
@@ -97,16 +103,16 @@ const CategoryPage = async ({ params }) => {
 
                 {/* Products */}
                 {products.length === 0 ? (
-                    <div className='py-20 text-center'>
+                    <div className='py-20 text-center border border-[#C9A24B]/20 bg-[#0a0805]'>
                         <Image
                             src={imgPlaceholder.src}
                             width={120}
                             height={120}
                             alt=''
-                            className='mx-auto mb-4 opacity-30'
+                            className='mx-auto mb-4 opacity-10 filter grayscale'
                         />
-                        <h3 className='text-xl font-semibold mb-2'>Nothing here yet</h3>
-                        <p className='text-gray-500'>
+                        <h3 className='text-xl font-serif-display text-[#F0D77C] mb-2'>Nothing here yet</h3>
+                        <p className='text-white/50 text-sm'>
                             No products in this category{children.length > 0 ? ' — try a sub-category above' : ''}.
                         </p>
                     </div>
