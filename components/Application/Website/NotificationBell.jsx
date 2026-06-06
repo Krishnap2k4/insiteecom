@@ -2,18 +2,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Link from 'next/link'
-import { FiBell } from 'react-icons/fi'
+import { Bell, Check } from 'lucide-react'
 import axios from '@/lib/apiClient'
 
-/**
- * Header notification bell. Only renders for authenticated customers
- * (auth is read from the Redux auth store, same source the rest of
- * the header uses).
- *
- * Light polling — every 30s while the tab is visible. Real-time push
- * (websocket / SSE) is out of scope for now; polling is plenty for an
- * in-app notification surface.
- */
 const fromTime = (d) => {
     if (!d) return ''
     const diff = Date.now() - new Date(d).getTime()
@@ -34,7 +25,6 @@ const NotificationBell = () => {
     const [unread, setUnread] = useState(0)
     const containerRef = useRef(null)
 
-    // Close the dropdown when clicking outside.
     useEffect(() => {
         const onClick = (e) => {
             if (open && containerRef.current && !containerRef.current.contains(e.target)) {
@@ -96,39 +86,45 @@ const NotificationBell = () => {
 
     return (
         <div ref={containerRef} className='relative'>
-            <button type='button' onClick={onToggle} className='relative'>
-                <FiBell size={22} className='text-gray-500 hover:text-primary' />
+            <button type='button' onClick={onToggle} className='relative hover:text-[#E5C76B] transition-colors'>
+                <Bell size={18} />
                 {unread > 0 && (
-                    <span className='absolute bg-red-500 text-white text-[10px] rounded-full min-w-4 h-4 px-1 flex justify-center items-center -right-2 -top-1'>
+                    <span className='absolute bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-black text-[9px] font-bold rounded-full min-w-4 h-4 px-1 flex justify-center items-center -right-2 -top-1'>
                         {unread > 9 ? '9+' : unread}
                     </span>
                 )}
             </button>
 
             {open && (
-                <div className='absolute right-0 mt-3 w-80 bg-white border rounded-md shadow-lg z-50'>
-                    <div className='flex items-center justify-between px-4 py-3 border-b'>
-                        <p className='text-sm font-semibold'>Notifications</p>
+                <div className='absolute right-0 mt-3 w-80 bg-[#0a0805] border border-[#C9A24B]/30 shadow-2xl shadow-black/50 z-50'>
+                    <div className='flex items-center justify-between px-4 py-3 border-b border-[#C9A24B]/20'>
+                        <p className='text-sm font-serif-display text-white flex items-center gap-2'>
+                            <Bell size={14} className='text-[#F0D77C]' />
+                            Notifications
+                        </p>
                         {unread > 0 && (
-                            <button type='button' onClick={markAllRead} className='text-xs text-primary hover:underline'>
-                                Mark all read
+                            <button type='button' onClick={markAllRead} className='text-[10px] text-[#F0D77C] hover:text-[#E5C76B] uppercase tracking-wider flex items-center gap-1 cursor-pointer'>
+                                <Check size={10} /> Mark read
                             </button>
                         )}
                     </div>
                     <div className='max-h-96 overflow-y-auto'>
                         {items.length === 0 ? (
-                            <p className='text-sm text-gray-500 text-center py-8'>You&apos;re all caught up.</p>
+                            <div className='py-8 text-center'>
+                                <Bell size={28} className='text-[#C9A24B]/30 mx-auto mb-2' />
+                                <p className='text-sm text-white/50'>You&apos;re all caught up.</p>
+                            </div>
                         ) : (
-                            <ul className='divide-y'>
+                            <ul className='divide-y divide-[#C9A24B]/10'>
                                 {items.map((n) => {
                                     const inner = (
-                                        <div className={`px-4 py-3 hover:bg-gray-50 transition ${n.read ? '' : 'bg-emerald-50/40'}`}>
+                                        <div className={`px-4 py-3 hover:bg-[#C9A24B]/10 transition ${n.read ? '' : 'bg-[#C9A24B]/5'}`}>
                                             <div className='flex items-start gap-2'>
-                                                {!n.read && <span className='w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-1.5' />}
+                                                {!n.read && <span className='w-2 h-2 rounded-full bg-[#F0D77C] shrink-0 mt-1.5' />}
                                                 <div className='min-w-0 flex-1'>
-                                                    <p className='text-sm font-medium truncate'>{n.title}</p>
-                                                    {n.body && <p className='text-xs text-gray-500 mt-0.5 line-clamp-2'>{n.body}</p>}
-                                                    <p className='text-[11px] text-gray-400 mt-1'>{fromTime(n.createdAt)}</p>
+                                                    <p className='text-sm font-medium text-white truncate'>{n.title}</p>
+                                                    {n.body && <p className='text-xs text-white/50 mt-0.5 line-clamp-2'>{n.body}</p>}
+                                                    <p className='text-[10px] text-[#F0D77C]/50 mt-1'>{fromTime(n.createdAt)}</p>
                                                 </div>
                                             </div>
                                         </div>

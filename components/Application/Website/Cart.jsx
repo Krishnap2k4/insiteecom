@@ -1,5 +1,5 @@
 'use client'
-import { BsCart2 } from 'react-icons/bs'
+import { ShoppingBag, Minus, Plus, Trash2 } from 'lucide-react'
 import {
     Sheet,
     SheetContent,
@@ -14,10 +14,8 @@ import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import { removeFromCartAsync, updateCartQty } from '@/store/reducer/cartReducer'
 import Link from 'next/link'
 import { WEBSITE_CART, WEBSITE_CHECKOUT, WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
-import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { showToast } from '@/lib/showToast'
-import { HiMinus, HiPlus } from 'react-icons/hi2'
 
 const Cart = () => {
     const [open, setOpen] = useState(false)
@@ -37,116 +35,124 @@ const Cart = () => {
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className='relative'>
-                <BsCart2 size={25} className='text-gray-500 hover:text-primary' />
+            <SheetTrigger className='relative hover:text-[#E5C76B] transition-colors'>
+                <ShoppingBag size={20} />
                 {cart.count > 0 && (
-                    <span className='absolute bg-red-500 text-white text-xs rounded-full w-4 h-4 flex justify-center items-center -right-2 -top-1'>
+                    <span className='absolute bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-black text-[9px] font-bold rounded-full w-4 h-4 flex justify-center items-center -right-2 -top-1'>
                         {cart.count}
                     </span>
                 )}
             </SheetTrigger>
-            <SheetContent className='sm:max-w-[450px] w-full'>
-                <SheetHeader className='py-2'>
-                    <SheetTitle className='text-2xl'>My Cart</SheetTitle>
-                    <SheetDescription></SheetDescription>
+            <SheetContent className='sm:max-w-[450px] w-full bg-[#0a0805] border-l border-[#C9A24B]/30 text-white p-0'>
+                <SheetHeader className='p-5 border-b border-[#C9A24B]/20'>
+                    <SheetTitle className='text-xl font-serif-display text-white flex items-center gap-3'>
+                        <ShoppingBag size={20} className='text-[#F0D77C]' />
+                        My Cart
+                    </SheetTitle>
+                    <SheetDescription className='text-white/50 text-xs'>
+                        {cart.count > 0 ? `${cart.count} item${cart.count > 1 ? 's' : ''} in your bag` : 'Your bag is empty'}
+                    </SheetDescription>
                 </SheetHeader>
 
-                <div className='h-[calc(100vh-40px)] pb-10'>
-                    <div className='h-[calc(100%-128px)] overflow-auto px-2'>
+                <div className='h-[calc(100vh-80px)]'>
+                    <div className='h-[calc(100%-160px)] overflow-auto px-5 py-4'>
                         {cart.count === 0 && (
-                            <div className='h-full flex justify-center items-center text-xl font-semibold'>
-                                Your cart is empty.
+                            <div className='h-full flex flex-col justify-center items-center text-center'>
+                                <ShoppingBag size={48} className='text-[#C9A24B]/30 mb-4' />
+                                <p className='text-white/60 font-serif-display text-lg'>Your cart is empty.</p>
+                                <p className='text-white/40 text-xs mt-1'>Discover our curated fragrances</p>
                             </div>
                         )}
 
                         {cart.products?.map((product) => (
                             <div
                                 key={product.variantId}
-                                className={`flex justify-between items-start gap-4 mb-4 border-b pb-4 ${product.unavailable ? 'opacity-75' : ''}`}
+                                className={`flex gap-4 mb-4 pb-4 border-b border-[#C9A24B]/15 ${product.unavailable ? 'opacity-60' : ''}`}
                             >
-                                <div className='flex gap-3 items-start min-w-0'>
-                                    <Image
-                                        src={product?.media || imgPlaceholder.src}
-                                        height={80}
-                                        width={80}
-                                        alt={product.name || ''}
-                                        className='w-20 h-20 rounded border object-cover'
-                                    />
-                                    <div className='min-w-0'>
-                                        <h4 className='text-sm font-medium line-clamp-2'>
-                                            <Link
-                                                href={WEBSITE_PRODUCT_DETAILS(product.slug, product.publicId)}
-                                                onClick={() => setOpen(false)}
-                                            >
-                                                {product.name || 'Item'}
-                                            </Link>
-                                        </h4>
-                                        {(product.optionValues || []).length > 0 && (
-                                            <p className='text-xs text-gray-500 mt-0.5'>
-                                                {product.optionValues.map((ov) => `${ov.name}: ${ov.value}`).join(' · ')}
-                                            </p>
-                                        )}
-                                        {product.unavailable && (
-                                            <p className='text-xs text-red-500 mt-1'>{product.unavailableReason || 'Unavailable'}</p>
-                                        )}
+                                <Image
+                                    src={product?.media || imgPlaceholder.src}
+                                    height={80}
+                                    width={80}
+                                    alt={product.name || ''}
+                                    className='w-20 h-20 object-cover border border-[#C9A24B]/30'
+                                />
+                                <div className='flex-1 min-w-0'>
+                                    <h4 className='text-sm font-medium text-white line-clamp-2'>
+                                        <Link
+                                            href={WEBSITE_PRODUCT_DETAILS(product.slug, product.publicId)}
+                                            onClick={() => setOpen(false)}
+                                            className='hover:text-[#F0D77C] transition-colors'
+                                        >
+                                            {product.name || 'Item'}
+                                        </Link>
+                                    </h4>
+                                    {(product.optionValues || []).length > 0 && (
+                                        <p className='text-[10px] text-[#F0D77C]/60 mt-0.5 uppercase tracking-wider'>
+                                            {product.optionValues.map((ov) => `${ov.name}: ${ov.value}`).join(' · ')}
+                                        </p>
+                                    )}
+                                    {product.unavailable && (
+                                        <p className='text-[10px] text-red-400 mt-1'>{product.unavailableReason || 'Unavailable'}</p>
+                                    )}
 
-                                        <div className='flex items-center gap-3 mt-2'>
-                                            <div className='flex items-center h-7 border w-fit rounded-full'>
-                                                <button type='button' className='h-full w-7 flex justify-center items-center cursor-pointer' onClick={() => handleQty(product, -1)}>
-                                                    <HiMinus size={12} />
-                                                </button>
-                                                <span className='w-8 text-center text-sm'>{product.qty}</span>
-                                                <button type='button' className='h-full w-7 flex justify-center items-center cursor-pointer' onClick={() => handleQty(product, 1)}>
-                                                    <HiPlus size={12} />
-                                                </button>
-                                            </div>
-                                            <p className='text-sm font-semibold'>
-                                                {(Number(product.sellingPrice || 0) * product.qty).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
-                                            </p>
+                                    <div className='flex items-center justify-between mt-3'>
+                                        <div className='flex items-center h-7 border border-[#C9A24B]/30 w-fit'>
+                                            <button type='button' className='h-full w-7 flex justify-center items-center cursor-pointer hover:bg-[#C9A24B]/15 transition text-white/70' onClick={() => handleQty(product, -1)}>
+                                                <Minus size={12} />
+                                            </button>
+                                            <span className='w-8 text-center text-xs text-[#F0D77C]'>{product.qty}</span>
+                                            <button type='button' className='h-full w-7 flex justify-center items-center cursor-pointer hover:bg-[#C9A24B]/15 transition text-white/70' onClick={() => handleQty(product, 1)}>
+                                                <Plus size={12} />
+                                            </button>
                                         </div>
+                                        <p className='text-sm font-serif-display gold-text'>
+                                            {(Number(product.sellingPrice || 0) * product.qty).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <button
                                     type='button'
-                                    className='text-xs text-red-500 underline underline-offset-2 cursor-pointer shrink-0'
+                                    className='text-white/40 hover:text-red-400 cursor-pointer shrink-0 mt-1 transition-colors'
                                     onClick={() => dispatch(removeFromCartAsync({ variantId: product.variantId }))}
                                 >
-                                    Remove
+                                    <Trash2 size={14} />
                                 </button>
                             </div>
                         ))}
                     </div>
 
-                    <div className='h-32 border-t pt-5 px-2'>
-                        <h2 className='flex justify-between items-center text-base font-semibold'>
-                            <span>Subtotal</span>
-                            <span>{Number(cart.subtotal || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
-                        </h2>
-                        <h2 className='flex justify-between items-center text-sm text-gray-500'>
-                            <span>Discount applied</span>
-                            <span>- {Number(cart.discount || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
-                        </h2>
+                    <div className='h-40 border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
+                        <div className='flex justify-between items-center text-sm'>
+                            <span className='text-white/60 uppercase tracking-wider text-[11px]'>Subtotal</span>
+                            <span className='font-serif-display text-lg gold-text'>{Number(cart.subtotal || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                        </div>
+                        {(cart.discount || 0) > 0 && (
+                            <div className='flex justify-between items-center text-xs text-[#F0D77C]/60 mt-1'>
+                                <span>Discount</span>
+                                <span>- {Number(cart.discount || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                            </div>
+                        )}
 
-                        <div className='flex justify-between mt-3 gap-3'>
-                            <Button type='button' asChild variant='secondary' className='flex-1' onClick={() => setOpen(false)}>
-                                <Link href={WEBSITE_CART}>View cart</Link>
-                            </Button>
-                            <Button
-                                type='button'
-                                asChild
-                                className='flex-1'
-                                onClick={() => setOpen(false)}
-                                disabled={cart.count === 0 || hasUnavailable}
-                            >
-                                {cart.count && !hasUnavailable ? (
-                                    <Link href={WEBSITE_CHECKOUT}>Checkout</Link>
-                                ) : (
-                                    <button type='button' onClick={() => showToast('error', hasUnavailable ? 'Remove unavailable items first.' : 'Your cart is empty.')}>
-                                        Checkout
-                                    </button>
-                                )}
-                            </Button>
+                        <div className='flex gap-3 mt-4'>
+                            <Link href={WEBSITE_CART}
+                                  onClick={() => setOpen(false)}
+                                  className='flex-1 text-center btn-dark-gold uppercase text-[10px] tracking-[0.25em] font-semibold py-3'>
+                                View Cart
+                            </Link>
+                            {cart.count && !hasUnavailable ? (
+                                <Link href={WEBSITE_CHECKOUT}
+                                      onClick={() => setOpen(false)}
+                                      className='flex-1 text-center btn-gold uppercase text-[10px] tracking-[0.25em] font-bold py-3'>
+                                    Checkout
+                                </Link>
+                            ) : (
+                                <button type='button'
+                                        onClick={() => showToast('error', hasUnavailable ? 'Remove unavailable items first.' : 'Your cart is empty.')}
+                                        className='flex-1 text-center btn-gold uppercase text-[10px] tracking-[0.25em] font-bold py-3 opacity-50 cursor-not-allowed'>
+                                    Checkout
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>

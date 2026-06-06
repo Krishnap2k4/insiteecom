@@ -1,120 +1,76 @@
-'use client'
 import React from 'react'
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import { IoStar } from "react-icons/io5";
-import { BsChatQuote } from "react-icons/bs";
-
+import { Quote, Star } from 'lucide-react'
 
 const testimonials = [
     {
-        name: "Sophia Patel",
-        review: "This product exceeded my expectations. The quality is top-notch and it arrived much faster than I anticipated. I will definitely be recommending it to my friends and family.",
+        name: "Aanya Sharma",
+        location: "Mumbai",
+        review: "Wearing Velvet Bloom feels like wrapping myself in silk. Compliments wherever I go.",
         rating: 5
     },
     {
-        name: "James Thompson",
-        review: "Customer service was extremely helpful and responsive. They guided me through every step of the process. I'm very satisfied with the support I received.",
-        rating: 4
-    },
-    {
-        name: "Emily Chen",
-        review: "I’ve been using this service for over a month now and it’s been amazing. The user interface is intuitive and everything runs smoothly. I haven’t faced any major issues so far.",
+        name: "Rohan Mehta",
+        location: "Bengaluru",
+        review: "Hawaaz is unreal — it lasts the entire day and the projection is luxury-tier.",
         rating: 5
     },
     {
-        name: "Liam Rodriguez",
-        review: "Honestly, I was skeptical at first, but it turned out great. The features offered are well worth the price. There is room for improvement, but overall I’m happy with it.",
-        rating: 4
-    },
-    {
-        name: "Ava Johnson",
-        review: "The attention to detail is impressive. From packaging to performance, everything was handled professionally. I feel like I got great value for my money.",
+        name: "Ishita Kapoor",
+        location: "Delhi",
+        review: "Finally an Indian brand that competes with French maisons. ELOIR is special.",
         rating: 5
     },
-    {
-        name: "Noah Davis",
-        review: "There were a few hiccups during setup, but the documentation helped a lot. Once everything was in place, it worked flawlessly. I'm a satisfied customer now.",
-        rating: 4
-    },
-    {
-        name: "Isabella Martinez",
-        review: "What stood out the most was how easy it was to get started. The onboarding process is smooth and well thought out. I appreciated the thoughtful design.",
-        rating: 5
-    },
-    {
-        name: "William Lee",
-        review: "It does what it promises, no complaints there. The pricing is fair and the customer experience is excellent. I’ll be coming back for future purchases.",
-        rating: 4
-    },
-    {
-        name: "Mia Anderson",
-        review: "I encountered a few bugs in the beginning, but support helped fix them quickly. Now everything works perfectly. The team really listens to feedback.",
-        rating: 4
-    },
-    {
-        name: "Ethan Clark",
-        review: "This has been one of the best investments I’ve made recently. The performance is consistent and it integrates seamlessly with my workflow. Highly recommended!",
-        rating: 5
-    }
-];
-
-
+]
 
 const Testimonial = () => {
-
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        autoplay: true,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        responsive: [
-            {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 1,
-                    dots: true,
-                    infinite: true,
-                }
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1,
-                    dots: false,
-                }
-            },
-
-        ]
-    }
-
     return (
-        <div className='lg:px-32 px-4 sm:pt-20 pt-5 pb-10'>
-            <h2 className='text-center sm:text-4xl text-2xl mb-5 font-semibold'>Customer Review</h2>
-            <Slider {...settings}>
-                {testimonials.map((item, index) => (
-                    <div key={index} className="p-5">
-                        <div className='border rounded-lg p-5'>
-                            <BsChatQuote size={30} className='mb-3' />
+        <section className='relative bg-wine py-20 md:py-28 overflow-hidden'>
+            {/* Decorative elements */}
+            <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent'></div>
+            <div className='absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[#C9A24B]/15 rounded-full blur-3xl'></div>
+            <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-1/4 left-[8%] text-2xl' style={{ animationDelay: '0.5s' }}>✦</span>
+            <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-1/3 right-[10%] text-xl' style={{ animationDelay: '2.5s' }}>✦</span>
 
-                            <p className='mb-5'>{item.review}</p>
-                            <h4 className='font-semibold'>{item.name}</h4>
-                            <div className='flex mt-1'>
+            <div className='relative max-w-6xl mx-auto px-6'>
+                {/* Section Header */}
+                <div className='text-center mb-14'>
+                    <div className='flex items-center justify-center gap-3 text-[#C9A24B]'>
+                        <span className='h-px w-16 bg-[#C9A24B]/50'></span>
+                        <span className='text-xs'>❖</span>
+                        <span className='h-px w-16 bg-[#C9A24B]/50'></span>
+                    </div>
+                    <div className='text-[#F0D77C] text-[11px] tracking-[0.5em] uppercase mt-4'>Voices of Eloir</div>
+                    <h2 className='font-serif-display gold-shine text-5xl md:text-6xl mt-3'>Loved By Many</h2>
+                </div>
+
+                {/* Testimonial Grid */}
+                <div className='grid md:grid-cols-3 gap-6 md:gap-8'>
+                    {testimonials.map((item, index) => (
+                        <div key={index} className='relative bg-gradient-to-br from-[#1a0a0d] to-[#2a1208] border border-[#C9A24B]/30 p-8 hover:border-[#F0D77C] transition card-glow'>
+                            <Quote size={32} className='text-[#C9A24B]/60 absolute top-5 right-5' />
+
+                            {/* Stars */}
+                            <div className='flex gap-1 mb-4'>
                                 {Array.from({ length: item.rating }).map((_, i) => (
-                                    <IoStar key={`star${i}`} className='text-yellow-400' size={20} />
+                                    <Star key={`star${i}`} size={14} className='fill-[#F0D77C] text-[#F0D77C]' />
                                 ))}
                             </div>
 
+                            <p className='font-serif-display italic text-white/85 text-lg leading-relaxed'>
+                                &ldquo;{item.review}&rdquo;
+                            </p>
+
+                            <div className='mt-6 pt-5 border-t border-[#C9A24B]/20'>
+                                <div className='text-[#F0D77C] font-semibold tracking-wider'>{item.name}</div>
+                                <div className='text-white/50 text-xs uppercase tracking-[0.25em] mt-1'>{item.location}</div>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </Slider>
-        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className='absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent'></div>
+        </section>
     )
 }
 

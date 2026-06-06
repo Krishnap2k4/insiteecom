@@ -125,3 +125,171 @@
 .slick-dots{
   bottom: 15px !important;
 }
+
+/* ===== ELOIR Luxury Theme Design Tokens ===== */
+:root {
+  --gold: #D4AF37;
+  --gold-bright: #F0C419;
+  --gold-soft: #E5C76B;
+  --gold-pale: #F5E8C4;
+  --cream: #F7EFD8;
+  --ivory: #FAF4E1;
+  --eloir-bg: #070707;
+  --eloir-bg-2: #0d0d0d;
+  --wine: #2a0f12;
+}
+
+/* ===== ELOIR Font Classes ===== */
+.font-serif-display {
+  font-family: var(--font-cormorant), 'Cormorant Garamond', serif;
+  letter-spacing: 0.01em;
+}
+
+/* ===== Gold Gradient Text ===== */
+.gold-text {
+  background: linear-gradient(180deg, #F5E1A4 0%, #D4AF37 45%, #A37D1F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-shine {
+  background: linear-gradient(120deg, #B8861F 0%, #F7E58A 25%, #D4AF37 50%, #F7E58A 75%, #B8861F 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shine 6s linear infinite;
+}
+
+.gold-dark-text {
+  background: linear-gradient(180deg, #6b4f1a 0%, #3a2a0a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== Gold Button Shimmer ===== */
+.btn-gold {
+  background: linear-gradient(90deg, #C49A2C 0%, #F0D77C 50%, #C49A2C 100%);
+  background-size: 200% auto;
+  color: #0a0a0a;
+  transition: background-position 0.6s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(201, 162, 75, 0.25);
+}
+.btn-gold:hover {
+  background-position: right center;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 28px rgba(240, 215, 124, 0.45);
+}
+
+.btn-dark-gold {
+  background: linear-gradient(135deg, #1a1208 0%, #2a1d0a 100%);
+  color: #F0D77C;
+  border: 1px solid #C9A24B;
+  transition: all 0.3s;
+}
+.btn-dark-gold:hover {
+  background: linear-gradient(135deg, #2a1d0a 0%, #1a1208 100%);
+  box-shadow: 0 0 24px rgba(201, 162, 75, 0.4);
+}
+
+/* ===== Divider Line ===== */
+.gold-line {
+  background: linear-gradient(90deg, transparent, #C9A24B 50%, transparent);
+}
+
+/* ===== Section Backgrounds ===== */
+.bg-dark-gold {
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 75, 0.15), transparent 50%),
+              radial-gradient(ellipse at bottom right, rgba(240, 215, 124, 0.1), transparent 60%),
+              linear-gradient(180deg, #0a0805 0%, #120d04 50%, #0a0805 100%);
+}
+
+.bg-ivory {
+  background: linear-gradient(135deg, #FAF4E1 0%, #F0E4C0 50%, #E8D89B 100%);
+}
+
+.bg-wine {
+  background: linear-gradient(180deg, #1a0a0d 0%, #2a0f12 50%, #1a0a0d 100%);
+}
+
+.bg-charcoal-gold {
+  background: radial-gradient(ellipse at 20% 20%, rgba(201, 162, 75, 0.18), transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(201, 162, 75, 0.12), transparent 50%),
+              #0a0a0a;
+}
+
+/* ===== Hide Scrollbar ===== */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ===== Patterns ===== */
+.dot-pattern {
+  background-image: radial-gradient(rgba(201, 162, 75, 0.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.diamond-pattern {
+  background-image:
+    linear-gradient(45deg, rgba(201, 162, 75, 0.06) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(201, 162, 75, 0.06) 25%, transparent 25%);
+  background-size: 30px 30px;
+}
+
+/* ===== Card Hover Glow ===== */
+.card-glow:hover {
+  box-shadow: 0 0 60px rgba(201, 162, 75, 0.2);
+  border-color: rgba(240, 215, 124, 0.6);
+}
+
+/* ===== Gold Border Gradient ===== */
+.gold-border { position: relative; }
+.gold-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: linear-gradient(135deg, #C9A24B, transparent 40%, transparent 60%, #C9A24B);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ===== Corner Ornament ===== */
+.corner-ornament::before,
+.corner-ornament::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #C9A24B;
+}
+.corner-ornament::before { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.corner-ornament::after { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+/* ===== Keyframes ===== */
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes float-sparkle {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* ===== Animation Classes ===== */
+.animate-marquee { animation: marquee 35s linear infinite; }
+.animate-sparkle { animation: float-sparkle 5s ease-in-out infinite; }
+.animate-glow { animation: pulse-glow 4s ease-in-out infinite; }

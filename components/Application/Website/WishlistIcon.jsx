@@ -7,7 +7,6 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet'
-import { Button } from '@/components/ui/button'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import { USER_WISHLIST, WEBSITE_LOGIN, WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
@@ -20,29 +19,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FiHeart, FiTrash2 } from 'react-icons/fi'
-import { BsCart2 } from 'react-icons/bs'
+import { Heart, Trash2, ShoppingBag } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 
 const formatINR = (value) =>
     Number(value || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })
 
-/**
- * Header heart icon → slide-out wishlist sheet (mirrors the Cart UX).
- *
- * Lifecycle:
- *   - Count is fetched on mount + whenever `wishlistStore.lastChange`
- *     ticks. Items are loaded only when the sheet opens, so a closed
- *     drawer never touches the network.
- *   - Removing an item updates local state optimistically and bumps
- *     the redux timestamp so the count badge refetches.
- *   - "Add to cart" dispatches the same `addToCartAsync` thunk that the
- *     product page uses, so the Cart drawer reflects the change
- *     immediately. If the wishlist item has no variant attached
- *     (saved before picking color/size) we send the user to the
- *     product page instead.
- */
 const WishlistIcon = () => {
     const dispatch = useDispatch()
     const router = useRouter()
@@ -57,7 +40,6 @@ const WishlistIcon = () => {
     const [loading, setLoading] = useState(false)
     const [busyId, setBusyId] = useState(null)
 
-    // Lightweight count fetch on mount and on auth/mutation change.
     useEffect(() => {
         let cancelled = false
         const load = async () => {
@@ -66,17 +48,12 @@ const WishlistIcon = () => {
                 if (!cancelled && res?.success) {
                     dispatch(setWishlistCount(res.data?.count ?? 0))
                 }
-            } catch {
-                // best-effort
-            }
+            } catch { /* best-effort */ }
         }
         load()
-        return () => {
-            cancelled = true
-        }
+        return () => { cancelled = true }
     }, [auth, lastChange, dispatch])
 
-    // Heavy item fetch only when the drawer is opened (and refetches on changes).
     useEffect(() => {
         if (!open || !isLoggedIn) return
         let cancelled = false
@@ -94,9 +71,7 @@ const WishlistIcon = () => {
             }
         }
         loadItems()
-        return () => {
-            cancelled = true
-        }
+        return () => { cancelled = true }
     }, [open, isLoggedIn, lastChange])
 
     const handleRemove = async (item) => {
@@ -117,17 +92,12 @@ const WishlistIcon = () => {
     const handleAddToCart = async (item) => {
         const product = item.product || {}
         const variant = item.variant
-
-        // Without a variant we can't safely build the cart line (size /
-        // color / SKU / price all live on the variant). Bounce the user
-        // to the product page so they can pick.
         if (!variant) {
             setOpen(false)
             router.push(WEBSITE_PRODUCT_DETAILS(product.slug))
             showToast('info', 'Choose options to add this product to your cart.')
             return
         }
-
         const action = await dispatch(addToCartAsync({
             productId: product._id,
             variantId: variant._id,
@@ -142,49 +112,52 @@ const WishlistIcon = () => {
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className='relative'>
-                <FiHeart size={23} className='text-gray-500 hover:text-primary cursor-pointer' />
+            <SheetTrigger className='relative hover:text-[#E5C76B] transition-colors cursor-pointer'>
+                <Heart size={18} />
                 {count > 0 && (
-                    <span className='absolute bg-red-500 text-white text-xs rounded-full min-w-4 h-4 px-1 flex justify-center items-center -right-2 -top-1'>
+                    <span className='absolute bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-black text-[9px] font-bold rounded-full min-w-4 h-4 px-1 flex justify-center items-center -right-2 -top-1'>
                         {count > 99 ? '99+' : count}
                     </span>
                 )}
             </SheetTrigger>
-            <SheetContent className='sm:max-w-[450px] w-full'>
-                <SheetHeader className='py-2'>
-                    <SheetTitle className='text-2xl flex items-center gap-2'>
-                        <FiHeart /> My Wishlist
+            <SheetContent className='sm:max-w-[450px] w-full bg-[#0a0805] border-l border-[#C9A24B]/30 text-white p-0'>
+                <SheetHeader className='p-5 border-b border-[#C9A24B]/20'>
+                    <SheetTitle className='text-xl font-serif-display text-white flex items-center gap-3'>
+                        <Heart size={20} className='text-[#F0D77C]' />
+                        My Wishlist
                     </SheetTitle>
-                    <SheetDescription>
+                    <SheetDescription className='text-white/50 text-xs'>
                         {isLoggedIn
                             ? 'Items you saved for later.'
                             : 'Sign in to view your saved items.'}
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className='h-[calc(100vh-40px)] pb-10'>
-                    <div className='h-[calc(100%-90px)] overflow-auto px-2'>
+                <div className='h-[calc(100vh-80px)]'>
+                    <div className='h-[calc(100%-90px)] overflow-auto px-5 py-4'>
                         {!isLoggedIn && (
                             <div className='h-full flex flex-col justify-center items-center text-center px-6'>
-                                <FiHeart className='text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600 mb-4'>
+                                <Heart size={48} className='text-[#C9A24B]/30 mb-4' />
+                                <p className='text-white/60 mb-4 font-serif-display text-lg'>
                                     Sign in to view items you&apos;ve saved.
                                 </p>
-                                <Button asChild className='cursor-pointer' onClick={() => setOpen(false)}>
-                                    <Link href={WEBSITE_LOGIN}>Sign in</Link>
-                                </Button>
+                                <Link href={WEBSITE_LOGIN}
+                                      onClick={() => setOpen(false)}
+                                      className='btn-gold uppercase text-[10px] tracking-[0.25em] font-bold px-8 py-3'>
+                                    Sign In
+                                </Link>
                             </div>
                         )}
 
                         {isLoggedIn && loading && (
                             <div className='space-y-3 mt-3'>
                                 {[0, 1, 2].map((i) => (
-                                    <div key={i} className='flex gap-3 border-b pb-3 animate-pulse'>
-                                        <div className='w-20 h-20 bg-gray-100 rounded'></div>
+                                    <div key={i} className='flex gap-3 border-b border-[#C9A24B]/15 pb-3 animate-pulse'>
+                                        <div className='w-20 h-20 bg-[#C9A24B]/10'></div>
                                         <div className='flex-1 space-y-2 py-2'>
-                                            <div className='h-3 w-3/4 bg-gray-100 rounded'></div>
-                                            <div className='h-3 w-1/3 bg-gray-100 rounded'></div>
-                                            <div className='h-3 w-1/4 bg-gray-100 rounded'></div>
+                                            <div className='h-3 w-3/4 bg-[#C9A24B]/10'></div>
+                                            <div className='h-3 w-1/3 bg-[#C9A24B]/10'></div>
+                                            <div className='h-3 w-1/4 bg-[#C9A24B]/10'></div>
                                         </div>
                                     </div>
                                 ))}
@@ -193,10 +166,11 @@ const WishlistIcon = () => {
 
                         {isLoggedIn && !loading && items.length === 0 && (
                             <div className='h-full flex flex-col justify-center items-center text-center px-6'>
-                                <FiHeart className='text-gray-300 mb-3' size={48} />
-                                <p className='text-gray-600'>
-                                    Your wishlist is empty. Tap the heart on any product to save it for later.
+                                <Heart size={48} className='text-[#C9A24B]/30 mb-4' />
+                                <p className='text-white/60 font-serif-display text-lg'>
+                                    Your wishlist is empty.
                                 </p>
+                                <p className='text-white/40 text-xs mt-1'>Tap the heart on any product to save it.</p>
                             </div>
                         )}
 
@@ -211,7 +185,7 @@ const WishlistIcon = () => {
                             const hasDiscount = mrp > price
 
                             return (
-                                <div key={item._id} className='flex gap-3 mb-4 border-b pb-4'>
+                                <div key={item._id} className='flex gap-4 mb-4 pb-4 border-b border-[#C9A24B]/15'>
                                     <Link
                                         href={WEBSITE_PRODUCT_DETAILS(product.slug)}
                                         onClick={() => setOpen(false)}
@@ -222,48 +196,45 @@ const WishlistIcon = () => {
                                             width={80}
                                             height={80}
                                             alt={product.name || 'Product'}
-                                            className='w-20 h-20 rounded border object-cover'
+                                            className='w-20 h-20 object-cover border border-[#C9A24B]/30'
                                         />
                                     </Link>
                                     <div className='flex-1 min-w-0'>
                                         <Link
                                             href={WEBSITE_PRODUCT_DETAILS(product.slug)}
                                             onClick={() => setOpen(false)}
-                                            className='block font-medium leading-tight line-clamp-2 hover:text-primary'
+                                            className='block font-medium text-sm leading-tight line-clamp-2 hover:text-[#F0D77C] transition-colors'
                                         >
                                             {product.name || 'Product'}
                                         </Link>
                                         {variant && (variant.color || variant.size) && (
-                                            <p className='text-xs text-gray-500 mt-0.5'>
+                                            <p className='text-[10px] text-[#F0D77C]/60 mt-0.5 uppercase tracking-wider'>
                                                 {[variant.color, variant.size].filter(Boolean).join(' · ')}
                                             </p>
                                         )}
                                         <p className='flex items-baseline gap-2 mt-1 text-sm'>
-                                            <span className='font-semibold'>{formatINR(price)}</span>
+                                            <span className='font-serif-display gold-text'>{formatINR(price)}</span>
                                             {hasDiscount && (
-                                                <span className='line-through text-gray-400 text-xs'>{formatINR(mrp)}</span>
+                                                <span className='line-through text-white/30 text-xs'>{formatINR(mrp)}</span>
                                             )}
                                         </p>
-                                        <div className='flex gap-2 mt-2 flex-wrap'>
-                                            <Button
+                                        <div className='flex gap-2 mt-3'>
+                                            <button
                                                 type='button'
-                                                size='sm'
                                                 onClick={() => handleAddToCart(item)}
                                                 disabled={busyId === item._id}
-                                                className='cursor-pointer h-8'
+                                                className='btn-gold uppercase text-[9px] tracking-[0.2em] font-bold px-3 py-1.5 flex items-center gap-1 cursor-pointer disabled:opacity-50'
                                             >
-                                                <BsCart2 size={13} className='mr-1' /> Add to cart
-                                            </Button>
-                                            <Button
+                                                <ShoppingBag size={11} /> Add to cart
+                                            </button>
+                                            <button
                                                 type='button'
-                                                size='sm'
-                                                variant='ghost'
                                                 onClick={() => handleRemove(item)}
                                                 disabled={busyId === item._id}
-                                                className='cursor-pointer h-8 text-red-600 hover:text-red-700 hover:bg-red-50'
+                                                className='text-white/40 hover:text-red-400 transition-colors cursor-pointer disabled:opacity-50 px-2'
                                             >
-                                                <FiTrash2 size={13} className='mr-1' /> Remove
-                                            </Button>
+                                                <Trash2 size={14} />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -271,12 +242,14 @@ const WishlistIcon = () => {
                         })}
                     </div>
 
-                    <div className='h-[90px] border-t pt-4 px-2 flex flex-col gap-2'>
-                        <Button asChild className='w-full' onClick={() => setOpen(false)}>
-                            <Link href={USER_WISHLIST}>View full wishlist</Link>
-                        </Button>
+                    <div className='h-[90px] border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
+                        <Link href={USER_WISHLIST}
+                              onClick={() => setOpen(false)}
+                              className='block w-full text-center btn-dark-gold uppercase text-[10px] tracking-[0.25em] font-semibold py-3'>
+                            View Full Wishlist
+                        </Link>
                         {isLoggedIn && items.length > 0 && (
-                            <p className='text-xs text-center text-gray-500'>
+                            <p className='text-[10px] text-center text-white/40 mt-2'>
                                 {items.length} item{items.length === 1 ? '' : 's'} saved
                             </p>
                         )}
