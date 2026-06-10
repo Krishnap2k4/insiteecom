@@ -7,6 +7,7 @@ import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import { WEBSITE_MESSAGES, WEBSITE_ORDER_DETAILS } from '@/routes/WebsiteRoute'
 import { use, useEffect, useRef, useState } from 'react'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import Link from 'next/link'
 import { FiUser, FiUserCheck } from 'react-icons/fi'
 
@@ -34,12 +35,14 @@ const formatTime = (d) => new Date(d).toLocaleString('en-IN', {
 })
 
 const MessageDetail = ({ params }) => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { id } = use(params)
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
     const [reply, setReply] = useState('')
     const [sending, setSending] = useState(false)
     const listRef = useRef(null)
+    if (!rehydrated || !isLoggedIn) return null
 
     const load = async () => {
         try {

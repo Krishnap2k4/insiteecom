@@ -16,96 +16,114 @@ import { X } from 'lucide-react'
 
 const Filter = () => {
     const searchParams = useSearchParams()
+    const router = useRouter()
 
     const [priceFilter, setPriceFilter] = useState({ minPrice: 0, maxPrice: 3000 })
     const [selectedCategory, setSelectedCategory] = useState([])
-    const [selectedColor, setSelectedColor] = useState([])
-    const [selectedSize, setSelectedSize] = useState([])
+    // { "Color": ["Red", "Blue"], "Volume": ["100ml"] }
+    const [selectedOptions, setSelectedOptions] = useState({})
 
     const { data: categoryData } = useFetch('/api/category/get-category')
-    const { data: colorData } = useFetch('/api/product-variant/colors')
-    const { data: sizeData } = useFetch('/api/product-variant/sizes')
+    const { data: optionsData } = useFetch('/api/product-options')
 
-    const urlSearchParams = new URLSearchParams(searchParams.toString())
-    const router = useRouter()
+    const optionGroups = optionsData?.success ? optionsData.data : []
 
+    // Sync state from URL on every navigation
     useEffect(() => {
-        searchParams.get('category') ? setSelectedCategory(searchParams.get('category').split(',')) : setSelectedCategory([])
-        searchParams.get('color') ? setSelectedColor(searchParams.get('color').split(',')) : setSelectedColor([])
-        searchParams.get('size') ? setSelectedSize(searchParams.get('size').split(',')) : setSelectedSize([])
+        const cat = searchParams.get('category')
+        setSelectedCategory(cat ? cat.split(',') : [])
+
+        try {
+            const raw = searchParams.get('options')
+            setSelectedOptions(raw ? JSON.parse(raw) : {})
+        } catch {
+            setSelectedOptions({})
+        }
     }, [searchParams])
 
-    const handlePriceChange = (value) => {
-        setPriceFilter({ minPrice: value[0], maxPrice: value[1] })
+    // Build the full URL with current filter state
+    const buildUrl = (category, options, price) => {
+        const params = new URLSearchParams()
+
+        if (category.length > 0) params.set('category', category.join(','))
+
+        const activeOptions = Object.fromEntries(
+            Object.entries(options).filter(([, v]) => v.length > 0)
+        )
+        if (Object.keys(activeOptions).length > 0) {
+            params.set('options', JSON.stringify(activeOptions))
+        }
+
+        if (price) {
+            params.set('minPrice', price.minPrice)
+            params.set('maxPrice', price.maxPrice)
+        } else {
+            const existingMin = searchParams.get('minPrice')
+            const existingMax = searchParams.get('maxPrice')
+            if (existingMin) params.set('minPrice', existingMin)
+            if (existingMax) params.set('maxPrice', existingMax)
+        }
+
+        const qs = params.toString()
+        return `${WEBSITE_SHOP}${qs ? `?${qs}` : ''}`
     }
 
-    const handleCategoryFilter = (categorySlug) => {
-        let newSelectedCategory = [...selectedCategory]
-        if (newSelectedCategory.includes(categorySlug)) {
-            newSelectedCategory = newSelectedCategory.filter(cat => cat !== categorySlug)
-        } else {
-            newSelectedCategory.push(categorySlug)
-        }
-        setSelectedCategory(newSelectedCategory)
-        newSelectedCategory.length > 0 ? urlSearchParams.set('category', newSelectedCategory.join(',')) : urlSearchParams.delete('category')
-        router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+    const handleCategoryFilter = (slug) => {
+        const next = selectedCategory.includes(slug)
+            ? selectedCategory.filter(c => c !== slug)
+            : [...selectedCategory, slug]
+        router.push(buildUrl(next, selectedOptions, null))
     }
 
-    const handleColorFilter = (color) => {
-        let newSelectedColor = [...selectedColor]
-        if (newSelectedColor.includes(color)) {
-            newSelectedColor = newSelectedColor.filter(cat => cat !== color)
-        } else {
-            newSelectedColor.push(color)
-        }
-        setSelectedColor(newSelectedColor)
-        newSelectedColor.length > 0 ? urlSearchParams.set('color', newSelectedColor.join(',')) : urlSearchParams.delete('color')
-        router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
-    }
-
-    const handleSizeFilter = (size) => {
-        let newSelectedSize = [...selectedSize]
-        if (newSelectedSize.includes(size)) {
-            newSelectedSize = newSelectedSize.filter(cat => cat !== size)
-        } else {
-            newSelectedSize.push(size)
-        }
-        setSelectedSize(newSelectedSize)
-        newSelectedSize.length > 0 ? urlSearchParams.set('size', newSelectedSize.join(',')) : urlSearchParams.delete('size')
-        router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+    const handleOptionFilter = (optionName, value) => {
+        const current = selectedOptions[optionName] || []
+        const next = current.includes(value)
+            ? current.filter(v => v !== value)
+            : [...current, value]
+        const newOptions = { ...selectedOptions, [optionName]: next }
+        router.push(buildUrl(selectedCategory, newOptions, null))
     }
 
     const handlePriceFilter = () => {
-        urlSearchParams.set('minPrice', priceFilter.minPrice)
-        urlSearchParams.set('maxPrice', priceFilter.maxPrice)
-        router.push(`${WEBSITE_SHOP}?${urlSearchParams}`)
+        router.push(buildUrl(selectedCategory, selectedOptions, priceFilter))
     }
+
+    const hasFilters = searchParams.size > 0
+
+    // Keep all sections open by default; re-key when option groups load so new sections open automatically
+    const accordionKey = optionGroups.map(o => o.name).join(',')
+    const defaultOpen = ['category', ...optionGroups.map(o => o.name), 'price']
 
     return (
         <div>
-            {searchParams.size > 0 &&
-                <Link href={WEBSITE_SHOP}
-                      className='flex items-center justify-center gap-2 w-full text-[10px] tracking-[0.25em] uppercase font-semibold text-black bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] py-2.5 hover:from-[#F0D77C] hover:to-[#C9A24B] transition mb-4'>
+            {hasFilters && (
+                <Link
+                    href={WEBSITE_SHOP}
+                    className='flex items-center justify-center gap-2 w-full text-[10px] tracking-[0.25em] uppercase font-semibold text-black bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] py-2.5 hover:from-[#F0D77C] hover:to-[#C9A24B] transition mb-4'
+                >
                     <X size={12} /> Clear Filters
                 </Link>
-            }
-            <Accordion type="multiple" defaultValue={['1', '2', '3', '4']}>
-                <AccordionItem value="1" className="border-[#C9A24B]/20">
+            )}
+
+            <Accordion key={accordionKey} type="multiple" defaultValue={defaultOpen}>
+
+                {/* Category — always shown */}
+                <AccordionItem value="category" className="border-[#C9A24B]/20">
                     <AccordionTrigger className="text-[11px] tracking-[0.3em] uppercase font-semibold hover:no-underline text-white/90 hover:text-[#F0D77C]">
                         Category
                     </AccordionTrigger>
                     <AccordionContent>
                         <div className='max-h-48 overflow-auto'>
                             <ul>
-                                {categoryData && categoryData.success && categoryData.data.map((category) => (
-                                    <li key={category._id} className='mb-3'>
+                                {categoryData?.success && categoryData.data.map((cat) => (
+                                    <li key={cat._id} className='mb-3'>
                                         <label className="flex items-center space-x-3 cursor-pointer group">
                                             <Checkbox
-                                                onCheckedChange={() => handleCategoryFilter(category.slug)}
-                                                checked={selectedCategory.includes(category.slug)}
+                                                onCheckedChange={() => handleCategoryFilter(cat.slug)}
+                                                checked={selectedCategory.includes(cat.slug)}
                                                 className="border-[#C9A24B]/50 data-[state=checked]:bg-[#C9A24B] data-[state=checked]:border-[#C9A24B]"
                                             />
-                                            <span className='text-white/70 text-sm group-hover:text-[#F0D77C] transition-colors'>{category.name}</span>
+                                            <span className='text-white/70 text-sm group-hover:text-[#F0D77C] transition-colors'>{cat.name}</span>
                                         </label>
                                     </li>
                                 ))}
@@ -113,61 +131,54 @@ const Filter = () => {
                         </div>
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="2" className="border-[#C9A24B]/20">
-                    <AccordionTrigger className="text-[11px] tracking-[0.3em] uppercase font-semibold hover:no-underline text-white/90 hover:text-[#F0D77C]">
-                        Color
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <div className='max-h-48 overflow-auto'>
-                            <ul>
-                                {colorData && colorData.success && colorData.data.map((color) => (
-                                    <li key={color} className='mb-3'>
-                                        <label className="flex items-center space-x-3 cursor-pointer group">
-                                            <Checkbox
-                                                onCheckedChange={() => handleColorFilter(color)}
-                                                checked={selectedColor.includes(color)}
-                                                className="border-[#C9A24B]/50 data-[state=checked]:bg-[#C9A24B] data-[state=checked]:border-[#C9A24B]"
-                                            />
-                                            <span className='text-white/70 text-sm group-hover:text-[#F0D77C] transition-colors'>{color}</span>
-                                        </label>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="3" className="border-[#C9A24B]/20">
-                    <AccordionTrigger className="text-[11px] tracking-[0.3em] uppercase font-semibold hover:no-underline text-white/90 hover:text-[#F0D77C]">
-                        Size
-                    </AccordionTrigger>
-                    <AccordionContent>
-                        <div className='max-h-48 overflow-auto'>
-                            <ul>
-                                {sizeData && sizeData.success && sizeData.data.map((size) => (
-                                    <li key={size} className='mb-3'>
-                                        <label className="flex items-center space-x-3 cursor-pointer group">
-                                            <Checkbox
-                                                onCheckedChange={() => handleSizeFilter(size)}
-                                                checked={selectedSize.includes(size)}
-                                                className="border-[#C9A24B]/50 data-[state=checked]:bg-[#C9A24B] data-[state=checked]:border-[#C9A24B]"
-                                            />
-                                            <span className='text-white/70 text-sm group-hover:text-[#F0D77C] transition-colors'>{size}</span>
-                                        </label>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="4" className="border-[#C9A24B]/20">
+
+                {/* Dynamic option sections — one per option group from published products */}
+                {optionGroups.map((group) => (
+                    <AccordionItem key={group.name} value={group.name} className="border-[#C9A24B]/20">
+                        <AccordionTrigger className="text-[11px] tracking-[0.3em] uppercase font-semibold hover:no-underline text-white/90 hover:text-[#F0D77C]">
+                            {group.name}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <div className='max-h-48 overflow-auto'>
+                                <ul>
+                                    {group.values.map((value) => (
+                                        <li key={value} className='mb-3'>
+                                            <label className="flex items-center space-x-3 cursor-pointer group">
+                                                <Checkbox
+                                                    onCheckedChange={() => handleOptionFilter(group.name, value)}
+                                                    checked={(selectedOptions[group.name] || []).includes(value)}
+                                                    className="border-[#C9A24B]/50 data-[state=checked]:bg-[#C9A24B] data-[state=checked]:border-[#C9A24B]"
+                                                />
+                                                <span className='text-white/70 text-sm group-hover:text-[#F0D77C] transition-colors'>{value}</span>
+                                            </label>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </AccordionContent>
+                    </AccordionItem>
+                ))}
+
+                {/* Price — always shown */}
+                <AccordionItem value="price" className="border-[#C9A24B]/20">
                     <AccordionTrigger className="text-[11px] tracking-[0.3em] uppercase font-semibold hover:no-underline text-white/90 hover:text-[#F0D77C]">
                         Price
                     </AccordionTrigger>
                     <AccordionContent>
-                        <Slider defaultValue={[0, 3000]} max={3000} step={1} onValueChange={handlePriceChange} className="[&_[role=slider]]:bg-[#C9A24B] [&_[role=slider]]:border-[#F0D77C]" />
+                        <Slider
+                            defaultValue={[0, 3000]}
+                            max={3000}
+                            step={1}
+                            onValueChange={(v) => setPriceFilter({ minPrice: v[0], maxPrice: v[1] })}
+                            className="[&_[role=slider]]:bg-[#C9A24B] [&_[role=slider]]:border-[#F0D77C]"
+                        />
                         <div className='flex justify-between items-center pt-3'>
-                            <span className='text-xs text-[#F0D77C]/80'>{priceFilter.minPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
-                            <span className='text-xs text-[#F0D77C]/80'>{priceFilter.maxPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                            <span className='text-xs text-[#F0D77C]/80'>
+                                {priceFilter.minPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                            </span>
+                            <span className='text-xs text-[#F0D77C]/80'>
+                                {priceFilter.maxPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                            </span>
                         </div>
                         <div className='mt-4'>
                             <button
@@ -180,6 +191,7 @@ const Filter = () => {
                         </div>
                     </AccordionContent>
                 </AccordionItem>
+
             </Accordion>
         </div>
     )

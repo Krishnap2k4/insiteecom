@@ -99,6 +99,7 @@ const Checkout = () => {
     const [selectedAddressId, setSelectedAddressId] = useState(null)
     const [showInlineForm, setShowInlineForm] = useState(false)
     const [savedAddrNote, setSavedAddrNote] = useState('')
+    const [resolvedEmail, setResolvedEmail] = useState(auth?.email || '')
 
     const [paymentMethod, setPaymentMethod] = useState('razorpay')
 
@@ -184,11 +185,20 @@ const Checkout = () => {
     })
 
     useEffect(() => {
-        if (auth) {
-            orderForm.setValue('fullName', auth.name || '')
-            orderForm.setValue('email', auth.email || '')
+        if (!auth) return
+        orderForm.setValue('fullName', auth.name || '')
+        if (auth.email) {
+            orderForm.setValue('email', auth.email)
+            setResolvedEmail(auth.email)
+        } else {
+            // Old JWT without email field — fetch once from profile
+            axios.get('/api/profile/get').then(({ data: res }) => {
+                const email = res?.data?.email || ''
+                orderForm.setValue('email', email)
+                setResolvedEmail(email)
+            }).catch(() => {})
         }
-    }, [auth, orderForm])
+    }, [auth])
 
     const getOrderId = async () => {
         const { data: res } = await axios.post('/api/payment/get-order-id', {
@@ -202,15 +212,30 @@ const Checkout = () => {
     const submitOrder = async (formData) => {
         if (cart.count === 0) return showToast('error', 'Your cart is empty.')
         if (hasUnavailable) return showToast('error', 'Remove unavailable items before checking out.')
-
         const useSavedAddress = isLoggedIn && selectedAddressId && !showInlineForm
-        let email = auth?.email
+        let email = resolvedEmail || auth?.email || ''
         let prefill = { name: auth?.name || '', email, contact: '' }
         let savePayloadAddr = {}
 
         if (useSavedAddress) {
+            if (!email || !email.includes('@')) {
+                return showToast('error', 'Email could not be resolved. Please log out and log back in.')
+            }
             const addr = addresses.find((a) => a._id === selectedAddressId)
-            if (!addr) return showToast('error', 'Pick a shipping address.')
+            if (!addr) return showToast('error', 'Please select a shipping address.')
+
+            // Validate every required field on the saved address
+            const missing = []
+            if (!addr.phone?.trim() || addr.phone.trim().length < 7) missing.push('phone number')
+            if (!addr.line1?.trim()) missing.push('address line 1')
+            if (!addr.city?.trim()) missing.push('city')
+            if (!addr.state?.trim()) missing.push('state')
+            if (!addr.country?.trim()) missing.push('country')
+            if (!addr.pincode?.trim() || addr.pincode.trim().length < 3) missing.push('pincode')
+            if (missing.length > 0) {
+                return showToast('error', `Address is incomplete — missing ${missing.join(', ')}. Please update it in My Addresses.`)
+            }
+
             prefill = { name: addr.fullName || prefill.name, email, contact: addr.phone || '' }
             savePayloadAddr = { addressId: selectedAddressId }
         } else {
@@ -343,7 +368,7 @@ const Checkout = () => {
                                                 key={addr._id}
                                                 type='button'
                                                 onClick={() => setSelectedAddressId(addr._id)}
-                                                className={`w-full text-left p-4 border transition ${active ? 'border-[#C9A24B] bg-[#C9A24B]/10' : 'border-[#C9A24B]/20 hover:border-[#C9A24B]/40'}`}
+                                                className={`w-full text-left p-4 border transition cursor-pointer ${active ? 'border-[#C9A24B] bg-[#C9A24B]/10' : 'border-[#C9A24B]/20 hover:border-[#C9A24B]/40'}`}
                                             >
                                                 <div className='flex justify-between items-start gap-3'>
                                                     <div className='min-w-0'>
@@ -370,7 +395,7 @@ const Checkout = () => {
                                     <button
                                         type='button'
                                         onClick={() => setShowInlineForm(true)}
-                                        className='inline-flex items-center gap-1 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors'
+                                        className='inline-flex items-center gap-1 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors cursor-pointer'
                                     >
                                         <FiPlus /> Use a different address
                                     </button>
@@ -388,7 +413,7 @@ const Checkout = () => {
                                         <button
                                             type='button'
                                             onClick={() => setShowInlineForm(false)}
-                                            className='mb-2 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors'
+                                            className='mb-2 text-sm text-[#C9A24B] hover:text-[#F0D77C] transition-colors cursor-pointer'
                                         >
                                             ← Use a saved address
                                         </button>

@@ -47,7 +47,7 @@ const Header = () => {
             <nav className="max-w-[1500px] mx-auto px-4 md:px-8 h-[78px] flex items-center justify-between">
                 {/* Left: Mobile menu + Nav links */}
                 <div className="flex items-center gap-7 flex-1">
-                    <button className="md:hidden text-white" onClick={() => setIsMobileMenu(true)}>
+                    <button className="md:hidden text-white cursor-pointer" onClick={() => setIsMobileMenu(true)}>
                         <Menu size={22} />
                     </button>
                     <ul className="hidden md:flex items-center gap-7 text-[12px] tracking-[0.25em] text-white/85">
@@ -95,13 +95,13 @@ const Header = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/orders" className="hover:text-[#E5C76B] transition-colors">
-                                TRACK ORDER
+                            <Link href="/contact-us" className="hover:text-[#E5C76B] transition-colors">
+                                CONTACT US
                             </Link>
                         </li>
                     </ul>
 
-                    <button type="button" onClick={() => setShowSearch(!showSearch)} className="hover:text-[#E5C76B] transition-colors">
+                    <button type="button" onClick={() => setShowSearch(!showSearch)} className="hover:text-[#E5C76B] transition-colors cursor-pointer">
                         <SearchIcon size={18} />
                     </button>
 
@@ -142,7 +142,7 @@ const Header = () => {
                                 <span className="absolute -top-[0.55em] left-1/2 -translate-x-1/2 text-[0.3em] gold-shine">❖</span>
                             </span>IR
                         </div>
-                        <button type="button" onClick={() => setIsMobileMenu(false)} className="text-white/60 hover:text-[#E5C76B]">
+                        <button type="button" onClick={() => setIsMobileMenu(false)} className="text-white/60 hover:text-[#E5C76B] cursor-pointer">
                             <X size={22} />
                         </button>
                     </div>
@@ -153,7 +153,7 @@ const Header = () => {
                             { label: 'WOMEN', href: `${WEBSITE_SHOP}?category=women` },
                             { label: 'UNISEX', href: `${WEBSITE_SHOP}?category=unisex` },
                             { label: 'OUR STORY', href: '/about-us' },
-                            { label: 'TRACK ORDER', href: '/orders' },
+                            { label: 'CONTACT US', href: '/contact-us' },
                         ].map(item => (
                             <li key={item.label}>
                                 <Link href={item.href}

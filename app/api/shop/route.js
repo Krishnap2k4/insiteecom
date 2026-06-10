@@ -10,13 +10,20 @@ export async function GET(request) {
 
         const searchParams = request.nextUrl.searchParams
 
-        // get filters from query params  
-        const size = searchParams.get('size')
-        const color = searchParams.get('color')
+        // get filters from query params
         const minPrice = parseInt(searchParams.get('minPrice')) || 0
         const maxPrice = parseInt(searchParams.get('maxPrice')) || 100000
         const categorySlug = searchParams.get('category')
         const search = searchParams.get('q')
+
+        // Dynamic option filters: { "Color": ["Red", "Blue"], "Volume": ["100ml"] }
+        let optionFilters = {}
+        try {
+            const raw = searchParams.get('options')
+            if (raw) optionFilters = JSON.parse(raw)
+        } catch {
+            optionFilters = {}
+        }
 
 
 
@@ -34,6 +41,7 @@ export async function GET(request) {
         if (sortOption === 'desc') sortquery = { name: -1 }
         if (sortOption === 'price_low_high') sortquery = { sellingPrice: 1 }
         if (sortOption === 'price_high_low') sortquery = { sellingPrice: -1 }
+        if (sortOption === 'bestseller') sortquery = { salesCount: -1, createdAt: -1 }
 
 
         // find category by slug 
@@ -52,16 +60,14 @@ export async function GET(request) {
         if (categoryId.length > 0) matchStage.category = { $in: categoryId }
         if (search) matchStage.name = { $regex: search, $options: 'i' }
 
-        // Color / size filter against product.options[] so the sidebar and
-        // the results stay consistent (both read from option definitions,
-        // not from the legacy variant.color / variant.size fields).
-        const optionConditions = []
-        if (color) optionConditions.push({
-            options: { $elemMatch: { name: { $regex: /^colou?r$/i }, values: { $in: color.split(',') } } }
-        })
-        if (size) optionConditions.push({
-            options: { $elemMatch: { name: { $regex: /^size$/i }, values: { $in: size.split(',') } } }
-        })
+        // Dynamic option filter — one $elemMatch condition per selected option group.
+        // Each condition checks that the product defines an option with that name
+        // containing at least one of the selected values.
+        const optionConditions = Object.entries(optionFilters)
+            .filter(([, values]) => Array.isArray(values) && values.length > 0)
+            .map(([name, values]) => ({
+                options: { $elemMatch: { name, values: { $in: values } } },
+            }))
         if (optionConditions.length > 0) matchStage['$and'] = optionConditions
 
 

@@ -133,7 +133,7 @@ const ImageUploader = ({
                             <button
                                 type='button'
                                 onClick={() => removeAt(i)}
-                                className='absolute -top-2 -right-2 bg-white rounded-full border shadow w-5 h-5 flex items-center justify-center text-red-500'
+                                className='absolute -top-2 -right-2 bg-white rounded-full border shadow w-5 h-5 flex items-center justify-center text-red-500 cursor-pointer'
                                 aria-label='Remove image'
                             >
                                 <FiX size={10} />
@@ -162,7 +162,7 @@ const ImageUploader = ({
                     fileRef.current?.click()
                 }}
                 disabled={uploading}
-                className='text-xs inline-flex items-center gap-1 text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed'
+                className='text-xs inline-flex items-center gap-1 text-primary hover:underline disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer'
             >
                 <FiImage size={12} />
                 {uploading

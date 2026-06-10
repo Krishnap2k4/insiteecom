@@ -9,6 +9,7 @@ import {
     WEBSITE_RETURNS,
 } from '@/routes/WebsiteRoute'
 import { use, useEffect, useState } from 'react'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import Link from 'next/link'
 import { FiCheckCircle, FiClock, FiInfo, FiPackage, FiRefreshCw, FiTruck, FiXCircle } from 'react-icons/fi'
 
@@ -130,10 +131,12 @@ const NextActionBanner = ({ doc }) => {
 }
 
 const ReturnDetailsPage = ({ params }) => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { id } = use(params)
     const [doc, setDoc] = useState(null)
     const [loading, setLoading] = useState(true)
     const [busy, setBusy] = useState(false)
+    if (!rehydrated || !isLoggedIn) return null
 
     const load = async () => {
         setLoading(true)

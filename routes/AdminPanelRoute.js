@@ -83,3 +83,8 @@ export const ADMIN_ROLES_EDIT = (id) => id ? `/admin/roles/edit/${id}` : ''
 export const ADMIN_CUSTOMER_GROUPS_SHOW = '/admin/customer-groups'
 export const ADMIN_CUSTOMER_GROUPS_ADD = '/admin/customer-groups/add'
 export const ADMIN_CUSTOMER_GROUPS_EDIT = (id) => id ? `/admin/customer-groups/edit/${id}` : ''
+
+// Content — Shop the Look (CMS-ready; will live under the CMS "Content" group)
+export const ADMIN_SHOP_THE_LOOK_SHOW = '/admin/shop-the-look'
+export const ADMIN_SHOP_THE_LOOK_ADD = '/admin/shop-the-look/add'
+export const ADMIN_SHOP_THE_LOOK_EDIT = (id) => id ? `/admin/shop-the-look/edit/${id}` : ''

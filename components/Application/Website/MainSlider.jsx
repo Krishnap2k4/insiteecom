@@ -16,7 +16,7 @@ import { LuChevronLeft } from "react-icons/lu";
 const ArrowNext = (props) => {
     const { onClick } = props
     return (
-        <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white right-10' >
+        <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white right-10 cursor-pointer' >
             <LuChevronRight size={25} className='text-gray-600' />
         </button>
     )
@@ -24,7 +24,7 @@ const ArrowNext = (props) => {
 const ArrowPrev = (props) => {
     const { onClick } = props
     return (
-        <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white left-10' >
+        <button onClick={onClick} type='button' className='w-14 h-14 flex justify-center items-center rounded-full absolute z-10 top-1/2 -translate-y-1/2 bg-white left-10 cursor-pointer' >
             <LuChevronLeft size={25} className='text-gray-600' />
         </button>
     )

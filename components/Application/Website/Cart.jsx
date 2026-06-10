@@ -35,7 +35,7 @@ const Cart = () => {
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger className='relative hover:text-[#E5C76B] transition-colors'>
+            <SheetTrigger className='relative hover:text-[#E5C76B] transition-colors cursor-pointer'>
                 <ShoppingBag size={20} />
                 {cart.count > 0 && (
                     <span className='absolute bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-black text-[9px] font-bold rounded-full w-4 h-4 flex justify-center items-center -right-2 -top-1'>

@@ -6,6 +6,7 @@ import useFetch from '@/hooks/useFetch'
 import { WEBSITE_MESSAGES_NEW, WEBSITE_MESSAGE_DETAILS } from '@/routes/WebsiteRoute'
 import Link from 'next/link'
 import { FiMessageSquare, FiPlus } from 'react-icons/fi'
+import useRequireAuth from '@/hooks/useRequireAuth'
 
 const breadCrumb = { title: 'Messages', links: [{ label: 'Messages' }] }
 
@@ -36,7 +37,9 @@ const fromTime = (d) => {
 }
 
 const Messages = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { data, loading } = useFetch('/api/support/conversations')
+    if (!rehydrated || !isLoggedIn) return null
     const list = data?.data || []
 
     return (

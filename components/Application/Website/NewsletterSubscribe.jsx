@@ -81,7 +81,7 @@ const NewsletterSubscribe = ({
                             <button
                                 type='submit'
                                 disabled={loading}
-                                className='btn-gold uppercase text-[11px] tracking-[0.3em] font-bold px-8 py-3 disabled:opacity-50'>
+                                className='btn-gold uppercase text-[11px] tracking-[0.3em] font-bold px-8 py-3 disabled:opacity-50 cursor-pointer'>
                                 {loading ? 'Subscribing...' : 'Subscribe'}
                             </button>
                         </form>

@@ -9,6 +9,7 @@ import useFetch from '@/hooks/useFetch'
 import { zSchema } from '@/lib/zodSchema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect, useState } from 'react'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import { useForm } from 'react-hook-form'
 import Dropzone from 'react-dropzone'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
@@ -24,8 +25,10 @@ const breadCrumbData = {
     links: [{ label: 'Profile' }]
 }
 const Profile = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const dispatch = useDispatch()
     const { data: user } = useFetch('/api/profile/get')
+    if (!rehydrated || !isLoggedIn) return null
     const [loading, setLoading] = useState(false)
     const [preview, setPreview] = useState()
     const [file, setFile] = useState()

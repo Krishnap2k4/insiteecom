@@ -2,6 +2,7 @@
 import UserPanelLayout from '@/components/Application/Website/UserPanelLayout'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import useFetch from '@/hooks/useFetch';
+import useRequireAuth from '@/hooks/useRequireAuth'
 import { WEBSITE_ORDER_DETAILS } from '@/routes/WebsiteRoute';
 import Link from 'next/link';
 import React from 'react'
@@ -14,8 +15,10 @@ const breadCrumbData = {
     links: [{ label: 'Dashboard' }]
 }
 const MyAccount = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { data: dashboardData } = useFetch('/api/dashboard/user')
     const cartStore = useSelector(store => store.cartStore)
+    if (!rehydrated || !isLoggedIn) return null
 
     return (
         <div>

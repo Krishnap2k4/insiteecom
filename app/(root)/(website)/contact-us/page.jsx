@@ -34,13 +34,9 @@ const ContactUs = () => {
         <>
             {/* ===== HERO BANNER ===== */}
             <section className='relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0'>
-                    <img
-                        src='https://images.unsplash.com/photo-1596462502278-27bfdc403348?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200'
-                        alt=''
-                        className='w-full h-full object-cover opacity-35'
-                    />
-                    <div className='absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a1208]/50 to-[#070707]'></div>
+                <div className='absolute inset-0' style={{ backgroundImage: "url('https://images.unsplash.com/photo-1583442801251-5ce051ed7cb3?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <div className='absolute inset-0 bg-black/65'></div>
+                    <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-[#1a1208]/40 to-[#070707]'></div>
                     <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.12),transparent_70%)]'></div>
                 </div>
 
@@ -153,13 +149,10 @@ const ContactUs = () => {
                         </div>
 
                         {/* Decorative image */}
-                        <div className='hidden lg:block mt-10 aspect-[3/2] overflow-hidden border border-[#C9A24B]/30'>
-                            <img
-                                src='https://images.unsplash.com/photo-1595425964071-2c1ecb10b52d?crop=entropy&cs=srgb&fm=jpg&q=85&w=900'
-                                alt='ELOIR fragrance'
-                                className='w-full h-full object-cover opacity-70'
-                            />
-                        </div>
+                        <div
+                            className='hidden lg:block mt-10 aspect-[3/2] overflow-hidden border border-[#C9A24B]/30'
+                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1622618991746-fe6004db3a47?crop=entropy&cs=srgb&fm=jpg&q=85&w=900')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7 }}
+                        />
                     </div>
 
                     {/* Right Side — Form */}

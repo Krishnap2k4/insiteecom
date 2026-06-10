@@ -1,33 +1,46 @@
+import { isAuthenticated } from '@/lib/authentication'
+import { redirect } from 'next/navigation'
+import { WEBSITE_LOGIN } from '@/routes/WebsiteRoute'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
-import axios from '@/lib/apiClient'
 import Image from 'next/image'
 import placeholderImg from '@/public/assets/images/img-placeholder.webp'
 import Link from 'next/link'
-import { WEBSITE_INVOICE_DOWNLOAD, WEBSITE_MESSAGES_NEW, WEBSITE_PRODUCT_DETAILS, WEBSITE_RETURN_DETAILS, WEBSITE_RETURN_REQUEST } from '@/routes/WebsiteRoute'
-import { RETURN_WINDOW_DAYS } from '@/lib/orders'
+import {
+    WEBSITE_INVOICE_DOWNLOAD, WEBSITE_MESSAGES_NEW,
+    WEBSITE_PRODUCT_DETAILS, WEBSITE_RETURN_DETAILS, WEBSITE_RETURN_REQUEST,
+} from '@/routes/WebsiteRoute'
+import { RETURN_WINDOW_DAYS, isReturnEligible, summarizeReturnableItems } from '@/lib/orders'
+import { connectDB } from '@/lib/databaseConnection'
+import OrderModel from '@/models/Order.model'
+import PaymentModel from '@/models/Payment.model'
+import RefundModel from '@/models/Refund.model'
+import ShipmentModel from '@/models/Shipment.model'
+import OrderStatusHistoryModel from '@/models/OrderStatusHistory.model'
+import ReturnModel from '@/models/Return.model'
+import InvoiceModel from '@/models/Invoice.model'
 import { FiCheckCircle, FiClock, FiDownload, FiPackage, FiRefreshCw, FiTruck, FiXCircle } from 'react-icons/fi'
 
 const PAYMENT_LABEL = {
-    paid: { text: 'Paid', cls: 'bg-emerald-500/20 text-emerald-400', Icon: FiCheckCircle },
-    pending: { text: 'Pending', cls: 'bg-amber-500/20 text-amber-400', Icon: FiClock },
-    failed: { text: 'Failed', cls: 'bg-red-500/20 text-red-400', Icon: FiXCircle },
-    refunded: { text: 'Refunded', cls: 'bg-white/10 text-white/50', Icon: FiRefreshCw },
-    partially_refunded: { text: 'Partially refunded', cls: 'bg-white/10 text-white/50', Icon: FiRefreshCw },
+    paid:               { text: 'Paid',               cls: 'bg-emerald-500/20 text-emerald-400', Icon: FiCheckCircle },
+    pending:            { text: 'Pending',             cls: 'bg-amber-500/20 text-amber-400',     Icon: FiClock },
+    failed:             { text: 'Failed',              cls: 'bg-red-500/20 text-red-400',         Icon: FiXCircle },
+    refunded:           { text: 'Refunded',            cls: 'bg-white/10 text-white/50',          Icon: FiRefreshCw },
+    partially_refunded: { text: 'Partially refunded', cls: 'bg-white/10 text-white/50',          Icon: FiRefreshCw },
 }
 const FULFILLMENT_LABEL = {
-    fulfilled: { text: 'Delivered', cls: 'bg-emerald-500/20 text-emerald-400', Icon: FiCheckCircle },
-    partial: { text: 'Partially shipped', cls: 'bg-sky-500/20 text-sky-400', Icon: FiTruck },
-    unfulfilled: { text: 'Preparing', cls: 'bg-amber-500/20 text-amber-400', Icon: FiPackage },
-    cancelled: { text: 'Cancelled', cls: 'bg-red-500/20 text-red-400', Icon: FiXCircle },
+    fulfilled:  { text: 'Delivered',         cls: 'bg-emerald-500/20 text-emerald-400', Icon: FiCheckCircle },
+    partial:    { text: 'Partially shipped', cls: 'bg-sky-500/20 text-sky-400',         Icon: FiTruck },
+    unfulfilled:{ text: 'Preparing',         cls: 'bg-amber-500/20 text-amber-400',     Icon: FiPackage },
+    cancelled:  { text: 'Cancelled',         cls: 'bg-red-500/20 text-red-400',         Icon: FiXCircle },
 }
 const RETURN_LABEL = {
-    requested: { text: 'Requested', cls: 'bg-amber-500/20 text-amber-400' },
-    approved: { text: 'Approved', cls: 'bg-sky-500/20 text-sky-400' },
-    received: { text: 'Items received', cls: 'bg-indigo-500/20 text-indigo-400' },
-    refunded: { text: 'Refunded', cls: 'bg-emerald-500/20 text-emerald-400' },
-    replaced: { text: 'Replaced', cls: 'bg-emerald-500/20 text-emerald-400' },
-    rejected: { text: 'Rejected', cls: 'bg-red-500/20 text-red-400' },
-    cancelled: { text: 'Cancelled', cls: 'bg-white/10 text-white/50' },
+    requested: { text: 'Requested',      cls: 'bg-amber-500/20 text-amber-400' },
+    approved:  { text: 'Approved',       cls: 'bg-sky-500/20 text-sky-400' },
+    received:  { text: 'Items received', cls: 'bg-indigo-500/20 text-indigo-400' },
+    refunded:  { text: 'Refunded',       cls: 'bg-emerald-500/20 text-emerald-400' },
+    replaced:  { text: 'Replaced',       cls: 'bg-emerald-500/20 text-emerald-400' },
+    rejected:  { text: 'Rejected',       cls: 'bg-red-500/20 text-red-400' },
+    cancelled: { text: 'Cancelled',      cls: 'bg-white/10 text-white/50' },
 }
 
 const StatusPill = ({ status, dict }) => {
@@ -43,37 +56,55 @@ const StatusPill = ({ status, dict }) => {
 const formatINR = (v, cur = 'INR') =>
     Number(v || 0).toLocaleString('en-IN', { style: 'currency', currency: cur })
 
-const OrderDetails = async ({ params }) => {
-    const { orderid } = await params
-    const { data: orderData } = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/orders/get/${orderid}`
-    )
+const breadcrumb = { title: 'Order Details', links: [{ label: 'Order Details' }] }
 
-    const breadcrumb = { title: 'Order Details', links: [{ label: 'Order Details' }] }
-
-    if (!orderData?.success || !orderData?.data?.order) {
-        return (
-            <div>
-                <WebsiteBreadcrumb props={breadcrumb} />
-                <div className='lg:px-32 px-5 my-20'>
-                    <div className='flex justify-center items-center py-32'>
-                        <h4 className='text-red-500 text-xl font-semibold'>Order Not Found</h4>
-                    </div>
-                </div>
+const NotFound = () => (
+    <div>
+        <WebsiteBreadcrumb props={breadcrumb} />
+        <div className='lg:px-32 px-5 my-20'>
+            <div className='flex justify-center items-center py-32'>
+                <h4 className='text-red-500 text-xl font-semibold'>Order Not Found</h4>
             </div>
-        )
+        </div>
+    </div>
+)
+
+const OrderDetails = async ({ params }) => {
+    const auth = await isAuthenticated()
+    if (!auth.isAuth) redirect(WEBSITE_LOGIN)
+
+    const { orderid } = await params
+
+    let order, payments, refunds, shipments, statusHistory, returns, invoice
+
+    try {
+        await connectDB()
+
+        const or = [{ orderNumber: orderid.toUpperCase() }, { order_id: orderid }]
+        if (/^[0-9a-fA-F]{24}$/.test(orderid)) or.push({ _id: orderid })
+
+        order = await OrderModel.findOne({ $or: or, deletedAt: null })
+            .populate('items.product', 'name slug publicId')
+            .lean()
+
+        if (!order) return <NotFound />
+
+        ;[payments, refunds, shipments, statusHistory, returns, invoice] = await Promise.all([
+            PaymentModel.find({ order: order._id, deletedAt: null }).sort({ createdAt: 1 }).lean(),
+            RefundModel.find({ order: order._id, deletedAt: null }).sort({ createdAt: 1 }).lean(),
+            ShipmentModel.find({ order: order._id, deletedAt: null }).sort({ createdAt: 1 }).lean(),
+            OrderStatusHistoryModel.find({ order: order._id }).sort({ createdAt: 1 }).lean(),
+            ReturnModel.find({ order: order._id, deletedAt: null }).sort({ createdAt: -1 }).lean(),
+            InvoiceModel.findOne({ order: order._id, deletedAt: null }).lean(),
+        ])
+    } catch (err) {
+        console.error('[order-details] DB error:', err)
+        return <NotFound />
     }
 
-    const {
-        order,
-        payments = [],
-        refunds = [],
-        shipments = [],
-        statusHistory = [],
-        returns = [],
-        invoice = null,
-        returnable = { bySku: {}, anyReturnable: false, activeReturns: [], eligible: false },
-    } = orderData.data
+    const returnable = summarizeReturnableItems(order, returns)
+    const eligible = isReturnEligible(order) && returnable.anyReturnable
+
     const invoiceAvailable = Boolean(invoice?.invoiceNumber)
     const orderRef = order.orderNumber || order._id
 
@@ -91,6 +122,7 @@ const OrderDetails = async ({ params }) => {
             optionValuesSnapshot: [],
             sku: '',
         }))
+
     const shippingAddress = order.shippingAddress?.line1
         ? order.shippingAddress
         : {
@@ -98,8 +130,9 @@ const OrderDetails = async ({ params }) => {
             landmark: order.landmark, city: order.city, state: order.state,
             country: order.country, pincode: order.pincode,
         }
+
     const customerNote = order.customerNote || order.ordernote || ''
-    const processedRefundTotal = refunds
+    const processedRefundTotal = (refunds || [])
         .filter((r) => r.status === 'processed')
         .reduce((s, r) => s + (Number(r.amount) || 0), 0)
     const hasProcessedRefund = processedRefundTotal > 0
@@ -108,6 +141,7 @@ const OrderDetails = async ({ params }) => {
         <div>
             <WebsiteBreadcrumb props={breadcrumb} />
             <div className='lg:px-32 px-5 my-12'>
+                {/* Header */}
                 <div className='flex flex-wrap items-start justify-between gap-3 mb-6'>
                     <div>
                         <h1 className='text-2xl font-serif-display text-[#F0D77C]'>Order {order.orderNumber || order.order_id}</h1>
@@ -131,7 +165,7 @@ const OrderDetails = async ({ params }) => {
                                 <FiDownload size={12} /> Download invoice
                             </a>
                         )}
-                        {returnable.eligible && (
+                        {eligible && (
                             <Link
                                 href={WEBSITE_RETURN_REQUEST(orderRef)}
                                 className='inline-flex items-center text-xs font-medium px-3 py-1.5 rounded-full bg-[#15110a] border border-[#C9A24B] text-[#F0D77C] hover:bg-[#C9A24B]/10 transition'
@@ -148,20 +182,17 @@ const OrderDetails = async ({ params }) => {
                     </div>
                 </div>
 
-                {/* Eligibility / state hints below the header. */}
-                {returnable.eligible && returnable.activeReturns.length === 0 && (
+                {eligible && returnable.activeReturns.length === 0 && (
                     <p className='text-xs text-white/50 mb-6'>
                         Eligible for returns or exchanges within {RETURN_WINDOW_DAYS} days of delivery.
                     </p>
                 )}
-                {!returnable.eligible && order.fulfillmentStatus === 'fulfilled' && !returnable.anyReturnable && returnable.activeReturns.length > 0 && (
+                {!eligible && order.fulfillmentStatus === 'fulfilled' && !returnable.anyReturnable && returnable.activeReturns.length > 0 && (
                     <p className='text-xs text-white/50 mb-6'>
                         All eligible items already have an active return — check the Returns section below.
                     </p>
                 )}
 
-                {/* Refund banner — prominent because the customer cares
-                    most about whether their money came back. */}
                 {hasProcessedRefund && (
                     <div className='mb-6 rounded-md border border-[#C9A24B]/30 bg-[#C9A24B]/10 p-4 flex items-start gap-3'>
                         <FiRefreshCw className='mt-0.5 shrink-0 text-[#C9A24B]' />
@@ -178,6 +209,7 @@ const OrderDetails = async ({ params }) => {
 
                 <div className='grid lg:grid-cols-[2fr_1fr] gap-6'>
                     <div className='space-y-6'>
+                        {/* Items */}
                         <section className='border border-[#C9A24B]/20 rounded-md overflow-hidden bg-[#0a0805]'>
                             <div className='px-4 py-3 border-b border-[#C9A24B]/20 bg-[#15110a] font-medium text-[#F0D77C]'>Items</div>
                             <table className='w-full'>
@@ -199,7 +231,7 @@ const OrderDetails = async ({ params }) => {
                                                         <div className='min-w-0'>
                                                             <p className='font-medium line-clamp-1'>
                                                                 {it?.product?.slug ? (
-                                                                <Link href={WEBSITE_PRODUCT_DETAILS(it.product.slug, it.product.publicId)} className='text-[#C9A24B] hover:text-[#F0D77C] transition-colors'>
+                                                                    <Link href={WEBSITE_PRODUCT_DETAILS(it.product.slug, it.product.publicId)} className='text-[#C9A24B] hover:text-[#F0D77C] transition-colors'>
                                                                         {it.name}
                                                                     </Link>
                                                                 ) : <span className='text-white'>{it.name}</span>}
@@ -233,6 +265,7 @@ const OrderDetails = async ({ params }) => {
                             </table>
                         </section>
 
+                        {/* Returns */}
                         {returns.length > 0 && (
                             <section className='border border-[#C9A24B]/20 rounded-md overflow-hidden bg-[#0a0805]'>
                                 <div className='px-4 py-3 border-b border-[#C9A24B]/20 bg-[#15110a] font-medium flex items-center justify-between text-[#F0D77C]'>
@@ -261,6 +294,7 @@ const OrderDetails = async ({ params }) => {
                             </section>
                         )}
 
+                        {/* Shipments */}
                         {shipments.length > 0 && (
                             <section className='border border-[#C9A24B]/20 rounded-md overflow-hidden bg-[#0a0805]'>
                                 <div className='px-4 py-3 border-b border-[#C9A24B]/20 bg-[#15110a] font-medium text-[#F0D77C]'>Shipment tracking</div>
@@ -282,6 +316,7 @@ const OrderDetails = async ({ params }) => {
                             </section>
                         )}
 
+                        {/* Refunds */}
                         {refunds.length > 0 && (
                             <section className='border border-[#C9A24B]/20 rounded-md overflow-hidden bg-[#0a0805]'>
                                 <div className='px-4 py-3 border-b border-[#C9A24B]/20 bg-[#15110a] font-medium text-[#F0D77C]'>Refunds</div>
@@ -299,6 +334,7 @@ const OrderDetails = async ({ params }) => {
                             </section>
                         )}
 
+                        {/* Timeline */}
                         {statusHistory.length > 0 && (
                             <section className='border border-[#C9A24B]/20 rounded-md overflow-hidden bg-[#0a0805]'>
                                 <div className='px-4 py-3 border-b border-[#C9A24B]/20 bg-[#15110a] font-medium text-[#F0D77C]'>Timeline</div>
@@ -325,6 +361,7 @@ const OrderDetails = async ({ params }) => {
                         )}
                     </div>
 
+                    {/* Right sidebar */}
                     <div className='space-y-6'>
                         <section className='border border-[#C9A24B]/20 rounded-md p-4 bg-[#0a0805]'>
                             <h3 className='font-medium mb-3 text-[#F0D77C]'>Shipping address</h3>
@@ -390,6 +427,7 @@ const OrderDetails = async ({ params }) => {
                                     )}
                                 </tbody>
                             </table>
+
                             {invoiceAvailable && (
                                 <>
                                     <hr className='my-3 border-[#C9A24B]/10' />
@@ -409,6 +447,7 @@ const OrderDetails = async ({ params }) => {
                                     </div>
                                 </>
                             )}
+
                             <hr className='my-3 border-[#C9A24B]/10' />
                             <p className='text-xs text-white/50 mb-1'>Payment method</p>
                             <p className='text-sm capitalize text-white/80'>
@@ -419,6 +458,7 @@ const OrderDetails = async ({ params }) => {
                                     <span className='ml-2 text-xs text-amber-400'>Pay {formatINR(order.totalAmount, order.currency)} on delivery</span>
                                 )}
                             </p>
+
                             {payments.length > 0 && (
                                 <>
                                     <hr className='my-3 border-[#C9A24B]/10' />

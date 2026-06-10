@@ -40,6 +40,7 @@ export async function POST(request) {
             _id: getUser._id.toString(),
             role: getUser.role,
             name: getUser.name,
+            email: getUser.email,
             avatar: getUser.avatar,
         }
 

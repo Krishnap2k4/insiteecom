@@ -19,10 +19,19 @@ const FeaturedProduct = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true)
             try {
-                const { data } = await axios.get('/api/product/get-featured-product')
+                let url
+                if (activeTab === 'all') {
+                    url = '/api/product/get-featured-product'
+                } else {
+                    url = `/api/shop?limit=8&category=${activeTab}`
+                }
+                const { data } = await axios.get(url)
                 if (data?.success) {
-                    setProducts(data.data || [])
+                    // Featured endpoint returns data.data (array)
+                    // Shop endpoint returns data.data.products (array)
+                    setProducts(data.data?.products ?? data.data ?? [])
                 }
             } catch (error) {
                 console.log(error)
@@ -31,12 +40,7 @@ const FeaturedProduct = () => {
             }
         }
         fetchProducts()
-    }, [])
-
-    // Filter is visual only — since backend doesn't have gender categories,
-    // we rotate through them statically for display. The filter tabs are
-    // decorative matching the reference, but still functional for future use.
-    const filteredProducts = products
+    }, [activeTab])
 
     return (
         <section id="choice" className='relative bg-charcoal-gold dot-pattern py-24 md:py-32 overflow-hidden'>
@@ -83,19 +87,21 @@ const FeaturedProduct = () => {
                     {loading && (
                         <div className='col-span-3 text-center py-10 text-white/60'>Loading...</div>
                     )}
-                    {!loading && filteredProducts.length === 0 && (
+                    {!loading && products.length === 0 && (
                         <div className='col-span-3 text-center py-5 text-white/60'>Data Not Found.</div>
                     )}
-                    {!loading && filteredProducts.map((product, index) => (
+                    {!loading && products.map((product, index) => (
                         <ProductBox key={product._id} product={product} index={index} />
                     ))}
                 </div>
 
                 {/* View All Button */}
                 <div className='mt-14 text-center'>
-                    <Link href={WEBSITE_SHOP}
-                          className='inline-flex items-center gap-3 btn-dark-gold uppercase text-[11px] tracking-[0.35em] font-semibold px-10 py-4 transition'>
-                        View All Products
+                    <Link
+                        href={activeTab === 'all' ? WEBSITE_SHOP : `${WEBSITE_SHOP}?category=${activeTab}`}
+                        className='inline-flex items-center gap-3 btn-dark-gold uppercase text-[11px] tracking-[0.35em] font-semibold px-10 py-4 transition'
+                    >
+                        {activeTab === 'men' ? 'View All For Him' : activeTab === 'women' ? 'View All For Her' : 'View All Products'}
                         <ChevronRight size={14} />
                     </Link>
                 </div>

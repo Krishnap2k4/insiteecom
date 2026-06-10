@@ -1,6 +1,7 @@
 'use client'
 import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import UserPanelLayout from '@/components/Application/Website/UserPanelLayout'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import ButtonLoading from '@/components/Application/ButtonLoading'
@@ -20,8 +21,10 @@ const breadCrumb = {
 }
 
 const NewMessageInner = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const router = useRouter()
     const sp = useSearchParams()
+    if (!rehydrated || !isLoggedIn) return null
     const orderRef = sp.get('order')
     const { data: orderData } = useFetch(orderRef ? `/api/orders/get/${orderRef}` : null)
     const order = orderData?.data?.order

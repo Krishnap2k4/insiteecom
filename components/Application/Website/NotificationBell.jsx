@@ -86,7 +86,7 @@ const NotificationBell = () => {
 
     return (
         <div ref={containerRef} className='relative'>
-            <button type='button' onClick={onToggle} className='relative hover:text-[#E5C76B] transition-colors'>
+            <button type='button' onClick={onToggle} className='relative hover:text-[#E5C76B] transition-colors cursor-pointer'>
                 <Bell size={18} />
                 {unread > 0 && (
                     <span className='absolute bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-black text-[9px] font-bold rounded-full min-w-4 h-4 px-1 flex justify-center items-center -right-2 -top-1'>

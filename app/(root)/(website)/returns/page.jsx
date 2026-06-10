@@ -2,6 +2,7 @@
 import UserPanelLayout from '@/components/Application/Website/UserPanelLayout'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import useFetch from '@/hooks/useFetch'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import { WEBSITE_ORDER_DETAILS, WEBSITE_RETURN_DETAILS, USER_ORDERS } from '@/routes/WebsiteRoute'
 import Link from 'next/link'
 
@@ -25,7 +26,9 @@ const statusChip = (status) => {
 }
 
 const Returns = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { data, loading } = useFetch('/api/account/returns')
+    if (!rehydrated || !isLoggedIn) return null
     const list = data?.data || []
 
     return (

@@ -23,7 +23,7 @@ const Sorting = ({ limit, setLimit, sorting, setSorting, mobileFilterOpen, setMo
                             key={n}
                             type='button'
                             onClick={() => setLimit(n)}
-                            className={`text-[10px] w-7 h-7 flex items-center justify-center rounded-full transition-colors ${limit === n ? 'bg-[#C9A24B] text-[#0a0805] font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+                            className={`text-[10px] w-7 h-7 flex items-center justify-center rounded-full transition-colors cursor-pointer ${limit === n ? 'bg-[#C9A24B] text-[#0a0805] font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
                         >
                             {n}
                         </button>

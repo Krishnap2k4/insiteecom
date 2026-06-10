@@ -11,6 +11,7 @@ import { showToast } from '@/lib/showToast'
 import { WEBSITE_ORDER_DETAILS, WEBSITE_RETURN_DETAILS, WEBSITE_RETURNS } from '@/routes/WebsiteRoute'
 import { use, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import Link from 'next/link'
 import { FiInfo } from 'react-icons/fi'
 
@@ -25,10 +26,12 @@ const breadCrumb = { title: 'Request return', links: [{ label: 'Returns', href: 
  * but we still render a clear "nothing left to return" empty state.
  */
 const ReturnRequestPage = ({ params }) => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { orderid } = use(params)
     const router = useRouter()
 
     const [order, setOrder] = useState(null)
+    if (!rehydrated || !isLoggedIn) return null
     const [returnable, setReturnable] = useState(null)
     const [activeReturns, setActiveReturns] = useState([])
     const [loading, setLoading] = useState(true)

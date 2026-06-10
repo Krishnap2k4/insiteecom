@@ -127,10 +127,12 @@ const AddressBookPage = () => {
                                         <FiPlus className='mr-1' /> Add address
                                     </Button>
                                 </DialogTrigger>
-                                <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0805] border-[#C9A24B]/30'>
-                                    <DialogHeader>
-                                        <DialogTitle>{editing ? 'Edit address' : 'Add a new address'}</DialogTitle>
-                                        <DialogDescription>
+                                <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0805] border-[#C9A24B]/30 text-white'>
+                                    <DialogHeader className='border-b border-[#C9A24B]/20 pb-4'>
+                                        <DialogTitle className='font-serif-display text-2xl text-[#F0D77C]'>
+                                            {editing ? 'Edit Address' : 'Add New Address'}
+                                        </DialogTitle>
+                                        <DialogDescription className='text-white/50 text-xs tracking-wide'>
                                             Used at checkout. You can edit or remove this any time.
                                         </DialogDescription>
                                     </DialogHeader>
@@ -196,20 +198,22 @@ const AddressBookPage = () => {
             </UserPanelLayout>
 
             <Dialog open={Boolean(deleting)} onOpenChange={(open) => !open && setDeleting(null)}>
-                <DialogContent className='max-w-md bg-[#0a0805] border-[#C9A24B]/30'>
-                    <DialogHeader>
-                        <DialogTitle>Delete this address?</DialogTitle>
-                        <DialogDescription>
+                <DialogContent className='max-w-md bg-[#0a0805] border-[#C9A24B]/30 text-white'>
+                    <DialogHeader className='border-b border-[#C9A24B]/20 pb-4'>
+                        <DialogTitle className='font-serif-display text-xl text-[#F0D77C]'>Delete this address?</DialogTitle>
+                        <DialogDescription className='text-white/50 text-xs tracking-wide'>
                             This will remove the address from your address book. It can&apos;t be undone.
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className='gap-2'>
-                        <Button type="button" variant="outline" onClick={() => setDeleting(null)} disabled={busy} className='cursor-pointer'>
+                    <DialogFooter className='gap-2 pt-2'>
+                        <button type="button" onClick={() => setDeleting(null)} disabled={busy}
+                            className='btn-dark-gold px-6 py-2.5 uppercase text-[11px] tracking-[0.3em] font-semibold cursor-pointer disabled:opacity-50'>
                             Cancel
-                        </Button>
-                        <Button type="button" variant="destructive" onClick={handleDelete} disabled={busy} className='cursor-pointer'>
-                            Delete
-                        </Button>
+                        </button>
+                        <button type="button" onClick={handleDelete} disabled={busy}
+                            className='bg-red-900/80 hover:bg-red-900 border border-red-700/50 text-white px-6 py-2.5 uppercase text-[11px] tracking-[0.3em] font-semibold cursor-pointer disabled:opacity-50 transition-colors'>
+                            Delete address
+                        </button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

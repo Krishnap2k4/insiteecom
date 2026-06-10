@@ -2,6 +2,7 @@
 import UserPanelLayout from '@/components/Application/Website/UserPanelLayout'
 import WebsiteBreadcrumb from '@/components/Application/Website/WebsiteBreadcrumb'
 import useFetch from '@/hooks/useFetch'
+import useRequireAuth from '@/hooks/useRequireAuth'
 import { WEBSITE_INVOICE_DOWNLOAD, WEBSITE_ORDER_DETAILS, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Link from 'next/link'
 import { FiDownload } from 'react-icons/fi'
@@ -37,7 +38,9 @@ const fulfillmentChip = (status) => {
 }
 
 const Orders = () => {
+    const { isLoggedIn, rehydrated } = useRequireAuth()
     const { data: orderData, loading } = useFetch('/api/user-order')
+    if (!rehydrated || !isLoggedIn) return null
     const list = orderData?.data || []
 
     return (

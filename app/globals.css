@@ -113,6 +113,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     @apply border-border outline-ring/50;
   }
@@ -293,6 +296,33 @@
 .animate-marquee { animation: marquee 35s linear infinite; }
 .animate-sparkle { animation: float-sparkle 5s ease-in-out infinite; }
 .animate-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+/* ===== Hero Entrance ===== */
+@keyframes hero-entrance {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-hero {
+  animation: hero-entrance 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ===== Hero Image Subtle Ken-Burns ===== */
+@keyframes hero-zoom {
+  from { transform: scale(1.07); }
+  to   { transform: scale(1); }
+}
+.animate-hero-image {
+  animation: hero-zoom 3.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ===== Scroll Caret Bounce ===== */
+@keyframes caret-bounce {
+  0%, 100% { transform: translateY(0);   opacity: 0.45; }
+  50%       { transform: translateY(8px); opacity: 1; }
+}
+.animate-caret {
+  animation: caret-bounce 2.4s ease-in-out infinite;
+}
 
 /* ===================================================================
    STOREFRONT THEME SCOPE
