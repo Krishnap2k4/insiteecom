@@ -82,8 +82,18 @@ export const metadata = {
 // + on-demand revalidatePath on admin save). No page-level override.
 
 const Home = async () => {
-    const { hero } = await getSiteSettings()
-    const slides = await enrichHeroSlides(hero?.slides || [])
+    // Defensive: if settings fetch fails (transient DB issue), fall back to
+    // an empty hero rather than crashing the whole page. The rest of the
+    // home page (sections, footer, etc.) keeps rendering normally.
+    let hero = null
+    let slides = []
+    try {
+        const settings = await getSiteSettings()
+        hero = settings?.hero || null
+        slides = await enrichHeroSlides(hero?.slides || [])
+    } catch {
+        // swallow — empty hero already assigned
+    }
     return (
         <>
             {/* ===== HERO SECTION — admin-configured carousel ===== */}

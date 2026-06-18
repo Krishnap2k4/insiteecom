@@ -23,6 +23,7 @@ import Preloader from '@/components/Application/Website/Preloader'
 import React from 'react'
 import { Cormorant_Garamond, Inter } from 'next/font/google'
 import { getSiteSettings } from '@/lib/settings'
+import { SITE_SETTINGS_DEFAULTS } from '@/lib/siteSettingsDefaults'
 
 const cormorant = Cormorant_Garamond({
     weight: ['400', '500', '600', '700'],
@@ -40,8 +41,16 @@ const inter = Inter({
 
 const layout = async ({ children }) => {
     // Brand values are SSR'd so the splash never flashes from a fallback
-    // siteName to the real one on hydration.
-    const { branding } = await getSiteSettings()
+    // siteName to the real one on hydration. If the settings fetch fails
+    // (e.g. DB transiently unreachable), fall back to defaults so the
+    // whole storefront still renders instead of bubbling up to error.jsx.
+    let branding = SITE_SETTINGS_DEFAULTS.branding
+    try {
+        const s = await getSiteSettings()
+        branding = s?.branding || SITE_SETTINGS_DEFAULTS.branding
+    } catch {
+        // swallow — defaults already assigned
+    }
 
     return (
         <div className={`storefront ${cormorant.variable} ${inter.variable} font-sans bg-[#070707] text-white min-h-screen`}
