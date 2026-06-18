@@ -153,6 +153,27 @@ const productSchema = new mongoose.Schema({
         height: { type: Number, default: 0 },
         _id: false,
     },
+    // Storefront listing-card display fields. All optional — empty values
+    // gracefully collapse on the card (the field just doesn't render).
+    // Keeps card display copy separate from structural fields like
+    // `tags` (search-only) and `category` (relational), so admins can
+    // tune the on-page presentation without touching either.
+    //
+    //   badge          — small ribbon ("BEST SELLER", "NEW", etc.)
+    //   subtitle       — short descriptor line under the badge image
+    //   audienceLabel  — small tag under the name ("For Him", "Unisex")
+    //   sizeLabel      — size pill in the corner ("50ml", "1 lb")
+    //   highlights[]   — note-style chips below the name
+    //   bundleOffer    — promotional line under the price
+    card: {
+        badge:         { type: String, trim: true, default: '' },
+        subtitle:      { type: String, trim: true, default: '' },
+        audienceLabel: { type: String, trim: true, default: '' },
+        sizeLabel:     { type: String, trim: true, default: '' },
+        highlights:    [{ type: String, trim: true }],
+        bundleOffer:   { type: String, trim: true, default: '' },
+        _id: false,
+    },
     // Per-product SEO overrides. Falls back to product name/description
     // when blank. ogImage is a Media reference so the editor can pick
     // from the library.
@@ -197,6 +218,18 @@ productSchema.index({ category: 1 })
 productSchema.index({ brand: 1 })
 productSchema.index({ status: 1, deletedAt: 1 })
 productSchema.plugin(softDeletePlugin)
+
+/**
+ * HMR safety: Next.js dev re-evaluates this file on hot reloads, but
+ * mongoose.models persists across reloads. If we don't drop the cached
+ * model, Mongoose keeps using the *previous* schema and silently strips
+ * any newly-added fields from saves — same hazard we addressed on the
+ * Settings model. Production builds load this file once at cold start,
+ * so the delete is dev-only.
+ */
+if (process.env.NODE_ENV !== 'production' && mongoose.models.Product) {
+    delete mongoose.models.Product
+}
 
 const ProductModel = mongoose.models.Product || mongoose.model('Product', productSchema, 'products')
 export default ProductModel

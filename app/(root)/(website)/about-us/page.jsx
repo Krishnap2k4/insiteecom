@@ -5,46 +5,42 @@ import { ChevronRight, Crown, Droplets, Flame, Gem, Heart, ShieldCheck, Award } 
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
 
 export const metadata = {
-    title: 'Our Story — ELOIR',
-    description: 'Discover the story behind ELOIR. Crafted with passion, our luxury fragrances embody the art of perfumery and the signature of presence.',
+    title: 'Our Story',
+    description: 'We believe that fragrance is more than a scent — it\'s a statement of identity, confidence, and presence. Discover our story.',
 }
 
 const AboutUs = () => {
     return (
         <>
             {/* ===== HERO BANNER ===== */}
-            <section className='relative min-h-[60vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0'>
-                    <img
-                        src='https://images.unsplash.com/photo-1615634260167-c8cdede054de?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200'
-                        alt=''
-                        className='w-full h-full object-cover opacity-40'
-                    />
-                    <div className='absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a1208]/50 to-[#070707]'></div>
+            <section className='relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-[110px]'>
+                <div className='absolute inset-0' style={{ backgroundImage: "url('https://images.unsplash.com/photo-1615634260167-c8cdede054de?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                    <div className='absolute inset-0 bg-black/65'></div>
+                    <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-[#1a1208]/40 to-[#070707]'></div>
                     <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.12),transparent_70%)]'></div>
                 </div>
 
                 <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-[30%] left-[15%] text-xl' style={{ animationDelay: '0s' }}>✦</span>
                 <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] bottom-[25%] right-[20%] text-lg' style={{ animationDelay: '2s' }}>✦</span>
 
+                <div className='absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent pointer-events-none'></div>
                 <div className='relative z-10 text-center px-6 max-w-4xl'>
                     <div className='flex items-center justify-center gap-3 mb-5'>
                         <span className='h-px w-12 bg-gradient-to-r from-transparent to-[#C9A24B]'></span>
                         <span className='text-[#E5C76B] tracking-[0.5em] text-[11px] uppercase'>The House of Eloir</span>
                         <span className='h-px w-12 bg-gradient-to-l from-transparent to-[#C9A24B]'></span>
                     </div>
-                    <h1 className='font-serif-display gold-shine text-6xl md:text-8xl leading-[0.95] tracking-tight'>
+                    <h1 className='font-serif-display gold-shine text-6xl md:text-8xl leading-[0.95] tracking-tight pb-4'>
                         Our Story
                     </h1>
                     <p className='font-serif-display italic text-white/80 text-lg md:text-xl mt-6 max-w-2xl mx-auto'>
-                        Where artistry meets aroma — a journey of passion, precision, and presence.
+                        Fragrance is more than a scent — it&apos;s a statement of identity, confidence, and presence.
                     </p>
                 </div>
             </section>
 
             {/* ===== THE ORIGIN ===== */}
             <section className='relative bg-dark-gold py-20 md:py-28 overflow-hidden'>
-                <div className='absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent'></div>
                 <div className='absolute top-10 right-10 w-64 h-64 bg-[#C9A24B]/10 rounded-full blur-3xl'></div>
 
                 <div className='relative max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center'>
@@ -57,13 +53,10 @@ const AboutUs = () => {
                         <div className='text-[#F0D77C] text-[11px] tracking-[0.5em] uppercase font-semibold'>The Beginning</div>
                         <h2 className='font-serif-display gold-shine text-4xl md:text-5xl mt-3'>Born from Passion</h2>
                         <p className='text-white/70 leading-relaxed mt-6'>
-                            ELOIR was founded with a singular vision — to create fragrances that don&apos;t just smell extraordinary, but tell a story. Every bottle is a chapter in the narrative of who you are, crafted to be worn as a signature.
+                            At ELOIR, we believe that fragrance is more than a scent—it&apos;s a statement of identity, confidence, and presence.
                         </p>
                         <p className='text-white/70 leading-relaxed mt-4'>
-                            Our journey began in the ateliers of traditional perfumery, where ancient techniques meet modern sensibilities. We studied under master perfumers, explored rare botanical gardens, and sourced the finest natural essences from around the world.
-                        </p>
-                        <p className='text-white/70 leading-relaxed mt-4'>
-                            What emerged was ELOIR — a house that believes fragrance is not a product, but an art form. Every creation is meticulously designed to evoke emotion, create memories, and define presence.
+                            Founded with a passion for fine perfumery, ELOIR creates premium fragrances inspired by some of the world&apos;s most iconic scents. Our goal is simple: to make luxury fragrance accessible without compromising on quality, performance, or sophistication.
                         </p>
                     </div>
                     <div className='relative'>
@@ -111,13 +104,10 @@ const AboutUs = () => {
                         <div className='text-[#8a6d28] text-[11px] tracking-[0.5em] uppercase font-semibold'>Our Philosophy</div>
                         <h2 className='font-serif-display text-4xl md:text-5xl mt-3 gold-dark-text font-semibold'>The Art of Scent</h2>
                         <p className='text-[#3a2a0a]/80 leading-relaxed mt-6'>
-                            We believe that a fragrance is the most intimate accessory one can wear. It is invisible, yet unforgettable. At ELOIR, every formulation begins with an emotion — a feeling we want to capture in liquid form.
+                            Every bottle is carefully crafted to deliver a memorable experience, combining elegance, lasting performance, and exceptional value.
                         </p>
                         <p className='text-[#3a2a0a]/80 leading-relaxed mt-4'>
-                            Our ingredients are sourced from the finest fields: Bulgarian roses, Indian sandalwood, Madagascan vanilla, Italian bergamot, and Arabian oud. Each raw material is chosen for its purity, longevity, and depth.
-                        </p>
-                        <p className='text-[#3a2a0a]/80 leading-relaxed mt-4'>
-                            We never rush. Our blends are aged for months to allow the notes to harmonize naturally — because true luxury cannot be accelerated.
+                            Whether you&apos;re looking for a signature scent, a special occasion fragrance, or the perfect gift, ELOIR offers a collection designed to leave a lasting impression.
                         </p>
                     </div>
                 </div>
@@ -172,9 +162,12 @@ const AboutUs = () => {
                             <span className='h-px w-16 bg-[#C9A24B]/50'></span>
                         </div>
                         <div className='text-[#F0D77C] text-[11px] tracking-[0.5em] uppercase font-semibold'>Our Commitment</div>
-                        <h2 className='font-serif-display gold-shine text-4xl md:text-5xl mt-3'>Crafted in India,<br />Loved Globally</h2>
+                        <h2 className='font-serif-display gold-shine text-4xl md:text-5xl mt-3'>The Signature<br />of Presence</h2>
                         <p className='text-white/70 leading-relaxed mt-6'>
-                            ELOIR proudly crafts every bottle in India, blending the richness of Indian perfumery traditions with modern European techniques. Our facility follows the highest international standards — IFRA certified, cruelty-free, and vegan.
+                            We are committed to providing fragrances that inspire confidence and help you express your individuality through scent.
+                        </p>
+                        <p className='text-white/70 leading-relaxed mt-4 font-serif-display italic text-lg'>
+                            Because true luxury isn&apos;t about being noticed — it&apos;s about being remembered.
                         </p>
                         <div className='grid grid-cols-3 gap-4 mt-8'>
                             {[
@@ -232,7 +225,7 @@ const AboutUs = () => {
             </section>
 
             {/* ===== NEWSLETTER ===== */}
-            <NewsletterSubscribe variant='eloir' source='about-us' />
+            <NewsletterSubscribe variant='premium' source='about-us' />
         </>
     )
 }

@@ -1,3 +1,5 @@
+const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'Store'
+
 export const otpEmail = (otp) => {
 	const html = `
 <!DOCTYPE html>
@@ -190,7 +192,7 @@ export const otpEmail = (otp) => {
 																	<p style="margin: 0;">If you did not request this,
 																		please ignore this message.</p>
 																	<p style="margin: 0;">Thank you,<br />
-                                                                     ELOIR
+                                                                     ${brandName}
                                                                     </p>
 																</div>
 															</td>

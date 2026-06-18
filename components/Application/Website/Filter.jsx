@@ -165,13 +165,15 @@ const Filter = () => {
                         Price
                     </AccordionTrigger>
                     <AccordionContent>
-                        <Slider
-                            defaultValue={[0, 3000]}
-                            max={3000}
-                            step={1}
-                            onValueChange={(v) => setPriceFilter({ minPrice: v[0], maxPrice: v[1] })}
-                            className="[&_[role=slider]]:bg-[#C9A24B] [&_[role=slider]]:border-[#F0D77C]"
-                        />
+                        <div className='py-2'>
+                            <Slider
+                                defaultValue={[0, 3000]}
+                                max={3000}
+                                step={1}
+                                onValueChange={(v) => setPriceFilter({ minPrice: v[0], maxPrice: v[1] })}
+                                className="[&_[data-slot=slider-range]]:bg-[#C9A24B] [&_[data-slot=slider-track]]:bg-white/20 [&_[data-slot=slider-thumb]]:bg-[#C9A24B] [&_[data-slot=slider-thumb]]:border-[#F0D77C] [&_[data-slot=slider-thumb]]:ring-[#C9A24B]/30"
+                            />
+                        </div>
                         <div className='flex justify-between items-center pt-3'>
                             <span className='text-xs text-[#F0D77C]/80'>
                                 {priceFilter.minPrice.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}

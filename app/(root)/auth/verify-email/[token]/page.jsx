@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { WEBSITE_HOME } from '@/routes/WebsiteRoute'
+import AuthBrand from '@/components/Application/Website/AuthBrand'
 const EmailVerification = ({ params }) => {
     const { token } = use(params)
     const [isVerified, setIsVerified] = useState(false)
@@ -24,6 +25,7 @@ const EmailVerification = ({ params }) => {
     return (
         <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
             <CardContent className="pt-8">
+                <AuthBrand />
                 {isVerified ?
                     <div >
                         <div className='flex justify-center items-center'>

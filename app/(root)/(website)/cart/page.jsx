@@ -17,6 +17,8 @@ const CartPage = () => {
     const dispatch = useDispatch()
     const cart = useSelector((s) => s.cartStore)
     const hasUnavailable = cart.products.some((p) => p.unavailable)
+    const shippingAmount = Number(cart.shippingAmount || 0)
+    const cartTotal = Number(cart.subtotal || 0) + shippingAmount
 
     const setQty = (variantId, qty) => {
         if (qty <= 0) dispatch(removeFromCartAsync({ variantId }))
@@ -121,10 +123,19 @@ const CartPage = () => {
                                             -{Number(cart.discount || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
                                         </td>
                                     </tr>
+                                    <tr className='border-b border-[#C9A24B]/10'>
+                                        <td className='font-medium py-2 text-white/70'>Delivery</td>
+                                        <td className='text-end py-2'>
+                                            {shippingAmount === 0
+                                                ? <span className='text-[#4ade80] font-semibold'>Free</span>
+                                                : <span className='text-white'>{shippingAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                                            }
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td className='font-semibold py-2 text-white'>Total</td>
                                         <td className='text-end py-2 font-semibold text-[#F0D77C]'>
-                                            {Number(cart.subtotal || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                                            {cartTotal.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
                                         </td>
                                     </tr>
                                 </tbody>

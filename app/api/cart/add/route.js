@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/databaseConnection'
 import { catchError, response } from '@/lib/helperFunction'
 import { resolveCartOwner, findOrCreateCart, hydrateCartItems, cartTotals, GUEST_COOKIE } from '@/lib/cart'
+import { getShippingSettings } from '@/lib/settings'
 import ProductVariantModel from '@/models/ProductVariant.model'
 import { z } from 'zod'
 
@@ -49,7 +50,8 @@ export async function POST(request) {
         await cart.save()
 
         const items = await hydrateCartItems(cart)
-        const totals = cartTotals(items)
+        const shippingSettings = await getShippingSettings()
+        const totals = cartTotals(items, shippingSettings)
 
         const res = response(true, 200, 'Added to cart.', {
             id: String(cart._id),

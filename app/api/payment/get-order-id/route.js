@@ -2,6 +2,7 @@ import { connectDB } from '@/lib/databaseConnection'
 import { catchError, response } from '@/lib/helperFunction'
 import { RATE_LIMITS, rateLimit } from '@/lib/rateLimit'
 import { resolveCartOwner, findOrCreateCart, hydrateCartItems, cartTotals } from '@/lib/cart'
+import { getShippingSettings } from '@/lib/settings'
 import { z } from 'zod'
 import Razorpay from 'razorpay'
 
@@ -38,8 +39,9 @@ export async function POST(request) {
             return response(false, 400, 'One or more items in your cart are unavailable.')
         }
 
-        const totals = cartTotals(items)
-        const totalAmount = Math.max(0, totals.subtotal - couponDiscountAmount)
+        const shippingSettings = await getShippingSettings()
+        const totals = cartTotals(items, shippingSettings)
+        const totalAmount = Math.max(0, totals.subtotal - couponDiscountAmount) + totals.shippingAmount
         if (totalAmount <= 0) return response(false, 400, 'Order total must be greater than zero.')
 
         const razInstance = new Razorpay({

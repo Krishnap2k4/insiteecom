@@ -1,6 +1,6 @@
 import { renderEmailLayout } from './_layout'
 
-const brandName = () => process.env.NEXT_PUBLIC_BRAND_NAME || 'ELOIR'
+const brandName = () => process.env.NEXT_PUBLIC_BRAND_NAME || 'Store'
 
 /**
  * Double opt-in confirmation. Customer subscribed; we send them a

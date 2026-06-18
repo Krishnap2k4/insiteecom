@@ -7,82 +7,90 @@ import Testimonial from '@/components/Application/Website/Testimonial'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
 import ShopTheLook from '@/components/Application/Website/ShopTheLook'
 import AnimateIn from '@/components/Application/Website/AnimateIn'
+import HeroCarousel from '@/components/Application/Website/HeroCarousel'
 import { WEBSITE_SHOP } from '@/routes/WebsiteRoute'
-import { ChevronRight, ChevronDown, ShieldCheck, Heart, Leaf, Sparkles, Award, Star, Crown, Droplets, Flame, Gem } from 'lucide-react'
+import { getSiteSettings } from '@/lib/settings'
+import { connectDB } from '@/lib/databaseConnection'
+import ProductModel from '@/models/Product.model'
+import { ChevronRight, ShieldCheck, Heart, Leaf, Sparkles, Award, Star, Crown, Droplets, Flame, Gem } from 'lucide-react'
 
-export const metadata = {
-    title: "ELOIR — The Signature of Presence",
-    description: "Discover fine fragrances crafted for the modern connoisseur. ELOIR offers luxury extrait de parfum with long-lasting scent and premium quality.",
+/**
+ * Fetch the products referenced by hero slides in a single batch query
+ * and merge them onto each slide as `slide.product`. Server-side so the
+ * carousel renders with real product info on first paint — no client
+ * round-trip, no flash of the bare image.
+ */
+const enrichHeroSlides = async (slides) => {
+    if (!Array.isArray(slides) || slides.length === 0) return []
+
+    const ids = [...new Set(
+        slides.map((s) => s?.productId).filter((id) => id && typeof id === 'string')
+    )]
+    if (ids.length === 0) return slides.map((s) => ({ ...s, product: null }))
+    // (mobileImageUrl is already on each slide — it just flows through)
+
+    try {
+        await connectDB()
+        const products = await ProductModel
+            .find({ _id: { $in: ids }, deletedAt: null, status: { $in: ['published', null, undefined] } })
+            .populate('media', 'secure_url alt')
+            .select('name slug publicId media sellingPrice mrp discountPercentage card')
+            .lean()
+
+        // Build a fully-serialised plain-object map. Mongoose's .lean() only
+        // strips the *top-level* doc decorators — populated subdocs still
+        // carry ObjectId-typed `_id`s, which React refuses to ship from a
+        // Server Component to a Client Component ("Only plain objects can
+        // be passed…"). So we explicitly project each field to a primitive.
+        const byId = Object.fromEntries(
+            products.map((p) => [String(p._id), {
+                _id:                String(p._id),
+                name:               String(p.name || ''),
+                slug:               String(p.slug || ''),
+                publicId:           p.publicId ? String(p.publicId) : '',
+                media:              (p.media || []).map((m) => ({
+                    secure_url: m?.secure_url ? String(m.secure_url) : '',
+                    alt:        m?.alt        ? String(m.alt)        : '',
+                })),
+                sellingPrice:       Number(p.sellingPrice) || 0,
+                mrp:                Number(p.mrp) || 0,
+                discountPercentage: Number(p.discountPercentage) || 0,
+                card: {
+                    badge:         p.card?.badge         || '',
+                    subtitle:      p.card?.subtitle      || '',
+                    audienceLabel: p.card?.audienceLabel || '',
+                    sizeLabel:     p.card?.sizeLabel     || '',
+                    highlights:    Array.isArray(p.card?.highlights) ? p.card.highlights.map(String) : [],
+                    bundleOffer:   p.card?.bundleOffer   || '',
+                },
+            }])
+        )
+        return slides.map((s) => ({ ...s, product: s?.productId ? (byId[s.productId] || null) : null }))
+    } catch {
+        // Defensive — never let a failed product lookup take down the home page.
+        return slides.map((s) => ({ ...s, product: null }))
+    }
 }
 
-const Home = () => {
+// Home page intentionally has no `title` — it inherits the root layout's
+// dynamic "{siteName} — {tagline}" default so the brand always matches settings.
+export const metadata = {
+    description: 'Discover fine fragrances crafted for the modern connoisseur — luxury extrait de parfum with long-lasting scent and premium quality.',
+}
+
+// Revalidation cadence is inherited from the storefront layout (60s ISR
+// + on-demand revalidatePath on admin save). No page-level override.
+
+const Home = async () => {
+    const { hero } = await getSiteSettings()
+    const slides = await enrichHeroSlides(hero?.slides || [])
     return (
         <>
-            {/* ===== HERO SECTION ===== */}
-            <section id="top" className='relative min-h-[100vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0'>
-                    <img
-                        src="https://images.unsplash.com/photo-1544006593-1a0b9255782d?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200"
-                        alt=""
-                        className='w-full h-full object-cover opacity-50 animate-hero-image'
-                    />
-                    <div className='absolute inset-0 bg-gradient-to-b from-black/70 via-[#1a1208]/40 to-[#070707]'></div>
-                    <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.18),transparent_70%)]'></div>
-                    <div className='absolute top-1/4 -left-20 w-80 h-80 bg-[#C9A24B]/25 rounded-full blur-3xl animate-glow'></div>
-                    <div className='absolute bottom-1/4 -right-20 w-96 h-96 bg-[#F0D77C]/15 rounded-full blur-3xl animate-glow' style={{ animationDelay: '2s' }}></div>
-                </div>
-
-                {/* Sparkles */}
-                <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-[25%] left-[10%] text-2xl' style={{ animationDelay: '0s' }}>✦</span>
-                <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-[35%] right-[15%] text-xl' style={{ animationDelay: '1.5s' }}>✦</span>
-                <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] bottom-[30%] left-[18%] text-lg' style={{ animationDelay: '3s' }}>✦</span>
-                <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] bottom-[20%] right-[20%] text-2xl' style={{ animationDelay: '0.7s' }}>✦</span>
-                <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-[20%] right-[35%] text-base' style={{ animationDelay: '2.2s' }}>✦</span>
-
-                <div className='relative z-10 text-center px-6 max-w-5xl mt-20'>
-                    {/* Each child wrapped separately so animate-hero doesn't touch gold-shine */}
-                    <div className='animate-hero' style={{ animationDelay: '0.15s' }}>
-                        <div className='flex items-center justify-center gap-3 mb-6'>
-                            <span className='h-px w-12 bg-gradient-to-r from-transparent to-[#C9A24B]'></span>
-                            <span className='text-[#E5C76B] tracking-[0.5em] text-[11px] uppercase'>Eloir Maison</span>
-                            <span className='h-px w-12 bg-gradient-to-l from-transparent to-[#C9A24B]'></span>
-                        </div>
-                    </div>
-                    <div className='animate-hero' style={{ animationDelay: '0.35s' }}>
-                        <h1 className='font-serif-display gold-shine font-medium text-[14vw] md:text-[8.5vw] leading-[0.95] tracking-tight drop-shadow-[0_4px_30px_rgba(240,215,124,0.3)]'>
-                            Unveil Your Aura
-                        </h1>
-                    </div>
-                    <div className='animate-hero' style={{ animationDelay: '0.55s' }}>
-                        <p className='font-serif-display italic text-white/85 text-lg md:text-2xl mt-7 max-w-2xl mx-auto'>
-                            Discover fine fragrances crafted for the modern connoisseur.
-                        </p>
-                    </div>
-                    <div className='mt-10 animate-hero' style={{ animationDelay: '0.75s' }}>
-                        <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
-                            <Link href={WEBSITE_SHOP} className='btn-gold uppercase text-[12px] tracking-[0.3em] font-semibold px-10 py-4 rounded-sm'>
-                                Shop the Collection
-                            </Link>
-                            <Link href="/about-us" className='border border-[#C9A24B]/60 text-[#E5C76B] hover:bg-[#C9A24B]/15 uppercase text-[12px] tracking-[0.3em] font-semibold px-10 py-4 rounded-sm transition backdrop-blur-sm'>
-                                Our Story
-                            </Link>
-                        </div>
-                    </div>
-                    <div className='mt-14 animate-hero' style={{ animationDelay: '0.95s' }}>
-                        <div className='flex flex-col items-center justify-center gap-1 text-[#E5C76B]/70'>
-                            <div className='flex items-center gap-2'>
-                                <span className='h-px w-6 bg-[#C9A24B]/50'></span>
-                                <span className='text-[10px] tracking-[0.4em] uppercase'>Scroll</span>
-                                <span className='h-px w-6 bg-[#C9A24B]/50'></span>
-                            </div>
-                            <ChevronDown size={15} className='animate-caret text-[#C9A24B]/70 mt-1' />
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {/* ===== HERO SECTION — admin-configured carousel ===== */}
+            <HeroCarousel slides={slides} autoplayMs={hero?.autoplayMs ?? 5000} />
 
             {/* ===== MARKETPLACE BAR ===== */}
-            <section className='relative bg-gradient-to-r from-[#0a0805] via-[#1a1208] to-[#0a0805] border-y border-[#C9A24B]/30 py-14 overflow-hidden'>
+            {/* <section className='relative bg-gradient-to-r from-[#0a0805] via-[#1a1208] to-[#0a0805] border-y border-[#C9A24B]/30 py-14 overflow-hidden'>
                 <div className='absolute inset-0 diamond-pattern opacity-30'></div>
                 <div className='relative max-w-6xl mx-auto px-6'>
                     <AnimateIn direction="fade" className="text-center mb-8">
@@ -106,7 +114,7 @@ const Home = () => {
                         ))}
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* ===== NEW ARRIVALS ===== */}
             <ProductSection
@@ -117,17 +125,7 @@ const Home = () => {
                 viewAllHref={`${WEBSITE_SHOP}?sort=default_sorting`}
                 viewAllLabel="View All New Arrivals"
                 theme="dark"
-            />
-
-            {/* ===== BESTSELLERS ===== */}
-            <ProductSection
-                id="bestsellers"
-                title="Bestsellers"
-                eyebrow="Most Loved"
-                apiUrl="/api/shop?limit=6&sort=bestseller"
-                viewAllHref={`${WEBSITE_SHOP}?sort=bestseller`}
-                viewAllLabel="Shop Bestsellers"
-                theme="light"
+                showCategoryTabs
             />
 
             {/* ===== HER SCENT STORY (SPOTLIGHT) ===== */}
@@ -178,8 +176,58 @@ const Home = () => {
             {/* ===== SHOP THE LOOK ===== */}
             <ShopTheLook />
 
-            {/* ===== TESTIMONIALS ===== */}
-            <Testimonial />
+            {/* ===== BESTSELLERS ===== */}
+            <ProductSection
+                id="bestsellers"
+                title="Bestsellers"
+                eyebrow="Most Loved"
+                apiUrl="/api/shop?limit=6&sort=bestseller"
+                viewAllHref={`${WEBSITE_SHOP}?sort=bestseller`}
+                viewAllLabel="Shop Bestsellers"
+                theme="light"
+                showCategoryTabs
+            />
+
+            {/* ===== WHY CHOOSE ELOIR ===== */}
+            <section className='relative py-20 md:py-24 bg-gradient-to-br from-[#E0BF55] via-[#F4DE85] to-[#C49A2C] text-black overflow-hidden'>
+                <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.35),transparent_70%)]'></div>
+                <div className='absolute inset-0 diamond-pattern opacity-20'></div>
+                <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a1208] via-[#C9A24B] to-[#1a1208]'></div>
+                <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a1208] via-[#C9A24B] to-[#1a1208]'></div>
+
+                <div className='relative max-w-7xl mx-auto px-6'>
+                    <AnimateIn direction="fade" className="text-center mb-12">
+                        <div className='flex items-center justify-center gap-3 text-[#8a6d28]'>
+                            <span className='h-px w-16 bg-[#8a6d28]/50'></span>
+                            <span className='text-xs'>❖</span>
+                            <span className='h-px w-16 bg-[#8a6d28]/50'></span>
+                        </div>
+                        <div className='text-[#1a1208]/80 text-[11px] tracking-[0.5em] uppercase font-semibold mt-4'>Pure. Safe. Lasting.</div>
+                        <h2 className='font-serif-display text-5xl md:text-6xl mt-3 text-[#1a1208] font-semibold drop-shadow-sm'>Why Choose ELOIR</h2>
+                    </AnimateIn>
+
+                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-4'>
+                        {[
+                            { icon: ShieldCheck, title: 'IFRA Certified', sub: 'Premium Standards' },
+                            { icon: Heart,       title: 'Made in India',  sub: 'Crafted with Pride' },
+                            { icon: Leaf,        title: 'Vegan Friendly', sub: 'Plant Based' },
+                            { icon: Sparkles,    title: 'Cruelty Free',   sub: 'No Animal Testing' },
+                            { icon: Award,       title: 'Long Lasting',   sub: '8H+ Projection' },
+                            { icon: Star,        title: 'Quality Promise',sub: 'Premium Always' },
+                        ].map((item, index) => (
+                            <AnimateIn key={item.title} direction="up" delay={index * 90}>
+                                <div className='text-center group'>
+                                    <div className='w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#1a1208] to-[#3a2810] flex items-center justify-center shadow-xl shadow-[#1a1208]/30 group-hover:scale-110 transition-transform'>
+                                        <item.icon size={28} className='text-[#F0D77C]' />
+                                    </div>
+                                    <div className='mt-4 font-serif-display text-lg font-semibold text-[#1a1208]'>{item.title}</div>
+                                    <div className='text-[11px] text-[#1a1208]/70 tracking-wide mt-1'>{item.sub}</div>
+                                </div>
+                            </AnimateIn>
+                        ))}
+                    </div>
+                </div>
+            </section>
 
             {/* ===== FOUR PILLARS ===== */}
             <section className='relative bg-charcoal-gold py-20 md:py-24 overflow-hidden'>
@@ -261,53 +309,15 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* ===== WHY CHOOSE ELOIR ===== */}
-            <section className='relative py-20 md:py-24 bg-gradient-to-br from-[#E0BF55] via-[#F4DE85] to-[#C49A2C] text-black overflow-hidden'>
-                <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.35),transparent_70%)]'></div>
-                <div className='absolute inset-0 diamond-pattern opacity-20'></div>
-                <div className='absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a1208] via-[#C9A24B] to-[#1a1208]'></div>
-                <div className='absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-[#1a1208] via-[#C9A24B] to-[#1a1208]'></div>
-
-                <div className='relative max-w-7xl mx-auto px-6'>
-                    <AnimateIn direction="fade" className="text-center mb-12">
-                        <div className='flex items-center justify-center gap-3 text-[#8a6d28]'>
-                            <span className='h-px w-16 bg-[#8a6d28]/50'></span>
-                            <span className='text-xs'>❖</span>
-                            <span className='h-px w-16 bg-[#8a6d28]/50'></span>
-                        </div>
-                        <div className='text-[#1a1208]/80 text-[11px] tracking-[0.5em] uppercase font-semibold mt-4'>Pure. Safe. Lasting.</div>
-                        <h2 className='font-serif-display text-5xl md:text-6xl mt-3 text-[#1a1208] font-semibold drop-shadow-sm'>Why Choose ELOIR</h2>
-                    </AnimateIn>
-
-                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-4'>
-                        {[
-                            { icon: ShieldCheck, title: 'IFRA Certified', sub: 'Premium Standards' },
-                            { icon: Heart,       title: 'Made in India',  sub: 'Crafted with Pride' },
-                            { icon: Leaf,        title: 'Vegan Friendly', sub: 'Plant Based' },
-                            { icon: Sparkles,    title: 'Cruelty Free',   sub: 'No Animal Testing' },
-                            { icon: Award,       title: 'Long Lasting',   sub: '8H+ Projection' },
-                            { icon: Star,        title: 'Quality Promise',sub: 'Premium Always' },
-                        ].map((item, index) => (
-                            <AnimateIn key={item.title} direction="up" delay={index * 90}>
-                                <div className='text-center group'>
-                                    <div className='w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-[#1a1208] to-[#3a2810] flex items-center justify-center shadow-xl shadow-[#1a1208]/30 group-hover:scale-110 transition-transform'>
-                                        <item.icon size={28} className='text-[#F0D77C]' />
-                                    </div>
-                                    <div className='mt-4 font-serif-display text-lg font-semibold text-[#1a1208]'>{item.title}</div>
-                                    <div className='text-[11px] text-[#1a1208]/70 tracking-wide mt-1'>{item.sub}</div>
-                                </div>
-                            </AnimateIn>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* ===== TESTIMONIALS ===== */}
+            <Testimonial />
 
             {/* ===== FOLLOW US ===== */}
             <FollowUs />
 
             {/* ===== NEWSLETTER ===== */}
             <AnimateIn direction="up" threshold={0.08}>
-                <NewsletterSubscribe variant='eloir' source='home' />
+                <NewsletterSubscribe variant='premium' source='home' />
             </AnimateIn>
         </>
     )

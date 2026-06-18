@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, generateOTP, response } from "@/lib/helperFunction";
 import { RATE_LIMITS, rateLimit } from "@/lib/rateLimit";
 import { sendMail } from "@/lib/sendMail";
+import { getSiteSettings } from "@/lib/settings";
 import { zSchema } from "@/lib/zodSchema";
 import OTPModel from "@/models/Otp.model";
 import UserModel from "@/models/User.model";
@@ -47,7 +48,8 @@ export async function POST(request) {
                 .sign(secret)
 
 
-            await sendMail('Email Verification – ELOIR', email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`))
+            const { branding } = await getSiteSettings()
+            await sendMail(`Email Verification – ${branding?.siteName || 'Verify your email'}`, email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`))
 
             return response(false, 401, 'Your email is not verified. We have sent a verification link to your registered email address.')
         }

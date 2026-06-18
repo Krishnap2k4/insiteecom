@@ -21,6 +21,8 @@ import { USER_DASHBOARD, WEBSITE_REGISTER, WEBSITE_RESETPASSWORD } from '@/route
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import OTPVerification from '@/components/Application/OTPVerification'
+import AuthBrand from '@/components/Application/Website/AuthBrand'
+import { useSiteSettings } from '@/hooks/useSiteSettings'
 import { useDispatch } from 'react-redux'
 import { login } from '@/store/reducer/authReducer'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -29,6 +31,8 @@ const LoginPage = () => {
     const dispatch = useDispatch()
     const searchParams = useSearchParams()
     const router = useRouter()
+    const { branding } = useSiteSettings()
+    const siteName = branding?.siteName || 'us'
     const [loading, setLoading] = useState(false)
     const [otpVerificationLoading, setOtpVerificationLoading] = useState(false)
     const [isTypePassword, setIsTypePassword] = useState(true)
@@ -95,9 +99,7 @@ const LoginPage = () => {
     return (
         <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
             <CardContent className="pt-8">
-                <div className='flex justify-center mb-6'>
-                    <div className='font-serif-display gold-shine text-4xl tracking-widest'>ELOIR</div>
-                </div>
+                <AuthBrand />
 
                 {!otpEmail
                     ?
@@ -153,7 +155,7 @@ const LoginPage = () => {
                                     </div>
                                     <div className='text-center text-sm text-white/60'>
                                         <div className='flex justify-center items-center gap-2'>
-                                            <p>New to ELOIR?</p>
+                                            <p>New to {siteName}?</p>
                                             <Link href={WEBSITE_REGISTER} className='text-[#C9A24B] hover:text-[#F0D77C] hover:underline transition-colors'>Create an account</Link>
                                         </div>
                                         <div className='mt-4'>

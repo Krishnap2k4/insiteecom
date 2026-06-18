@@ -1,3 +1,7 @@
+// Brand name comes from env so the same codebase can power many client
+// deployments — each one sets NEXT_PUBLIC_BRAND_NAME at build/deploy time.
+const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'Store'
+
 export const emailVerificationLink = (link) => {
     const html = `
 <!DOCTYPE html>
@@ -207,7 +211,7 @@ export const emailVerificationLink = (link) => {
                                                                     <p style="margin: 10px;"><strong>Note:</strong> This link will expire in 1 hours. If you did not create an account, you can safely ignore this email.</p>
                                                                          
                                                                     <p style="margin: 0;">Thank you,<br />
-                                                                        ELOIR
+                                                                        ${brandName}
                                                                     </p>
                                                                 </div>
                                                             </td>

@@ -84,7 +84,11 @@ export const ADMIN_CUSTOMER_GROUPS_SHOW = '/admin/customer-groups'
 export const ADMIN_CUSTOMER_GROUPS_ADD = '/admin/customer-groups/add'
 export const ADMIN_CUSTOMER_GROUPS_EDIT = (id) => id ? `/admin/customer-groups/edit/${id}` : ''
 
-// Content — Shop the Look (CMS-ready; will live under the CMS "Content" group)
+// Content — storefront-facing CMS (logo, hero, marquee, sections, social, etc.)
+export const ADMIN_CMS = '/admin/cms'
 export const ADMIN_SHOP_THE_LOOK_SHOW = '/admin/shop-the-look'
 export const ADMIN_SHOP_THE_LOOK_ADD = '/admin/shop-the-look/add'
 export const ADMIN_SHOP_THE_LOOK_EDIT = (id) => id ? `/admin/shop-the-look/edit/${id}` : ''
+
+// Settings — system & business rules (shipping, etc.)
+export const ADMIN_SETTINGS = '/admin/settings'

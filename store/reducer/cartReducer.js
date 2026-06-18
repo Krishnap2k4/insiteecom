@@ -23,6 +23,7 @@ const initialState = {
     count: 0,
     subtotal: 0,
     discount: 0,
+    shippingAmount: 0,
     couponCode: null,
     currency: 'INR',
     loading: false,
@@ -37,6 +38,7 @@ const applyServerCart = (state, payload) => {
     state.count = payload.count ?? (payload.items?.reduce((s, i) => s + i.qty, 0) || 0)
     state.subtotal = payload.subtotal || 0
     state.discount = payload.discount || 0
+    state.shippingAmount = payload.shippingAmount || 0
     state.couponCode = payload.couponCode || null
     state.currency = payload.currency || 'INR'
     state.hydrated = true

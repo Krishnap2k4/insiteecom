@@ -25,7 +25,6 @@ import {
     WEBSITE_ORDER_DETAILS,
     WEBSITE_PRODUCT_DETAILS,
     WEBSITE_SHOP,
-    WEBSITE_LOGIN,
 } from '@/routes/WebsiteRoute'
 import { IoCloseCircleSharp } from 'react-icons/io5'
 import { FaShippingFast } from 'react-icons/fa'
@@ -120,7 +119,8 @@ const Checkout = () => {
 
     const subtotal = Number(cart.subtotal || 0)
     const discount = Number(cart.discount || 0)
-    const totalAmount = Math.max(0, subtotal - couponDiscountAmount)
+    const shippingAmount = Number(cart.shippingAmount || 0)
+    const totalAmount = Math.max(0, subtotal - couponDiscountAmount) + shippingAmount
     const hasUnavailable = cart.products.some((p) => p.unavailable)
 
     // ---- Coupon form ----
@@ -353,7 +353,7 @@ const Checkout = () => {
                 </div>
             ) : (
                 <div className='flex lg:flex-nowrap flex-wrap gap-10 my-20 lg:px-32 px-4'>
-                    <div className='lg:w-[60%] w-full space-y-6'>
+                    <div className='lg:w-[60%] w-full space-y-6 order-2 lg:order-1'>
                         <div>
                             <div className='flex font-semibold gap-2 items-center text-[#F0D77C]'>
                                 <FaShippingFast size={22} /> Shipping Address
@@ -402,13 +402,8 @@ const Checkout = () => {
                                 </div>
                             )}
 
-                            {(!isLoggedIn || showInlineForm || addresses.length === 0) && (
+                            {(showInlineForm || addresses.length === 0) && (
                                 <div className='mt-4'>
-                                    {!isLoggedIn && (
-                                        <div className='mb-4 text-sm bg-[#C9A24B]/10 border border-[#C9A24B]/30 text-white/80 p-3'>
-                                            Have an account? <Link href={WEBSITE_LOGIN} className='text-[#F0D77C] underline'>Log in</Link> to use a saved address and access your order history.
-                                        </div>
-                                    )}
                                     {isLoggedIn && addresses.length > 0 && (
                                         <button
                                             type='button'
@@ -502,7 +497,7 @@ const Checkout = () => {
                         </div>
                     </div>
 
-                    <div className='lg:w-[40%] w-full'>
+                    <div className='lg:w-[40%] w-full order-1 lg:order-2'>
                         <div className='bg-[#0a0805] border border-[#C9A24B]/20 p-5 sticky top-5'>
                             <h4 className='text-lg font-serif-display text-[#F0D77C] mb-5'>Order Summary</h4>
 
@@ -557,6 +552,15 @@ const Checkout = () => {
                                     <tr className='border-b border-[#C9A24B]/10'>
                                         <td className='font-medium py-1.5 text-white/70'>Coupon</td>
                                         <td className='text-end py-1.5'>- {couponDiscountAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</td>
+                                    </tr>
+                                    <tr className='border-b border-[#C9A24B]/10'>
+                                        <td className='font-medium py-1.5 text-white/70'>Delivery</td>
+                                        <td className='text-end py-1.5'>
+                                            {shippingAmount === 0
+                                                ? <span className='text-[#4ade80] font-semibold'>Free</span>
+                                                : shippingAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })
+                                            }
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td className='font-semibold py-2 text-lg text-white'>Total</td>

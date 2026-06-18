@@ -4,6 +4,7 @@ import { catchError, response } from "@/lib/helperFunction";
 import { logger } from "@/lib/logger";
 import { RATE_LIMITS, rateLimit } from "@/lib/rateLimit";
 import { sendMail } from "@/lib/sendMail";
+import { getSiteSettings } from "@/lib/settings";
 import { zSchema } from "@/lib/zodSchema";
 import UserModel from "@/models/User.model";
 import { SignJWT } from "jose";
@@ -51,8 +52,9 @@ export async function POST(request) {
             .sign(secret)
 
 
+        const { branding } = await getSiteSettings()
         const mailResult = await sendMail(
-            'Email Verification – ELOIR',
+            `Email Verification – ${branding?.siteName || 'Verify your email'}`,
             email,
             emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
         )

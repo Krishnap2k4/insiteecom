@@ -8,6 +8,7 @@ import { emitNotification, emitAdminBroadcast } from '@/lib/notifications'
 import { logger } from '@/lib/logger'
 import { resolveCartOwner, findOrCreateCart, hydrateCartItems, cartTotals, GUEST_COOKIE } from '@/lib/cart'
 import { buildOrderNumber, recordOrderStatus } from '@/lib/orders'
+import { getShippingSettings } from '@/lib/settings'
 import { deriveLegacyOrderStatus } from '@/lib/utils'
 import OrderModel from '@/models/Order.model'
 import PaymentModel from '@/models/Payment.model'
@@ -110,7 +111,8 @@ export async function POST(request) {
         // already saw it via /api/coupon/apply. The client value is a
         // hint; if it's been tampered with, the server's resolveCoupon
         // recomputes the real discount.
-        const totals = cartTotals(items)
+        const shippingSettings = await getShippingSettings()
+        const totals = cartTotals(items, shippingSettings)
         let appliedCoupon = null
         let couponDiscountAmount = 0
         if (data.couponCode) {
@@ -124,7 +126,8 @@ export async function POST(request) {
             appliedCoupon = cr.coupon
             couponDiscountAmount = cr.discountAmount
         }
-        const totalAmount = Math.max(0, totals.subtotal - couponDiscountAmount)
+        const shippingAmount = totals.shippingAmount
+        const totalAmount = Math.max(0, totals.subtotal - couponDiscountAmount) + shippingAmount
         if (totalAmount <= 0) return response(false, 400, 'Order total must be greater than zero.')
 
         // ---- Verify Razorpay signature (online flow only) ----
@@ -186,7 +189,7 @@ export async function POST(request) {
                     couponCode: data.couponCode ? data.couponCode.trim().toUpperCase() : null,
                     couponDiscountAmount,
                     taxAmount: 0,
-                    shippingAmount: 0,
+                    shippingAmount,
                     totalAmount,
                     currency: cart.currency || 'INR',
                     paymentStatus,

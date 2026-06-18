@@ -5,7 +5,7 @@
  *
  * Inline CSS only — Gmail/Outlook strip <style> blocks.
  */
-const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'ELOIR'
+const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || 'Store'
 
 export const renderEmailLayout = ({
     preheader = '',

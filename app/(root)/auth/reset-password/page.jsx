@@ -22,6 +22,7 @@ import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import OTPVerification from '@/components/Application/OTPVerification'
 import UpdatePassword from '@/components/Application/UpdatePassword'
+import AuthBrand from '@/components/Application/Website/AuthBrand'
 const ResetPassword = () => {
     const [emailVerificationLoading, setEmailVerificationLoading] = useState(false)
     const [otpVerificationLoading, setOtpVerificationLoading] = useState(false)
@@ -76,9 +77,7 @@ const ResetPassword = () => {
     return (
         <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
             <CardContent className="pt-8">
-                <div className='flex justify-center mb-6'>
-                    <div className='font-serif-display gold-shine text-4xl tracking-widest'>ELOIR</div>
-                </div>
+                <AuthBrand />
 
                 {!otpEmail
                     ?

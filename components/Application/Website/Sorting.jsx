@@ -2,7 +2,15 @@ import React from 'react'
 import { sortings } from '@/lib/utils'
 import { SlidersHorizontal, ChevronDown } from 'lucide-react'
 
-const Sorting = ({ limit, setLimit, sorting, setSorting, mobileFilterOpen, setMobileFilterOpen }) => {
+const Sorting = ({ sorting, setSorting, mobileFilterOpen, setMobileFilterOpen, total, page, pageSize }) => {
+    // Human-readable summary: "Showing 13–24 of 87"
+    const summary = (() => {
+        if (!total) return null
+        const start = page * pageSize + 1
+        const end   = Math.min(total, (page + 1) * pageSize)
+        return `${start.toLocaleString('en-IN')}–${end.toLocaleString('en-IN')} of ${total.toLocaleString('en-IN')}`
+    })()
+
     return (
         <div className='flex justify-between items-center flex-wrap gap-3 p-4 bg-gradient-to-r from-[#0e0e0e] via-[#15110a] to-[#0e0e0e] border border-[#C9A24B]/20'>
             <button
@@ -14,22 +22,13 @@ const Sorting = ({ limit, setLimit, sorting, setSorting, mobileFilterOpen, setMo
                 Filter
             </button>
 
-            {/* Per Page selector */}
-            <div className='flex items-center gap-2'>
-                <span className='text-[10px] tracking-[0.2em] uppercase text-white/40'>Show</span>
-                <div className='flex items-center gap-1'>
-                    {[9, 12, 18, 24].map(n => (
-                        <button
-                            key={n}
-                            type='button'
-                            onClick={() => setLimit(n)}
-                            className={`text-[10px] w-7 h-7 flex items-center justify-center rounded-full transition-colors cursor-pointer ${limit === n ? 'bg-[#C9A24B] text-[#0a0805] font-semibold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-                        >
-                            {n}
-                        </button>
-                    ))}
+            {/* Result count */}
+            {summary && (
+                <div className='text-[10px] tracking-[0.2em] uppercase text-white/50'>
+                    <span className='hidden md:inline text-white/40'>Showing </span>
+                    <span className='text-[#F0D77C]/80 font-medium'>{summary}</span>
                 </div>
-            </div>
+            )}
 
             {/* Sort selector */}
             <div className='flex items-center gap-2'>

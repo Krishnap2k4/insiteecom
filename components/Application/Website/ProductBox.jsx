@@ -4,56 +4,55 @@ import React, { useState } from 'react'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import Link from 'next/link'
 import { WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
-import { useDispatch } from 'react-redux'
-import { addToCartAsync } from '@/store/reducer/cartReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { addToCartAsync, updateCartQty, removeFromCartAsync } from '@/store/reducer/cartReducer'
 import { showToast } from '@/lib/showToast'
 import { useRouter } from 'next/navigation'
-import axios from '@/lib/apiClient'
-
-/**
- * Static fallback data for ELOIR card fields not present in backend.
- * Rotated by product index for visual variety.
- */
-const STATIC_EXTRAS = [
-    { badge: 'BEST SELLER', scentNotes: 'Fresh • Aquatic • Citrus', category: 'For Him & For Her', size: '50ML', tags: ['Bergamot', 'Sea Salt', 'White Musk'], bundle: 'Buy 3 at ₹1599/-' },
-    { badge: null, scentNotes: 'Cool • Mysterious • Deep', category: 'For Him', size: '50ML', tags: ['Iris', 'Vetiver', 'Amber'], bundle: 'Buy 3 at ₹1599/-' },
-    { badge: null, scentNotes: 'Spicy • Bold • Magnetic', category: 'For Him', size: '50ML', tags: ['Cardamom', 'Leather', 'Tobacco'], bundle: 'Buy 3 at ₹1599/-' },
-    { badge: null, scentNotes: 'Floral • Soft • Romantic', category: 'For Her', size: '50ML', tags: ['Rose', 'Peony', 'Sandalwood'], bundle: 'Buy 3 at ₹1599/-' },
-    { badge: null, scentNotes: 'Gourmand • Sweet • Addictive', category: 'For Her', size: '50ML', tags: ['Vanilla', 'Praline', 'Cocoa'], bundle: 'Buy 3 at ₹1599/-' },
-    { badge: 'PREMIUM', scentNotes: 'Oriental • Warm • Regal', category: 'Unisex', size: '50ML', tags: ['Saffron', 'Rose', 'Oud'], bundle: 'Buy 3 at ₹2099/-' },
-]
 
 const ProductBox = ({ product, index = 0 }) => {
-    const extras = STATIC_EXTRAS[index % STATIC_EXTRAS.length]
+    // Storefront card copy — all admin-editable via Products → Edit → "Storefront card".
+    // Empty fields collapse on the card (no fallback brand-specific text).
+    const card = product?.card || {}
+    const badge         = card.badge?.trim() || ''
+    const subtitle      = card.subtitle?.trim() || ''
+    const audienceLabel = card.audienceLabel?.trim() || ''
+    const sizeLabel     = card.sizeLabel?.trim() || ''
+    const highlights    = Array.isArray(card.highlights) ? card.highlights.filter(Boolean) : []
+    const bundleOffer   = card.bundleOffer?.trim() || ''
+
     const productUrl = WEBSITE_PRODUCT_DETAILS(product.slug, product.publicId)
     const dispatch = useDispatch()
     const router = useRouter()
     const [adding, setAdding] = useState(false)
+    const [updating, setUpdating] = useState(false)
+
+    const cartItem = useSelector(s => s.cartStore.products?.find(p => p.productId === product._id))
+    const inCart = Boolean(cartItem)
 
     const handleAddToCart = async (e) => {
         e.preventDefault()
         e.stopPropagation()
 
         if (adding) return
+
+        // Fast path: the listing API already embeds the product's variants,
+        // so we can grab the first variant id locally and skip the extra
+        // /api/product/details fetch. This shaves a full network round-trip
+        // off the click → "in cart" feedback.
+        const firstVariantId = product.variants?.[0]?._id
+        if (!firstVariantId) {
+            // No variant info on this listing payload — fall back to the
+            // product page so the user can choose options manually.
+            router.push(productUrl)
+            showToast('info', 'Please select options to add this product to your cart.')
+            return
+        }
+
         setAdding(true)
-
         try {
-            // Use the existing product detail API to get the first variant
-            const slug = product.publicId
-                ? `${product.slug}-${product.publicId}`
-                : product.slug
-            const { data: res } = await axios.get(`/api/product/details/${slug}`)
-            const variant = res?.data?.variant
-
-            if (!variant?._id) {
-                router.push(productUrl)
-                showToast('info', 'Please select options to add this product to your cart.')
-                return
-            }
-
             const action = await dispatch(addToCartAsync({
                 productId: product._id,
-                variantId: variant._id,
+                variantId: firstVariantId,
                 qty: 1,
             }))
 
@@ -62,11 +61,40 @@ const ProductBox = ({ product, index = 0 }) => {
             } else {
                 showToast('success', `${product.name} added to cart!`)
             }
-        } catch {
-            router.push(productUrl)
-            showToast('info', 'Please select options to add this product to your cart.')
         } finally {
             setAdding(false)
+        }
+    }
+
+    const handleDecrement = async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (updating || !cartItem) return
+        setUpdating(true)
+        try {
+            if (cartItem.qty <= 1) {
+                await dispatch(removeFromCartAsync({ variantId: cartItem.variantId }))
+            } else {
+                await dispatch(updateCartQty({ variantId: cartItem.variantId, qty: cartItem.qty - 1 }))
+            }
+        } catch {
+            showToast('error', 'Could not update cart.')
+        } finally {
+            setUpdating(false)
+        }
+    }
+
+    const handleIncrement = async (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        if (updating || !cartItem) return
+        setUpdating(true)
+        try {
+            await dispatch(updateCartQty({ variantId: cartItem.variantId, qty: cartItem.qty + 1 }))
+        } catch {
+            showToast('error', 'Could not update cart.')
+        } finally {
+            setUpdating(false)
         }
     }
 
@@ -93,18 +121,20 @@ const ProductBox = ({ product, index = 0 }) => {
                     <div className='absolute inset-0 bg-gradient-to-br from-[#C9A24B]/0 via-transparent to-[#C9A24B]/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500'></div>
 
                     {/* Badge */}
-                    {extras.badge && (
+                    {badge && (
                         <div className='absolute top-5 left-5 bg-gradient-to-r from-[#F0D77C] to-[#C9A24B] text-black text-[10px] font-bold tracking-[0.25em] uppercase px-3 py-1.5 shadow-lg shadow-[#C9A24B]/30'>
-                            {extras.badge}
+                            {badge}
                         </div>
                     )}
 
-                    {/* Scent notes overlay */}
-                    <div className='absolute bottom-0 left-0 right-0 p-5'>
-                        <div className='text-[10px] tracking-[0.35em] text-[#F0D77C] uppercase'>
-                            {extras.scentNotes}
+                    {/* Subtitle / descriptor overlay */}
+                    {subtitle && (
+                        <div className='absolute bottom-0 left-0 right-0 p-5'>
+                            <div className='text-[10px] tracking-[0.35em] text-[#F0D77C] uppercase'>
+                                {subtitle}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </Link>
 
@@ -117,25 +147,31 @@ const ProductBox = ({ product, index = 0 }) => {
                                 {product?.name}
                             </h3>
                         </Link>
-                        <p className='text-white/55 text-[11px] tracking-[0.18em] mt-1 uppercase'>
-                            {extras.category}
-                        </p>
+                        {audienceLabel && (
+                            <p className='text-white/55 text-[11px] tracking-[0.18em] mt-1 uppercase'>
+                                {audienceLabel}
+                            </p>
+                        )}
                     </div>
-                    <div className='text-right'>
-                        <div className='text-[10px] text-[#F0D77C]/80 tracking-[0.3em] px-2 py-1 border border-[#C9A24B]/30'>
-                            {extras.size}
+                    {sizeLabel && (
+                        <div className='text-right'>
+                            <div className='text-[10px] text-[#F0D77C]/80 tracking-[0.3em] px-2 py-1 border border-[#C9A24B]/30'>
+                                {sizeLabel}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
-                {/* Note Tags */}
-                <div className='mt-4 flex flex-wrap gap-2'>
-                    {extras.tags.map((tag) => (
-                        <span key={tag} className='text-[10px] tracking-[0.2em] text-[#F0D77C]/80 uppercase border border-[#C9A24B]/25 bg-[#C9A24B]/5 px-2 py-1'>
-                            {tag}
-                        </span>
-                    ))}
-                </div>
+                {/* Highlight chips */}
+                {highlights.length > 0 && (
+                    <div className='mt-4 flex flex-wrap gap-2'>
+                        {highlights.map((tag) => (
+                            <span key={tag} className='text-[10px] tracking-[0.2em] text-[#F0D77C]/80 uppercase border border-[#C9A24B]/25 bg-[#C9A24B]/5 px-2 py-1'>
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
 
                 {/* Pricing + CTA */}
                 <div className='mt-5 pt-4 border-t border-[#C9A24B]/15 flex items-end justify-between gap-3'>
@@ -144,18 +180,46 @@ const ProductBox = ({ product, index = 0 }) => {
                         <div className='font-serif-display text-3xl gold-text'>
                             ₹{product?.sellingPrice || 599}/-
                         </div>
-                        <div className='text-[10px] text-[#F0D77C]/60 mt-1'>
-                            {extras.bundle}
-                        </div>
+                        {bundleOffer && (
+                            <div className='text-[10px] text-[#F0D77C]/60 mt-1'>
+                                {bundleOffer}
+                            </div>
+                        )}
                     </div>
-                    <button
-                        type='button'
-                        onClick={handleAddToCart}
-                        disabled={adding}
-                        className='btn-gold uppercase text-[10px] tracking-[0.25em] font-bold px-4 py-3 cursor-pointer disabled:opacity-50'
-                    >
-                        {adding ? 'Adding...' : 'Add to Cart →'}
-                    </button>
+                    {inCart ? (
+                        <div className='flex items-center border border-[#C9A24B] bg-[#C9A24B]/10'>
+                            <button
+                                type='button'
+                                onClick={handleDecrement}
+                                disabled={updating}
+                                className='text-[#F0D77C] font-bold text-base px-3 py-2.5 hover:bg-[#C9A24B]/20 transition-colors cursor-pointer disabled:opacity-50'
+                                aria-label='Decrease quantity'
+                            >
+                                −
+                            </button>
+                            <span className='text-[#F0D77C] font-bold text-sm min-w-[1.75rem] text-center'>
+                                {cartItem.qty}
+                            </span>
+                            <button
+                                type='button'
+                                onClick={handleIncrement}
+                                disabled={updating}
+                                className='text-[#F0D77C] font-bold text-base px-3 py-2.5 hover:bg-[#C9A24B]/20 transition-colors cursor-pointer disabled:opacity-50'
+                                aria-label='Increase quantity'
+                            >
+                                +
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            type='button'
+                            onClick={handleAddToCart}
+                            disabled={adding}
+                            className='btn-gold uppercase text-[10px] tracking-[0.25em] font-bold px-4 py-3 cursor-pointer disabled:opacity-50'
+                        >
+                            {adding ? 'Adding...' : 'Add to Cart →'}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

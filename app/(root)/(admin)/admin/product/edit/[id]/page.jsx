@@ -75,6 +75,14 @@ const EditProductPage = ({ params }) => {
     const [options, setOptions] = useState([])
     const [specifications, setSpecifications] = useState([])
 
+    // Storefront card display fields
+    const [cardBadge,         setCardBadge]         = useState('')
+    const [cardSubtitle,      setCardSubtitle]      = useState('')
+    const [cardAudienceLabel, setCardAudienceLabel] = useState('')
+    const [cardSizeLabel,     setCardSizeLabel]     = useState('')
+    const [cardHighlights,    setCardHighlights]    = useState([])
+    const [cardBundleOffer,   setCardBundleOffer]   = useState('')
+
     // SEO
     const [seoTitle, setSeoTitle] = useState('')
     const [seoDescription, setSeoDescription] = useState('')
@@ -140,6 +148,16 @@ const EditProductPage = ({ params }) => {
             if (product.seo?.ogImage?.secure_url) {
                 setSeoOgImage([{ _id: product.seo.ogImage._id, url: product.seo.ogImage.secure_url }])
             }
+
+            // Storefront card fields — all safe defaults if the product
+            // was created before this section existed.
+            const card = product.card || {}
+            setCardBadge(card.badge || '')
+            setCardSubtitle(card.subtitle || '')
+            setCardAudienceLabel(card.audienceLabel || '')
+            setCardSizeLabel(card.sizeLabel || '')
+            setCardHighlights(Array.isArray(card.highlights) ? card.highlights : [])
+            setCardBundleOffer(card.bundleOffer || '')
         }
     }, [getProduct])
 
@@ -177,6 +195,14 @@ const EditProductPage = ({ params }) => {
                 tags,
                 options: options.filter((o) => o.name && o.name.trim() !== ''),
                 specifications: specifications.filter((s) => s.name && s.value),
+                card: {
+                    badge:         cardBadge.trim(),
+                    subtitle:      cardSubtitle.trim(),
+                    audienceLabel: cardAudienceLabel.trim(),
+                    sizeLabel:     cardSizeLabel.trim(),
+                    highlights:    cardHighlights.filter((t) => t && t.trim()),
+                    bundleOffer:   cardBundleOffer.trim(),
+                },
                 seo: {
                     title: seoTitle,
                     description: seoDescription,
@@ -327,6 +353,43 @@ const EditProductPage = ({ params }) => {
 
                     <Section title='Specifications' description='Static product info — Material, Country of origin, Care instructions, etc. Shown as a table on the product page.'>
                         <SpecificationsEditor value={specifications} onChange={setSpecifications} />
+                    </Section>
+
+                    <Section title='Storefront card' description='Optional copy that controls how this product appears on home-page sections and the shop listing card. Leave any field empty to hide it on the card.'>
+                        <div className='space-y-5'>
+                            <div className='grid md:grid-cols-2 gap-5'>
+                                <div>
+                                    <Label className='mb-2 block'>Badge</Label>
+                                    <Input value={cardBadge} onChange={(e) => setCardBadge(e.target.value)} placeholder='e.g. BEST SELLER, NEW, LIMITED' maxLength={40} />
+                                    <p className='text-xs text-gray-500 mt-1'>Small ribbon shown on the product image. Optional.</p>
+                                </div>
+                                <div>
+                                    <Label className='mb-2 block'>Bundle offer</Label>
+                                    <Input value={cardBundleOffer} onChange={(e) => setCardBundleOffer(e.target.value)} placeholder='e.g. Buy 3 at ₹1599/-' maxLength={120} />
+                                    <p className='text-xs text-gray-500 mt-1'>Promo line shown under the price.</p>
+                                </div>
+                                <div>
+                                    <Label className='mb-2 block'>Audience label</Label>
+                                    <Input value={cardAudienceLabel} onChange={(e) => setCardAudienceLabel(e.target.value)} placeholder='e.g. For Him, Unisex' maxLength={60} />
+                                    <p className='text-xs text-gray-500 mt-1'>Small tag below the product name.</p>
+                                </div>
+                                <div>
+                                    <Label className='mb-2 block'>Size label</Label>
+                                    <Input value={cardSizeLabel} onChange={(e) => setCardSizeLabel(e.target.value)} placeholder='e.g. 50ML' maxLength={30} />
+                                    <p className='text-xs text-gray-500 mt-1'>Pill shown next to the product name.</p>
+                                </div>
+                                <div className='md:col-span-2'>
+                                    <Label className='mb-2 block'>Subtitle</Label>
+                                    <Input value={cardSubtitle} onChange={(e) => setCardSubtitle(e.target.value)} placeholder='e.g. Fresh • Aquatic • Citrus' maxLength={160} />
+                                    <p className='text-xs text-gray-500 mt-1'>One-line descriptor overlaid at the bottom of the product image.</p>
+                                </div>
+                                <div className='md:col-span-2'>
+                                    <Label className='mb-2 block'>Highlights (note chips)</Label>
+                                    <TagsInput value={cardHighlights} onChange={setCardHighlights} />
+                                    <p className='text-xs text-gray-500 mt-1'>Small chips shown below the product name. Comma or Enter to commit. Max 12.</p>
+                                </div>
+                            </div>
+                        </div>
                     </Section>
 
                     <Section title='Tags & SEO'>

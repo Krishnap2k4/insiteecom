@@ -17,6 +17,8 @@ import { Minus, Plus, ShoppingBag, Loader2, Star, ChevronRight, Truck, ShieldChe
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "@/store/reducer/cartReducer";
 import { showToast } from "@/lib/showToast";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import axios from "@/lib/apiClient";
 import loadingSvg from '@/public/assets/images/loading.svg'
 import ProductReveiw from "@/components/Application/Website/ProductReveiw";
 import WishlistButton from "@/components/Application/Website/WishlistButton";
@@ -37,6 +39,8 @@ const ProductDetails = ({
     const [isAddedIntoCart, setIsAddedIntoCart] = useState(false)
     const [isProductLoading, setIsProductLoading] = useState(false)
     const [addingToCart, setAddingToCart] = useState(false)
+    const { shipping } = useSiteSettings()
+    const freeDeliveryThreshold = shipping?.freeDeliveryThreshold
 
     // Pricing falls back to product-level fields when no variant exists yet.
     const display = useMemo(() => ({
@@ -380,7 +384,7 @@ const ProductDetails = ({
                         {/* Trust badges */}
                         <div className='mt-8 grid grid-cols-3 gap-4'>
                             {[
-                                { icon: Truck, label: 'Free Delivery', sub: 'Orders over ₹999' },
+                                { icon: Truck, label: 'Free Delivery', sub: `Orders over ₹${freeDeliveryThreshold.toLocaleString('en-IN')}` },
                                 { icon: ShieldCheck, label: 'Authentic', sub: '100% Genuine' },
                                 { icon: RotateCcw, label: 'Easy Returns', sub: '7-day policy' },
                             ].map((item) => (

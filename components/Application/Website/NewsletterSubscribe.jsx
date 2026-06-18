@@ -9,7 +9,7 @@ import { Mail } from 'lucide-react'
  * Reusable newsletter subscribe block.
  *
  * Props:
- *   variant      — 'inline' (default), 'stacked', or 'eloir' (luxury dark gold)
+ *   variant      — 'inline' (default), 'stacked', or 'premium' (luxury dark gold)
  *   source       — attribution string sent to the API
  *   heading      — optional headline above the form
  *   description  — optional supporting copy
@@ -43,8 +43,8 @@ const NewsletterSubscribe = ({
         }
     }
 
-    // ===== ELOIR Luxury Variant =====
-    if (variant === 'eloir') {
+    // ===== Premium Luxury Variant =====
+    if (variant === 'premium') {
         return (
             <section className='relative py-20 bg-dark-gold border-y border-[#C9A24B]/30 overflow-hidden'>
                 <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-10 left-1/4 text-xl' style={{ animationDelay: '0s' }}>✦</span>
@@ -60,7 +60,7 @@ const NewsletterSubscribe = ({
                         <span className='text-xs'>❖</span>
                         <span className='h-px w-16 bg-[#C9A24B]/50'></span>
                     </div>
-                    <h3 className='font-serif-display text-4xl md:text-5xl gold-shine mt-4'>Join the House</h3>
+                    <h3 className='font-serif-display text-4xl md:text-5xl gold-shine mt-4 pb-2'>Join the House</h3>
                     <p className='text-white/70 mt-3'>Be first to receive launches, private editions and exclusive offers.</p>
 
                     {done ? (
@@ -71,7 +71,7 @@ const NewsletterSubscribe = ({
                         <form onSubmit={onSubmit} className='mt-8 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto'>
                             <input
                                 type='email'
-                                className='flex-1 h-12 bg-black/40 border border-[#C9A24B]/50 text-white placeholder:text-white/40 rounded-none focus:border-[#F0D77C] focus:outline-none px-4 text-sm transition-colors'
+                                className='w-full sm:flex-1 h-12 bg-black/40 border border-[#C9A24B]/50 text-white placeholder:text-white/40 rounded-none focus:border-[#F0D77C] focus:outline-none px-4 text-sm transition-colors'
                                 required
                                 placeholder='Your email address'
                                 value={email}
@@ -81,7 +81,7 @@ const NewsletterSubscribe = ({
                             <button
                                 type='submit'
                                 disabled={loading}
-                                className='btn-gold uppercase text-[11px] tracking-[0.3em] font-bold px-8 py-3 disabled:opacity-50 cursor-pointer'>
+                                className='w-full sm:w-auto btn-gold uppercase text-[11px] tracking-[0.3em] font-bold px-8 py-3 disabled:opacity-50 cursor-pointer'>
                                 {loading ? 'Subscribing...' : 'Subscribe'}
                             </button>
                         </form>

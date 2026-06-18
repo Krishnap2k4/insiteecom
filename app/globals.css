@@ -315,6 +315,39 @@
   animation: hero-zoom 3.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* ===== Hero Product Card Entrance =====
+   CSS-transition based so the slide-in replays on every active-slide
+   change. Default state is the "from" pose (off-screen + faded). When
+   `.hero-product-entered` is added, the element transitions to the
+   rest position. CRITICALLY, the `transition` rule lives on the
+   `entered` class — that way the *reset* (removing the class) is
+   instant, and only the *enter* (adding the class) animates. This
+   prevents fighting transitions between the reset and the next enter.
+
+   Mobile  (<768px): slides up from below.
+   Tablet+ (≥768px): slides in from the right.
+*/
+.hero-product {
+  opacity: 0;
+  transform: translateY(80px) scale(0.96);
+  will-change: transform, opacity;
+}
+.hero-product-entered {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity   1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.35s,
+    transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
+}
+@media (min-width: 768px) {
+  .hero-product {
+    transform: translateX(100px) scale(0.96);
+  }
+  .hero-product-entered {
+    transform: translateX(0) scale(1);
+  }
+}
+
 /* ===== Scroll Caret Bounce ===== */
 @keyframes caret-bounce {
   0%, 100% { transform: translateY(0);   opacity: 0.45; }

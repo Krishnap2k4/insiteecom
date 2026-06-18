@@ -20,7 +20,9 @@ import { showToast } from '@/lib/showToast'
 const Cart = () => {
     const [open, setOpen] = useState(false)
     const cart = useSelector((s) => s.cartStore)
+    const auth = useSelector((s) => s.authStore?.auth)
     const dispatch = useDispatch()
+    const shippingAmount = Number(cart.shippingAmount || 0)
 
     const hasUnavailable = cart.products.some((p) => p.unavailable)
 
@@ -54,8 +56,8 @@ const Cart = () => {
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className='h-[calc(100vh-80px)]'>
-                    <div className='h-[calc(100%-160px)] overflow-auto px-5 py-4'>
+                <div className='flex flex-col h-[calc(100vh-80px)]'>
+                    <div className='flex-1 overflow-auto px-5 py-4'>
                         {cart.count === 0 && (
                             <div className='h-full flex flex-col justify-center items-center text-center'>
                                 <ShoppingBag size={48} className='text-[#C9A24B]/30 mb-4' />
@@ -122,16 +124,34 @@ const Cart = () => {
                         ))}
                     </div>
 
-                    <div className='h-40 border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
-                        <div className='flex justify-between items-center text-sm'>
-                            <span className='text-white/60 uppercase tracking-wider text-[11px]'>Subtotal</span>
-                            <span className='font-serif-display text-lg gold-text'>{Number(cart.subtotal || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
-                        </div>
-                        {(cart.discount || 0) > 0 && (
-                            <div className='flex justify-between items-center text-xs text-[#F0D77C]/60 mt-1'>
-                                <span>Discount</span>
-                                <span>- {Number(cart.discount || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
-                            </div>
+                    <div className='shrink-0 border-t border-[#C9A24B]/30 px-5 pt-4 pb-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
+                        {cart.count > 0 && (
+                            <>
+                                <div className='flex justify-between items-center text-sm'>
+                                    <span className='text-white/60 uppercase tracking-wider text-[11px]'>Subtotal</span>
+                                    <span className='font-serif-display text-lg gold-text'>{Number(cart.subtotal || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                                </div>
+                                {(cart.discount || 0) > 0 && (
+                                    <div className='flex justify-between items-center text-xs text-[#F0D77C]/60 mt-1'>
+                                        <span>Discount</span>
+                                        <span>- {Number(cart.discount || 0).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}</span>
+                                    </div>
+                                )}
+                                <div className='flex justify-between items-center text-xs mt-1'>
+                                    <span className='text-white/60'>Delivery</span>
+                                    <span className={shippingAmount === 0 ? 'text-[#4ade80] font-semibold' : 'text-white/70'}>
+                                        {shippingAmount === 0
+                                            ? 'Free'
+                                            : shippingAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                                    </span>
+                                </div>
+                                <div className='flex justify-between items-center text-sm mt-1 pt-1 border-t border-[#C9A24B]/20'>
+                                    <span className='text-white/60 uppercase tracking-wider text-[11px]'>Total</span>
+                                    <span className='font-serif-display text-lg gold-text'>
+                                        {(Number(cart.subtotal || 0) + shippingAmount).toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+                                    </span>
+                                </div>
+                            </>
                         )}
 
                         <div className='flex gap-3 mt-4'>
@@ -141,10 +161,11 @@ const Cart = () => {
                                 View Cart
                             </Link>
                             {cart.count && !hasUnavailable ? (
-                                <Link href={WEBSITE_CHECKOUT}
-                                      onClick={() => setOpen(false)}
-                                      className='flex-1 text-center btn-gold uppercase text-[10px] tracking-[0.25em] font-bold py-3'>
-                                    Checkout
+                                <Link
+                                    href={auth ? WEBSITE_CHECKOUT : `${WEBSITE_LOGIN}?callback=${WEBSITE_CHECKOUT}`}
+                                    onClick={() => setOpen(false)}
+                                    className='flex-1 text-center btn-gold uppercase text-[10px] tracking-[0.25em] font-bold py-3'>
+                                    {auth ? 'Checkout' : 'Login to Checkout'}
                                 </Link>
                             ) : (
                                 <button type='button'

@@ -4,8 +4,16 @@ import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle } from 'lucide-react'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
+import { useSiteSettings } from '@/hooks/useSiteSettings'
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion'
 
 const ContactUs = () => {
+    const { social, sections } = useSiteSettings()
     const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' })
     const [loading, setLoading] = useState(false)
     const [done, setDone] = useState(false)
@@ -43,13 +51,14 @@ const ContactUs = () => {
                 <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] top-[25%] right-[15%] text-xl' style={{ animationDelay: '0.5s' }}>✦</span>
                 <span className='absolute pointer-events-none animate-sparkle text-[#F0D77C] bottom-[30%] left-[20%] text-lg' style={{ animationDelay: '2s' }}>✦</span>
 
+                <div className='absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#C9A24B] to-transparent pointer-events-none'></div>
                 <div className='relative z-10 text-center px-6 max-w-4xl'>
                     <div className='flex items-center justify-center gap-3 mb-5'>
                         <span className='h-px w-12 bg-gradient-to-r from-transparent to-[#C9A24B]'></span>
                         <span className='text-[#E5C76B] tracking-[0.5em] text-[11px] uppercase'>Get in Touch</span>
                         <span className='h-px w-12 bg-gradient-to-l from-transparent to-[#C9A24B]'></span>
                     </div>
-                    <h1 className='font-serif-display gold-shine text-6xl md:text-8xl leading-[0.95] tracking-tight'>
+                    <h1 className='font-serif-display gold-shine text-6xl md:text-8xl leading-[0.95] tracking-tight pb-4'>
                         Contact Us
                     </h1>
                     <p className='font-serif-display italic text-white/80 text-lg md:text-xl mt-6 max-w-2xl mx-auto'>
@@ -64,19 +73,19 @@ const ContactUs = () => {
                 <div className='relative max-w-5xl mx-auto px-6'>
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                         {[
-                            {
+                            social?.email && {
                                 icon: Mail,
                                 title: 'Email Us',
-                                primary: 'support@eloir.in',
+                                primary: social.email,
                                 secondary: 'Mon-Sat, 10AM-7PM IST',
-                                href: 'mailto:support@eloir.in',
+                                href: `mailto:${social.email}`,
                             },
-                            {
-                                icon: Phone,
-                                title: 'Call Us',
-                                primary: '+91-856-987-4589',
+                            social?.whatsapp && {
+                                icon: MessageCircle,
+                                title: 'WhatsApp',
+                                primary: social.phone || `+${social.whatsapp}`,
                                 secondary: 'Mon-Sat, 10AM-7PM IST',
-                                href: 'tel:+91-8569874589',
+                                href: `https://wa.me/${social.whatsapp}`,
                             },
                             {
                                 icon: MapPin,
@@ -85,7 +94,7 @@ const ContactUs = () => {
                                 secondary: 'Lucknow, India 256320',
                                 href: null,
                             },
-                        ].map((item) => (
+                        ].filter(Boolean).map((item) => (
                             <div key={item.title} className='group relative bg-gradient-to-br from-black/60 to-[#1a1208]/60 backdrop-blur-sm border border-[#C9A24B]/25 p-7 hover:border-[#F0D77C]/70 transition card-glow text-center'>
                                 <div className='w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-[#C9A24B] to-[#F0D77C] flex items-center justify-center mb-4 shadow-lg shadow-[#C9A24B]/30 group-hover:scale-110 transition'>
                                     <item.icon size={24} className='text-[#1a1208]' />
@@ -270,36 +279,130 @@ const ContactUs = () => {
                         <h2 className='font-serif-display gold-shine text-4xl md:text-5xl mt-3'>Quick Answers</h2>
                     </div>
 
-                    <div className='space-y-4'>
+                    <Accordion type='single' collapsible className='space-y-3'>
                         {[
                             {
-                                q: 'How long does shipping take?',
-                                a: 'We dispatch all orders within 24-48 hours. Standard delivery takes 3-7 business days across India. Express shipping is available at checkout.',
+                                q: 'Are ELOIR fragrances original perfumes?',
+                                a: 'ELOIR fragrances are inspired by some of the world\'s most loved scents. We create our own interpretations while offering a premium fragrance experience at an accessible price.',
                             },
                             {
-                                q: 'What is your return policy?',
-                                a: 'We offer a 7-day hassle-free return policy for unused, sealed products. If you receive a damaged or incorrect item, we will replace it immediately.',
+                                q: 'How long do ELOIR perfumes last?',
+                                a: 'Longevity may vary depending on skin type, weather, and usage. Most ELOIR fragrances are designed to provide long-lasting performance throughout the day.',
                             },
                             {
-                                q: 'Are ELOIR fragrances safe for sensitive skin?',
-                                a: 'All ELOIR fragrances are IFRA certified, dermatologically tested, vegan, and cruelty-free. We use premium-grade ingredients that are gentle on all skin types.',
+                                q: 'What sizes are available?',
+                                a: null,
+                                list: ['50ML Perfumes', '8ML Tester / Gift Cards'],
                             },
                             {
-                                q: 'Do you offer wholesale or bulk pricing?',
-                                a: 'Yes! We work with retailers, gifting companies, and corporates. Please reach out via the form above or email us at support@eloir.in for wholesale inquiries.',
+                                q: 'What is a Tester / Gift Card?',
+                                a: 'Our 8ML Tester / Gift Card allows customers to explore fragrances before purchasing a full-size bottle. It is also a great gifting option.',
+                            },
+                            {
+                                q: 'Do you ship across India?',
+                                a: 'Yes, we offer Pan-India shipping.',
+                            },
+                            {
+                                q: 'How long does delivery take?',
+                                a: 'Most orders are delivered within 2–7 business days depending on the delivery location.',
+                            },
+                            {
+                                q: 'How can I track my order?',
+                                a: 'Once your order is shipped, tracking details will be shared via email, SMS, or WhatsApp.',
+                            },
+                            {
+                                q: 'Can I cancel my order?',
+                                a: 'Yes, orders can be cancelled before they are shipped. Once an order has been dispatched, cancellation requests cannot be accepted.',
+                            },
+                            {
+                                q: 'Do you accept returns?',
+                                a: 'Due to the nature of fragrance products, opened or used perfumes cannot be returned. Please refer to our Refund & Return Policy at /refund-policy for complete details.',
+                            },
+                            {
+                                q: 'What if I receive a damaged or incorrect product?',
+                                a: 'Please contact us within 48 hours of delivery with photos/videos of the package and product. We will review the issue and provide a suitable resolution.',
+                            },
+                            {
+                                q: 'Are your perfumes suitable for daily wear?',
+                                a: 'Yes. Our collection includes fragrances suitable for everyday use, office wear, special occasions, and evening outings.',
+                            },
+                            {
+                                q: 'What payment methods do you accept?',
+                                a: 'We accept secure online payments through UPI, debit cards, credit cards, net banking, and other payment methods available at checkout.',
+                            },
+                            {
+                                q: 'Are ELOIR fragrances suitable for gifting?',
+                                a: 'Absolutely. ELOIR fragrances and Tester / Gift Cards make excellent gifts for fragrance lovers.',
+                            },
+                            {
+                                q: 'How can I contact ELOIR?',
+                                a: null,
+                                contacts: [
+                                    social?.email && { label: 'Email',     value: social.email },
+                                    sections?.followUs?.instagramHandle && { label: 'Instagram', value: sections.followUs.instagramHandle },
+                                    social?.whatsapp && { label: 'WhatsApp', value: social.phone || `+${social.whatsapp}` },
+                                ].filter(Boolean),
+                            },
+                            {
+                                q: 'Why choose ELOIR?',
+                                a: null,
+                                bullets: ['✨ Premium quality fragrances', '✨ Inspired by iconic scents', '✨ Long-lasting performance', '✨ Affordable luxury', '✨ Pan-India delivery'],
+                                tagline: 'ELOIR — The Signature of Presence.',
                             },
                         ].map((item, i) => (
-                            <div key={i} className='bg-gradient-to-br from-black/50 to-[#1a1208]/50 border border-[#C9A24B]/20 p-6 hover:border-[#C9A24B]/40 transition'>
-                                <h3 className='font-serif-display text-lg text-white'>{item.q}</h3>
-                                <p className='text-white/60 text-sm leading-relaxed mt-2'>{item.a}</p>
-                            </div>
+                            <AccordionItem
+                                key={i}
+                                value={`faq-${i}`}
+                                className='bg-gradient-to-br from-black/50 to-[#1a1208]/50 border border-[#C9A24B]/20 px-6 data-[state=open]:border-[#C9A24B]/60 transition-colors'
+                            >
+                                <AccordionTrigger className='font-serif-display text-base md:text-lg text-white hover:no-underline hover:text-[#F0D77C] data-[state=open]:text-[#F0D77C] py-5 text-left gap-4 [&>svg]:text-[#C9A24B] [&>svg]:shrink-0'>
+                                    {item.q}
+                                </AccordionTrigger>
+                                <AccordionContent className='pb-5'>
+                                    {item.a && (
+                                        <p className='text-white/60 text-sm leading-relaxed'>{item.a}</p>
+                                    )}
+                                    {item.list && (
+                                        <ul className='space-y-1.5'>
+                                            {item.list.map((li) => (
+                                                <li key={li} className='text-white/60 text-sm flex items-center gap-2'>
+                                                    <span className='w-1.5 h-1.5 rounded-full bg-[#C9A24B] shrink-0'></span>
+                                                    {li}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {item.contacts && (
+                                        <ul className='space-y-2'>
+                                            {item.contacts.map((c) => (
+                                                <li key={c.label} className='text-white/60 text-sm flex items-start gap-2'>
+                                                    <span className='text-[#C9A24B] font-medium shrink-0'>{c.label}:</span>
+                                                    <span>{c.value}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                    {item.bullets && (
+                                        <>
+                                            <ul className='space-y-1'>
+                                                {item.bullets.map((b) => (
+                                                    <li key={b} className='text-white/60 text-sm'>{b}</li>
+                                                ))}
+                                            </ul>
+                                            {item.tagline && (
+                                                <p className='mt-3 text-[#F0D77C]/80 text-sm font-serif-display italic'>{item.tagline}</p>
+                                            )}
+                                        </>
+                                    )}
+                                </AccordionContent>
+                            </AccordionItem>
                         ))}
-                    </div>
+                    </Accordion>
                 </div>
             </section>
 
             {/* ===== NEWSLETTER ===== */}
-            <NewsletterSubscribe variant='eloir' source='contact-us' />
+            <NewsletterSubscribe variant='premium' source='contact-us' />
         </>
     )
 }

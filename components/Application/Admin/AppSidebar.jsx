@@ -12,24 +12,39 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
-import logoBlack from '@/public/assets/images/logo-black.png'
-import logoWhite from '@/public/assets/images/logo-white.png'
 import { Button } from "@/components/ui/button"
 import { LuChevronRight } from "react-icons/lu";
 import { IoMdClose } from "react-icons/io";
 import { adminAppSidebarMenu } from "@/lib/adminSidebarMenu"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import Link from "next/link"
+import { useSiteSettings } from "@/hooks/useSiteSettings"
 
 
 const AppSidebar = () => {
     const { toggleSidebar } = useSidebar()
+    const { branding } = useSiteSettings()
+    const siteName = branding?.siteName || 'Admin'
+    const hasCustomLogo = Boolean(branding?.logoUrl)
+
     return (
         <Sidebar className="z-50">
             <SidebarHeader className="border-b h-14 p-0">
                 <div className="flex justify-between items-center px-4">
-                    <Image src={logoBlack.src} height={50} width={logoBlack.width} className="block dark:hidden h-[50px] w-auto" alt="logo dark" />
-                    <Image src={logoWhite.src} height={50} width={logoWhite.width} className="hidden dark:block h-[50px] w-auto" alt="logo white" />
+                    {hasCustomLogo ? (
+                        <Image
+                            src={branding.logoUrl}
+                            height={50}
+                            width={160}
+                            alt={siteName}
+                            className="h-[40px] w-auto object-contain"
+                            unoptimized
+                        />
+                    ) : (
+                        <span className="text-lg font-semibold uppercase tracking-widest">
+                            {siteName}
+                        </span>
+                    )}
                     <Button onClick={toggleSidebar} type="button" size="icon" className="md:hidden">
                         <IoMdClose />
                     </Button>

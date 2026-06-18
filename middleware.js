@@ -30,7 +30,8 @@ export async function middleware(request) {
     const isAuthPath = pathname.startsWith('/auth')
     const isAdminPath = pathname.startsWith('/admin')
     const isUserPath = pathname.startsWith('/my-account')
-    const needsAuthCheck = isAuthPath || isAdminPath || isUserPath
+    const isCheckoutPath = pathname.startsWith('/checkout')
+    const needsAuthCheck = isAuthPath || isAdminPath || isUserPath || isCheckoutPath
 
     if (!needsAuthCheck) {
         return passThrough()
@@ -41,7 +42,9 @@ export async function middleware(request) {
 
         if (!hasToken) {
             if (!isAuthPath) {
-                return NextResponse.redirect(new URL(WEBSITE_LOGIN, request.nextUrl))
+                const loginUrl = new URL(WEBSITE_LOGIN, request.nextUrl)
+                loginUrl.searchParams.set('callback', pathname)
+                return NextResponse.redirect(loginUrl)
             }
             return passThrough()
         }

@@ -1,9 +1,21 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Instagram, Facebook, Twitter } from 'lucide-react'
-import { USER_DASHBOARD, WEBSITE_HOME, WEBSITE_LOGIN, WEBSITE_REGISTER, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
+import { USER_DASHBOARD, WEBSITE_LOGIN, WEBSITE_REGISTER, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
+import { getSiteSettings } from '@/lib/settings'
 
-const Footer = () => {
+const COLUMN_HEADING = 'text-[#F0D77C] uppercase tracking-[0.3em] text-[11px] font-semibold flex items-center gap-2'
+const LINK_CLASS = 'hover:text-[#F0D77C] transition-colors'
+
+const SOCIAL_ICON_CLASS = 'w-9 h-9 rounded-full border border-[#C9A24B]/50 flex items-center justify-center text-[#F0D77C] hover:bg-gradient-to-br hover:from-[#C9A24B] hover:to-[#F0D77C] hover:text-[#1a1208] transition'
+
+const Footer = async () => {
+    const settings = await getSiteSettings()
+    const { branding, social } = settings
+    const footerLogo = branding.logoFooterUrl || branding.logoUrl
+    const siteName   = branding.siteName || 'Store'
+
     return (
         <footer className='relative bg-gradient-to-b from-[#0a0805] to-[#040404] border-t border-[#C9A24B]/30 pt-16 pb-10 overflow-hidden'>
             {/* Top glow line */}
@@ -11,94 +23,138 @@ const Footer = () => {
             <div className='absolute top-0 left-1/4 w-64 h-64 bg-[#C9A24B]/10 rounded-full blur-3xl'></div>
 
             <div className='relative max-w-7xl mx-auto px-6'>
-                <div className='grid md:grid-cols-4 gap-10'>
-                    {/* Brand Column */}
-                    <div>
-                        <div className='text-center md:text-left select-none'>
-                            <div className='font-serif-display font-semibold gold-shine text-4xl md:text-5xl leading-none'>
-                                EL<span className='relative inline-block'>
-                                    <span>O</span>
-                                    <span className='absolute -top-[0.55em] left-1/2 -translate-x-1/2 text-[0.4em] gold-shine'>❖</span>
-                                </span>IR
-                            </div>
-                            <div className='flex items-center justify-center md:justify-start gap-2 mt-1'>
-                                <span className='text-[#C9A24B]'>◆</span>
-                                <div className='uppercase text-white/80 text-[10px] md:text-[11px] tracking-[0.4em]'>
-                                    The Signature of Presence
-                                </div>
-                                <span className='text-[#C9A24B]'>◆</span>
-                            </div>
-                        </div>
-                        <p className='text-white/55 text-sm mt-6 leading-relaxed'>
-                            ELOIR crafts premium extrait de parfum for the modern connoisseur — each bottle a signature of presence.
-                        </p>
 
-                        {/* Social Icons */}
+                {/* ── Main grid ── */}
+                <div className='grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10'>
+
+                    {/* Brand */}
+                    <div className='col-span-2 lg:col-span-1'>
+                        <div className='select-none'>
+                            {footerLogo ? (
+                                <Image src={footerLogo} width={160} height={48} alt={siteName} className='h-12 w-auto object-contain' unoptimized />
+                            ) : (
+                                <div className='font-serif-display font-semibold gold-shine text-4xl leading-none uppercase tracking-widest'>
+                                    {siteName}
+                                </div>
+                            )}
+                        </div>
+                        {branding.description && (
+                            <p className='text-white/55 text-sm mt-5 leading-relaxed'>
+                                {branding.description}
+                            </p>
+                        )}
+
+                        {/* Social icons — render only if URL is set */}
                         <div className='flex gap-3 mt-5'>
-                            <Link href="#" className='w-9 h-9 rounded-full border border-[#C9A24B]/50 flex items-center justify-center text-[#F0D77C] hover:bg-gradient-to-br hover:from-[#C9A24B] hover:to-[#F0D77C] hover:text-[#1a1208] transition'>
-                                <Instagram size={16} />
-                            </Link>
-                            <Link href="#" className='w-9 h-9 rounded-full border border-[#C9A24B]/50 flex items-center justify-center text-[#F0D77C] hover:bg-gradient-to-br hover:from-[#C9A24B] hover:to-[#F0D77C] hover:text-[#1a1208] transition'>
-                                <Facebook size={16} />
-                            </Link>
-                            <Link href="#" className='w-9 h-9 rounded-full border border-[#C9A24B]/50 flex items-center justify-center text-[#F0D77C] hover:bg-gradient-to-br hover:from-[#C9A24B] hover:to-[#F0D77C] hover:text-[#1a1208] transition'>
-                                <Twitter size={16} />
-                            </Link>
+                            {social.instagram && (
+                                <Link href={social.instagram} target='_blank' rel='noopener noreferrer' aria-label='Instagram' className={SOCIAL_ICON_CLASS}>
+                                    <Instagram size={16} />
+                                </Link>
+                            )}
+                            {social.facebook && (
+                                <Link href={social.facebook} target='_blank' rel='noopener noreferrer' aria-label='Facebook' className={SOCIAL_ICON_CLASS}>
+                                    <Facebook size={16} />
+                                </Link>
+                            )}
+                            {social.twitter && (
+                                <Link href={social.twitter} target='_blank' rel='noopener noreferrer' aria-label='Twitter / X' className={SOCIAL_ICON_CLASS}>
+                                    <Twitter size={16} />
+                                </Link>
+                            )}
+                        </div>
+
+                        {/* Quick contact */}
+                        <div className='mt-5 space-y-1 text-white/50 text-xs'>
+                            {social.email && (
+                                <p>
+                                    <a href={`mailto:${social.email}`} className='hover:text-[#F0D77C] transition-colors'>
+                                        {social.email}
+                                    </a>
+                                </p>
+                            )}
+                            {social.whatsapp && (
+                                <p>
+                                    <a href={`https://wa.me/${social.whatsapp}`} target='_blank' rel='noopener noreferrer' className='hover:text-[#F0D77C] transition-colors'>
+                                        {social.phone || `+${social.whatsapp}`}
+                                    </a>
+                                </p>
+                            )}
                         </div>
                     </div>
 
-                    {/* Shop Column */}
+                    {/* Shop */}
                     <div>
-                        <div className='text-[#F0D77C] uppercase tracking-[0.3em] text-[11px] font-semibold flex items-center gap-2'>
+                        <div className={COLUMN_HEADING}>
                             <span className='h-px w-6 bg-[#C9A24B]'></span> Shop
                         </div>
-                        <ul className='mt-4 space-y-2 text-white/60 text-sm'>
-                            <li><Link href={WEBSITE_SHOP} className='hover:text-[#F0D77C] transition'>All Fragrances</Link></li>
-                            <li><Link href={`${WEBSITE_SHOP}?category=men`} className='hover:text-[#F0D77C] transition'>For Him</Link></li>
-                            <li><Link href={`${WEBSITE_SHOP}?category=women`} className='hover:text-[#F0D77C] transition'>For Her</Link></li>
-                            <li><Link href={`${WEBSITE_SHOP}?category=unisex`} className='hover:text-[#F0D77C] transition'>Unisex</Link></li>
+                        <ul className='mt-4 space-y-2.5 text-white/60 text-sm'>
+                            <li><Link href={WEBSITE_SHOP} className={LINK_CLASS}>All Fragrances</Link></li>
+                            <li><Link href={`${WEBSITE_SHOP}?category=men`} className={LINK_CLASS}>For Him</Link></li>
+                            <li><Link href={`${WEBSITE_SHOP}?category=women`} className={LINK_CLASS}>For Her</Link></li>
+                            <li><Link href={`${WEBSITE_SHOP}?category=unisex`} className={LINK_CLASS}>Unisex</Link></li>
+                            <li><Link href={`${WEBSITE_SHOP}?sort=default_sorting`} className={LINK_CLASS}>New Arrivals</Link></li>
+                            <li><Link href={`${WEBSITE_SHOP}?sort=bestseller`} className={LINK_CLASS}>Bestsellers</Link></li>
                         </ul>
                     </div>
 
-                    {/* Support Column */}
+                    {/* Help */}
                     <div>
-                        <div className='text-[#F0D77C] uppercase tracking-[0.3em] text-[11px] font-semibold flex items-center gap-2'>
-                            <span className='h-px w-6 bg-[#C9A24B]'></span> Support
+                        <div className={COLUMN_HEADING}>
+                            <span className='h-px w-6 bg-[#C9A24B]'></span> Help
                         </div>
-                        <ul className='mt-4 space-y-2 text-white/60 text-sm'>
-                            <li><Link href="/contact-us" className='hover:text-[#F0D77C] transition'>Contact Us</Link></li>
-                            <li><Link href="/orders" className='hover:text-[#F0D77C] transition'>Track Order</Link></li>
-                            <li><Link href="/returns" className='hover:text-[#F0D77C] transition'>Returns</Link></li>
-                            <li><Link href={WEBSITE_LOGIN} className='hover:text-[#F0D77C] transition'>Login</Link></li>
-                            <li><Link href={WEBSITE_REGISTER} className='hover:text-[#F0D77C] transition'>Register</Link></li>
+                        <ul className='mt-4 space-y-2.5 text-white/60 text-sm'>
+                            <li><Link href="/contact-us" className={LINK_CLASS}>Contact Us</Link></li>
+                            <li><Link href="/contact-us#faq" className={LINK_CLASS}>FAQs</Link></li>
+                            <li><Link href="/orders" className={LINK_CLASS}>Track Order</Link></li>
+                            <li><Link href="/returns" className={LINK_CLASS}>My Returns</Link></li>
+                            <li><Link href={WEBSITE_LOGIN} className={LINK_CLASS}>Login</Link></li>
+                            <li><Link href={WEBSITE_REGISTER} className={LINK_CLASS}>Register</Link></li>
                         </ul>
                     </div>
 
-                    {/* Company Column */}
+                    {/* Company */}
                     <div>
-                        <div className='text-[#F0D77C] uppercase tracking-[0.3em] text-[11px] font-semibold flex items-center gap-2'>
+                        <div className={COLUMN_HEADING}>
                             <span className='h-px w-6 bg-[#C9A24B]'></span> Company
                         </div>
-                        <ul className='mt-4 space-y-2 text-white/60 text-sm'>
-                            <li><Link href="/about-us" className='hover:text-[#F0D77C] transition'>Our Story</Link></li>
-                            <li><Link href={USER_DASHBOARD} className='hover:text-[#F0D77C] transition'>My Account</Link></li>
-                            <li><Link href="/privacy-policy" className='hover:text-[#F0D77C] transition'>Privacy</Link></li>
-                            <li><Link href="/terms-and-conditions" className='hover:text-[#F0D77C] transition'>Terms</Link></li>
+                        <ul className='mt-4 space-y-2.5 text-white/60 text-sm'>
+                            <li><Link href="/about-us" className={LINK_CLASS}>Our Story</Link></li>
+                            <li><Link href="/contact-us" className={LINK_CLASS}>Contact</Link></li>
+                            <li><Link href={USER_DASHBOARD} className={LINK_CLASS}>My Account</Link></li>
                         </ul>
                     </div>
+
+                    {/* Policies */}
+                    <div>
+                        <div className={COLUMN_HEADING}>
+                            <span className='h-px w-6 bg-[#C9A24B]'></span> Policies
+                        </div>
+                        <ul className='mt-4 space-y-2.5 text-white/60 text-sm'>
+                            <li><Link href="/privacy-policy" className={LINK_CLASS}>Privacy Policy</Link></li>
+                            <li><Link href="/terms-and-conditions" className={LINK_CLASS}>Terms &amp; Conditions</Link></li>
+                            <li><Link href="/refund-policy" className={LINK_CLASS}>Refund &amp; Return Policy</Link></li>
+                            <li><Link href="/cancellation-policy" className={LINK_CLASS}>Cancellation Policy</Link></li>
+                            <li><Link href="/shipping-policy" className={LINK_CLASS}>Shipping Policy</Link></li>
+                        </ul>
+                    </div>
+
                 </div>
 
                 {/* Gold divider */}
-                <div className='gold-line h-px my-10'></div>
+                <div className='h-px bg-gradient-to-r from-transparent via-[#C9A24B]/50 to-transparent my-10'></div>
 
                 {/* Bottom bar */}
                 <div className='flex flex-col md:flex-row justify-between items-center text-white/40 text-xs gap-3'>
-                    <div>© {new Date().getFullYear()} ELOIR · The Signature of Presence. All rights reserved.</div>
-                    <div className='flex gap-5'>
-                        <Link href="/terms-and-conditions" className='hover:text-[#F0D77C]'>Terms</Link>
-                        <Link href="/privacy-policy" className='hover:text-[#F0D77C]'>Privacy</Link>
+                    <div>© {new Date().getFullYear()} {siteName}{branding.tagline ? ` · ${branding.tagline}` : ''}. All rights reserved.</div>
+                    <div className='flex flex-wrap justify-center gap-4'>
+                        <Link href="/privacy-policy" className='hover:text-[#F0D77C] transition-colors'>Privacy</Link>
+                        <Link href="/terms-and-conditions" className='hover:text-[#F0D77C] transition-colors'>Terms</Link>
+                        <Link href="/refund-policy" className='hover:text-[#F0D77C] transition-colors'>Refunds</Link>
+                        <Link href="/cancellation-policy" className='hover:text-[#F0D77C] transition-colors'>Cancellations</Link>
+                        <Link href="/shipping-policy" className='hover:text-[#F0D77C] transition-colors'>Shipping</Link>
                     </div>
                 </div>
+
             </div>
         </footer>
     )

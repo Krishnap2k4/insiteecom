@@ -18,6 +18,16 @@ const specSchema = z.object({
     value: z.string().trim().min(1),
 })
 
+/** Storefront listing-card display copy. All fields optional. */
+const cardSchema = z.object({
+    badge:         z.string().trim().max(40).optional().default(''),
+    subtitle:      z.string().trim().max(160).optional().default(''),
+    audienceLabel: z.string().trim().max(60).optional().default(''),
+    sizeLabel:     z.string().trim().max(30).optional().default(''),
+    highlights:    z.array(z.string().trim().min(1).max(40)).max(12).optional().default([]),
+    bundleOffer:   z.string().trim().max(120).optional().default(''),
+})
+
 const extensionSchema = z.object({
     brand: z.string().nullable().optional(),
     sku: z.string().trim().optional(),
@@ -27,6 +37,7 @@ const extensionSchema = z.object({
     categories: z.array(z.string()).optional(),
     options: z.array(optionSchema).max(3).optional(),
     specifications: z.array(specSchema).optional(),
+    card: cardSchema.optional(),
     seo: z.object({
         title: z.string().trim().optional(),
         description: z.string().trim().optional(),
@@ -101,6 +112,7 @@ export async function PUT(request) {
             }))
         }
         if (validatedData.specifications !== undefined) getProduct.specifications = validatedData.specifications
+        if (validatedData.card !== undefined) getProduct.card = validatedData.card
         if (validatedData.seo !== undefined) getProduct.seo = validatedData.seo
 
         // publicId is immutable — never touch it.

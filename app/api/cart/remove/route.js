@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/databaseConnection'
 import { catchError, response } from '@/lib/helperFunction'
 import { resolveCartOwner, findOrCreateCart, hydrateCartItems, cartTotals } from '@/lib/cart'
+import { getShippingSettings } from '@/lib/settings'
 import { z } from 'zod'
 
 const bodySchema = z.object({
@@ -23,7 +24,8 @@ export async function POST(request) {
         await cart.save()
 
         const items = await hydrateCartItems(cart)
-        const totals = cartTotals(items)
+        const shippingSettings = await getShippingSettings()
+        const totals = cartTotals(items, shippingSettings)
         return response(true, 200, 'Removed.', {
             id: String(cart._id),
             items,

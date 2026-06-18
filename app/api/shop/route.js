@@ -71,12 +71,10 @@ export async function GET(request) {
         if (optionConditions.length > 0) matchStage['$and'] = optionConditions
 
 
-        // aggregation pipeline
-        const products = await ProductModel.aggregate([
+        // Pipeline up to the variant-availability filter — shared between
+        // the paginated result and the total count via $facet.
+        const baseStages = [
             { $match: matchStage },
-            { $sort: sortquery },
-            { $skip: skip },
-            { $limit: limit + 1 },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -103,48 +101,65 @@ export async function GET(request) {
                 }
             },
             { $match: { variants: { $ne: [] } } },
+        ]
+
+        // Single $facet query: paginated items AND total count.
+        const [result] = await ProductModel.aggregate([
+            ...baseStages,
             {
-                $lookup: {
-                    from: 'medias',
-                    localField: 'media',
-                    foreignField: '_id',
-                    as: 'media'
-                }
-            },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    slug: 1,
-                    mrp: 1,
-                    sellingPrice: 1,
-                    discountPercentage: 1,
-                    media: {
-                        _id: 1,
-                        secure_url: 1,
-                        alt: 1
-                    },
-                    variants: {
-                        color: 1,
-                        size: 1,
-                        mrp: 1,
-                        sellingPrice: 1,
-                        discountPercentage: 1,
-                    }
+                $facet: {
+                    items: [
+                        { $sort: sortquery },
+                        { $skip: skip },
+                        { $limit: limit },
+                        {
+                            $lookup: {
+                                from: 'medias',
+                                localField: 'media',
+                                foreignField: '_id',
+                                as: 'media'
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                                name: 1,
+                                slug: 1,
+                                mrp: 1,
+                                sellingPrice: 1,
+                                discountPercentage: 1,
+                                media: { _id: 1, secure_url: 1, alt: 1 },
+                                publicId: 1,
+                                card: 1,
+                                variants: {
+                                    _id: 1,
+                                    color: 1,
+                                    size: 1,
+                                    mrp: 1,
+                                    sellingPrice: 1,
+                                    discountPercentage: 1,
+                                },
+                            }
+                        }
+                    ],
+                    total: [{ $count: 'count' }],
                 }
             }
         ])
 
+        const products   = result?.items || []
+        const total      = result?.total?.[0]?.count || 0
+        const totalPages = Math.max(1, Math.ceil(total / limit))
+        const nextPage   = (page + 1) * limit < total ? page + 1 : null  // back-compat
 
-
-        // check if more data exists 
-        let nextPage = null
-        if (products.length > limit) {
-            nextPage = page + 1
-            products.pop() // remove extra item
-        }
-
-        return response(true, 200, 'Product data found.', { products, nextPage })
+        return response(true, 200, 'Product data found.', {
+            products,
+            total,
+            totalPages,
+            currentPage: page,
+            limit,
+            nextPage,
+        })
 
     } catch (error) {
         return catchError(error)

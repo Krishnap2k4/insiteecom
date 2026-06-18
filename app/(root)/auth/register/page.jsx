@@ -20,6 +20,7 @@ import Link from 'next/link'
 import { WEBSITE_LOGIN } from '@/routes/WebsiteRoute'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
+import AuthBrand from '@/components/Application/Website/AuthBrand'
 const RegisterPage = () => {
     const [loading, setLoading] = useState(false)
     const [isTypePassword, setIsTypePassword] = useState(true)
@@ -63,9 +64,7 @@ const RegisterPage = () => {
     return (
         <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
             <CardContent className="pt-8">
-                <div className='flex justify-center mb-6'>
-                    <div className='font-serif-display gold-shine text-4xl tracking-widest'>ELOIR</div>
-                </div>
+                <AuthBrand />
                 <div className='text-center'>
                     <h1 className='text-2xl font-serif-display text-white mb-2'>Create Account</h1>
                     <p className='text-white/60 text-sm'>Enter your details to register.</p>

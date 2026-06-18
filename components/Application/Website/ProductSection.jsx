@@ -6,6 +6,12 @@ import ProductBox from './ProductBox'
 import AnimateIn from './AnimateIn'
 import { ChevronRight } from 'lucide-react'
 
+const CATEGORY_TABS = [
+    { label: 'For All', value: 'all'   },
+    { label: 'For Him', value: 'men'   },
+    { label: 'For Her', value: 'women' },
+]
+
 const ProductSection = ({
     title,
     eyebrow,
@@ -14,15 +20,25 @@ const ProductSection = ({
     viewAllLabel = 'View All',
     theme = 'dark',
     id,
+    showCategoryTabs = false,
 }) => {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
+    const [activeCategory, setActiveCategory] = useState('all')
+
+    const effectiveApiUrl = activeCategory === 'all'
+        ? apiUrl
+        : `${apiUrl}&category=${activeCategory}`
+
+    const effectiveViewAllHref = activeCategory === 'all'
+        ? viewAllHref
+        : `${viewAllHref}&category=${activeCategory}`
 
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true)
             try {
-                const { data } = await axios.get(apiUrl)
+                const { data } = await axios.get(effectiveApiUrl)
                 if (data?.success) {
                     setProducts(data.data?.products ?? data.data ?? [])
                 }
@@ -33,6 +49,11 @@ const ProductSection = ({
             }
         }
         fetchProducts()
+    }, [effectiveApiUrl])
+
+    // Reset tab when base URL changes
+    useEffect(() => {
+        setActiveCategory('all')
     }, [apiUrl])
 
     const isDark = theme === 'dark'
@@ -59,8 +80,9 @@ const ProductSection = ({
             )}
 
             <div className='relative max-w-7xl mx-auto px-6'>
+
                 {/* Section Header */}
-                <AnimateIn direction="fade" className="text-center mb-12">
+                <AnimateIn direction="fade" className="text-center mb-10">
                     <div className={`flex items-center justify-center gap-3 ${isDark ? 'text-[#C9A24B]' : 'text-[#8a6d28]'}`}>
                         <span className={`h-px w-16 ${isDark ? 'bg-[#C9A24B]/50' : 'bg-[#8a6d28]/50'}`}></span>
                         <span className='text-xs'>❖</span>
@@ -73,6 +95,33 @@ const ProductSection = ({
                         {title}
                     </h2>
                 </AnimateIn>
+
+                {/* Category Tabs */}
+                {showCategoryTabs && (
+                    <div className='flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10'>
+                        {CATEGORY_TABS.map((tab) => {
+                            const isActive = activeCategory === tab.value
+                            return (
+                                <button
+                                    key={tab.value}
+                                    type='button'
+                                    onClick={() => setActiveCategory(tab.value)}
+                                    className={`px-5 sm:px-6 py-2 text-[10px] sm:text-[11px] tracking-[0.25em] uppercase font-semibold transition-all duration-200 cursor-pointer ${
+                                        isDark
+                                            ? isActive
+                                                ? 'bg-gradient-to-r from-[#C9A24B] to-[#F0D77C] text-[#1a1208]'
+                                                : 'border border-[#C9A24B]/35 text-white/60 hover:border-[#C9A24B]/70 hover:text-white/90'
+                                            : isActive
+                                                ? 'bg-[#1a1208] text-[#F0D77C]'
+                                                : 'border border-[#8a6d28]/30 text-[#3a2a0a]/60 hover:border-[#8a6d28]/60 hover:text-[#3a2a0a]'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            )
+                        })}
+                    </div>
+                )}
 
                 {/* Product Grid */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
@@ -94,7 +143,7 @@ const ProductSection = ({
                 {/* View All CTA */}
                 <div className='mt-14 text-center'>
                     <Link
-                        href={viewAllHref}
+                        href={effectiveViewAllHref}
                         className={`inline-flex items-center gap-3 uppercase text-[11px] tracking-[0.35em] font-semibold px-10 py-4 transition ${
                             isDark
                                 ? 'btn-dark-gold'
@@ -104,6 +153,7 @@ const ProductSection = ({
                         {viewAllLabel} <ChevronRight size={14} />
                     </Link>
                 </div>
+
             </div>
         </section>
     )
