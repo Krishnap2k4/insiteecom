@@ -13,7 +13,7 @@ import Image from 'next/image'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
 import { removeFromCartAsync, updateCartQty } from '@/store/reducer/cartReducer'
 import Link from 'next/link'
-import { WEBSITE_CART, WEBSITE_CHECKOUT, WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
+import { WEBSITE_CART, WEBSITE_CHECKOUT, WEBSITE_LOGIN, WEBSITE_PRODUCT_DETAILS } from '@/routes/WebsiteRoute'
 import { useState } from 'react'
 import { showToast } from '@/lib/showToast'
 

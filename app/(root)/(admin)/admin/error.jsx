@@ -19,6 +19,7 @@ const isChunkLoadError = (error) => {
 
 export default function AdminError({ error, reset }) {
     useEffect(() => {
+        if (error) console.error('[Admin error boundary]', error)
         if (isChunkLoadError(error)) {
             try {
                 if (sessionStorage.getItem('chunk-reloaded') !== '1') {

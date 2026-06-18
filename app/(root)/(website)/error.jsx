@@ -19,6 +19,12 @@ const isChunkLoadError = (error) => {
 
 export default function StorefrontError({ error, reset }) {
     useEffect(() => {
+        // Log the real error to the browser console so it's visible in
+        // production user reports / DevTools, not swallowed by the boundary.
+        // (Next.js already reports it to the server via instrumentation
+        // when configured; this surfaces it for the visitor too.)
+        if (error) console.error('[Storefront error boundary]', error)
+
         if (isChunkLoadError(error)) {
             try {
                 if (sessionStorage.getItem('chunk-reloaded') !== '1') {

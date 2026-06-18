@@ -27,6 +27,7 @@ const isChunkLoadError = (error) => {
 
 export default function GlobalError({ error, reset }) {
     useEffect(() => {
+        if (error) console.error('[Global error boundary]', error)
         if (isChunkLoadError(error)) {
             // Avoid infinite reload loops — only auto-reload once.
             try {
