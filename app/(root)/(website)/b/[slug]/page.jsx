@@ -1,10 +1,29 @@
 import ProductBox from '@/components/Application/Website/ProductBox'
 import { Button } from '@/components/ui/button'
 import axios from '@/lib/apiClient'
+import { getApiBaseUrl } from '@/lib/serverApiUrl'
 import { WEBSITE_HOME, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FiChevronRight } from 'react-icons/fi'
+
+const BrandNotFound = ({ slug }) => (
+    <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
+        <div className='max-w-md text-center'>
+            <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
+            <h1 className='text-2xl font-serif-display text-white mb-3'>Brand not found</h1>
+            <p className='text-white/50 mb-8'>We couldn&apos;t find a brand at <span className='font-mono text-[#F0D77C]'>/b/{slug}</span>.</p>
+            <div className='flex gap-3 justify-center'>
+                <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                    Browse shop
+                </Link>
+                <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                    Go home
+                </Link>
+            </div>
+        </div>
+    </div>
+)
 
 /**
  * Brand landing page. Server-rendered: shows the brand hero (logo +
@@ -13,28 +32,19 @@ import { FiChevronRight } from 'react-icons/fi'
 const BrandPage = async ({ params }) => {
     const { slug } = await params
 
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/brand/by-slug/${encodeURIComponent(slug)}`
-    const { data: res } = await axios.get(url)
-
-    if (!res?.success) {
-        return (
-            <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
-                <div className='max-w-md text-center'>
-                    <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
-                    <h1 className='text-2xl font-serif-display text-white mb-3'>Brand not found</h1>
-                    <p className='text-white/50 mb-8'>We couldn&apos;t find a brand at <span className='font-mono text-[#F0D77C]'>/b/{slug}</span>.</p>
-                    <div className='flex gap-3 justify-center'>
-                        <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
-                            Browse shop
-                        </Link>
-                        <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
-                            Go home
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        )
+    let res = null
+    try {
+        const baseUrl = await getApiBaseUrl()
+        if (!baseUrl) throw new Error('API base URL unavailable')
+        const url = `${baseUrl}/brand/by-slug/${encodeURIComponent(slug)}`
+        const { data } = await axios.get(url)
+        res = data
+    } catch (err) {
+        console.error('[b/[slug]] fetch failed:', err?.message || err)
+        return <BrandNotFound slug={slug} />
     }
+
+    if (!res?.success) return <BrandNotFound slug={slug} />
 
     const { brand, products = [] } = res.data
     const logoUrl = brand.logo?.secure_url

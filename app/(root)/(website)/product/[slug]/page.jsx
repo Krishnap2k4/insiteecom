@@ -2,6 +2,7 @@ import axios from '@/lib/apiClient'
 import { permanentRedirect } from 'next/navigation'
 import React from 'react'
 import ProductDetails from './ProductDetails'
+import { getApiBaseUrl } from '@/lib/serverApiUrl'
 
 /**
  * Product detail page.
@@ -16,6 +17,17 @@ import ProductDetails from './ProductDetails'
  * forwarded as a query parameter so the API can pick the matching
  * variant.
  */
+const ProductNotFound = ({ slug }) => (
+    <div className='flex justify-center items-center py-10 min-h-[400px] bg-dark-gold pt-[120px]'>
+        <div className='text-center px-5'>
+            <h1 className='font-serif-display text-4xl gold-shine'>Product Not Found</h1>
+            <p className='text-white/50 mt-3 text-sm'>
+                The fragrance you&apos;re looking for doesn&apos;t exist or has been removed{slug ? <> — <span className='font-mono text-[#F0D77C]'>{slug}</span></> : null}.
+            </p>
+        </div>
+    </div>
+)
+
 const ProductPage = async ({ params, searchParams }) => {
     const { slug } = await params
     const sp = await searchParams
@@ -28,18 +40,23 @@ const ProductPage = async ({ params, searchParams }) => {
     }
     const qs = search.toString()
 
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/product/details/${slug}${qs ? `?${qs}` : ''}`
-    const { data: getProduct } = await axios.get(url)
+    // Defensive: if the API URL can't be resolved or the fetch fails,
+    // render a graceful "not found" page instead of letting the error
+    // bubble up to the storefront error boundary.
+    let getProduct = null
+    try {
+        const baseUrl = await getApiBaseUrl()
+        if (!baseUrl) throw new Error('API base URL unavailable')
+        const url = `${baseUrl}/product/details/${slug}${qs ? `?${qs}` : ''}`
+        const { data } = await axios.get(url)
+        getProduct = data
+    } catch (err) {
+        console.error('[product/[slug]] fetch failed:', err?.message || err)
+        return <ProductNotFound slug={slug} />
+    }
 
-    if (!getProduct.success) {
-        return (
-            <div className='flex justify-center items-center py-10 min-h-[400px] bg-dark-gold pt-[120px]'>
-                <div className='text-center'>
-                    <h1 className='font-serif-display text-4xl gold-shine'>Product Not Found</h1>
-                    <p className='text-white/50 mt-3 text-sm'>The fragrance you&apos;re looking for doesn&apos;t exist or has been removed.</p>
-                </div>
-            </div>
-        )
+    if (!getProduct?.success) {
+        return <ProductNotFound slug={slug} />
     }
 
     if (getProduct?.data?.slugMismatch && getProduct?.data?.canonicalUrl) {

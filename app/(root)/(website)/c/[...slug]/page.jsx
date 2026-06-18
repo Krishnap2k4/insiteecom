@@ -1,11 +1,30 @@
 import ProductBox from '@/components/Application/Website/ProductBox'
 import { Button } from '@/components/ui/button'
 import axios from '@/lib/apiClient'
+import { getApiBaseUrl } from '@/lib/serverApiUrl'
 import { WEBSITE_CATEGORY, WEBSITE_HOME, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
 import { FiChevronRight } from 'react-icons/fi'
 import imgPlaceholder from '@/public/assets/images/img-placeholder.webp'
+
+const CategoryNotFound = ({ path }) => (
+    <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
+        <div className='max-w-md text-center'>
+            <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
+            <h1 className='text-2xl font-serif-display text-white mb-3'>Category not found</h1>
+            <p className='text-white/50 mb-8'>We couldn&apos;t find a category at <span className='font-mono text-[#F0D77C]'>/c/{path}</span>.</p>
+            <div className='flex gap-3 justify-center'>
+                <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                    Browse shop
+                </Link>
+                <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
+                    Go home
+                </Link>
+            </div>
+        </div>
+    </div>
+)
 
 /**
  * Hierarchical category browse. Catches any depth — `/c/men`,
@@ -17,28 +36,19 @@ const CategoryPage = async ({ params }) => {
     const { slug } = await params
     const path = Array.isArray(slug) ? slug.join('/') : slug
 
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/category/by-path?path=${encodeURIComponent(path)}`
-    const { data: res } = await axios.get(url)
-
-    if (!res?.success) {
-        return (
-            <div className='min-h-[60vh] flex items-center justify-center px-4 bg-dark-gold pt-[120px]'>
-                <div className='max-w-md text-center'>
-                    <p className='text-7xl font-serif-display gold-text mb-2'>404</p>
-                    <h1 className='text-2xl font-serif-display text-white mb-3'>Category not found</h1>
-                    <p className='text-white/50 mb-8'>We couldn&apos;t find a category at <span className='font-mono text-[#F0D77C]'>/c/{path}</span>.</p>
-                    <div className='flex gap-3 justify-center'>
-                        <Link href={WEBSITE_SHOP} className='btn-dark-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
-                            Browse shop
-                        </Link>
-                        <Link href={WEBSITE_HOME} className='btn-outline-gold px-6 py-2.5 text-xs font-semibold uppercase tracking-widest'>
-                            Go home
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        )
+    let res = null
+    try {
+        const baseUrl = await getApiBaseUrl()
+        if (!baseUrl) throw new Error('API base URL unavailable')
+        const url = `${baseUrl}/category/by-path?path=${encodeURIComponent(path)}`
+        const { data } = await axios.get(url)
+        res = data
+    } catch (err) {
+        console.error('[c/[...slug]] fetch failed:', err?.message || err)
+        return <CategoryNotFound path={path} />
     }
+
+    if (!res?.success) return <CategoryNotFound path={path} />
 
     const { category, ancestors = [], children = [], products = [], meta } = res.data
 
