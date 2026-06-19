@@ -17,7 +17,7 @@ const RefundPolicy = () => {
             <WebsiteBreadcrumb props={breadcrumb} />
             <div className='lg:px-40 px-5 py-20 text-white/70'>
                 <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-2'>Refund &amp; Return Policy</h1>
-                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2025</p>
+                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2026</p>
 
                 <p>At ELOIR, customer satisfaction is important to us. Due to the personal nature of fragrance products, we have established the following Refund &amp; Return Policy. By placing an order on our website, you agree to the terms outlined below.</p>
 

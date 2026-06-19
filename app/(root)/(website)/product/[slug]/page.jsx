@@ -35,6 +35,11 @@ const ProductPage = async ({ params, searchParams }) => {
 
     const result = await getProductDetails(slug, queryParams)
     if (!result.ok) {
+        // Diagnostic line — visible in the dev terminal so it's clear
+        // when the page is rendering the 404 branch vs. the product.
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`[/product/${slug}] data layer returned not-ok:`, result.status, result.message)
+        }
         return <ProductNotFound slug={slug} />
     }
 

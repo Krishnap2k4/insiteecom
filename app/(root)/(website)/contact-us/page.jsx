@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
-import { Mail, Phone, MapPin, Send, Clock, MessageCircle } from 'lucide-react'
+import { Mail, Phone, Send, Clock, MessageCircle } from 'lucide-react'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
 import { useSiteSettings } from '@/hooks/useSiteSettings'
 import {
@@ -71,7 +71,7 @@ const ContactUs = () => {
             <section className='relative bg-gradient-to-r from-[#0a0805] via-[#1a1208] to-[#0a0805] border-y border-[#C9A24B]/30 py-16 overflow-hidden'>
                 <div className='absolute inset-0 diamond-pattern opacity-30'></div>
                 <div className='relative max-w-5xl mx-auto px-6'>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto'>
                         {[
                             social?.email && {
                                 icon: Mail,
@@ -86,13 +86,6 @@ const ContactUs = () => {
                                 primary: social.phone || `+${social.whatsapp}`,
                                 secondary: 'Mon-Sat, 10AM-7PM IST',
                                 href: `https://wa.me/${social.whatsapp}`,
-                            },
-                            {
-                                icon: MapPin,
-                                title: 'Visit Us',
-                                primary: 'ELOIR Maison',
-                                secondary: 'Lucknow, India 256320',
-                                href: null,
                             },
                         ].filter(Boolean).map((item) => (
                             <div key={item.title} className='group relative bg-gradient-to-br from-black/60 to-[#1a1208]/60 backdrop-blur-sm border border-[#C9A24B]/25 p-7 hover:border-[#F0D77C]/70 transition card-glow text-center'>

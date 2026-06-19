@@ -261,8 +261,21 @@ const ProductDetails = ({
                             )}
                         </div>
 
-                        {/* Description snippet */}
-                        <div className="mt-5 text-white/65 text-sm leading-relaxed line-clamp-3 [&>*]:text-white/65" dangerouslySetInnerHTML={{ __html: renderDescription(product.description) }}></div>
+                        {/* Description snippet — prefer the curated short
+                            description (plain text). Fall back to the long
+                            HTML description, clamped to 3 lines, so older
+                            products without a short description still show
+                            a teaser here. */}
+                        {product.shortDescription?.trim() ? (
+                            <p className="mt-5 text-white/65 text-sm leading-relaxed whitespace-pre-line">
+                                {product.shortDescription}
+                            </p>
+                        ) : (
+                            <div
+                                className="mt-5 text-white/65 text-sm leading-relaxed line-clamp-3 [&>*]:text-white/65"
+                                dangerouslySetInnerHTML={{ __html: renderDescription(product.description) }}
+                            />
+                        )}
 
                         <div className='h-px w-full bg-gradient-to-r from-transparent via-[#C9A24B]/30 to-transparent my-6'></div>
 

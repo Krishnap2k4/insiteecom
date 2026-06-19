@@ -70,7 +70,13 @@ const LoginPage = () => {
     }
 
 
-    // otp verification  
+    // Only allow internal paths so a malicious `?callback=https://evil.com`
+    // can't be used to phish a freshly-authenticated user.
+    const isSafeCallback = (url) => typeof url === 'string'
+        && url.startsWith('/')
+        && !url.startsWith('//')
+
+    // otp verification
     const handleOtpVerification = async (values) => {
         try {
             setOtpVerificationLoading(true)
@@ -78,22 +84,37 @@ const LoginPage = () => {
             if (!otpResponse.success) {
                 throw new Error(otpResponse.message)
             }
-            setOtpEmail('')
             showToast('success', otpResponse.message)
 
             dispatch(login(otpResponse.data))
 
-            if (searchParams.has('callback')) {
-                router.push(searchParams.get('callback'))
-            } else {
-                otpResponse.data.role === 'admin' ? router.push(ADMIN_DASHBOARD) : router.push(USER_DASHBOARD)
-            }
+            // Decide where to send the user.
+            const callback = searchParams.get('callback')
+            const role     = otpResponse.data?.role
+            const target = isSafeCallback(callback)
+                ? callback
+                : role === 'admin' ? ADMIN_DASHBOARD : USER_DASHBOARD
 
+            // Use a hard navigation. router.push runs inside the existing
+            // page bundle and can race with the just-set `access_token`
+            // cookie — the middleware then sees no cookie and bounces the
+            // request back to /auth/login. A full navigation forces a
+            // fresh request that includes the new cookie, so the
+            // middleware authorises it on the first try.
+            //
+            // We leave `otpEmail` set so the OTP component shows its
+            // disabled state until the navigation kicks in (avoids a
+            // flash of the login form).
+            if (typeof window !== 'undefined') {
+                window.location.assign(target)
+            } else {
+                router.replace(target)
+            }
         } catch (error) {
             showToast('error', error.message)
-        } finally {
             setOtpVerificationLoading(false)
         }
+        // NOTE: no `finally` reset of loading — the page is leaving.
     }
 
     return (

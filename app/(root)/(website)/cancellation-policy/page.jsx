@@ -17,7 +17,7 @@ const CancellationPolicy = () => {
             <WebsiteBreadcrumb props={breadcrumb} />
             <div className='lg:px-40 px-5 py-20 text-white/70'>
                 <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-2'>Cancellation Policy</h1>
-                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2025</p>
+                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2026</p>
 
                 <p>At ELOIR, we understand that plans may change. Please review our cancellation policy below. By placing an order on our website, you agree to the terms outlined in this policy.</p>
 

@@ -205,6 +205,7 @@ const AboutUs = () => {
             </section>
 
             {/* ===== STATS BAR ===== */}
+            {/* Commented out per request — restore the block below to re-enable.
             <section className='relative py-16 bg-gradient-to-r from-[#0a0805] via-[#1a1208] to-[#0a0805] border-y border-[#C9A24B]/30 overflow-hidden'>
                 <div className='absolute inset-0 diamond-pattern opacity-30'></div>
                 <div className='relative max-w-5xl mx-auto px-6'>
@@ -223,6 +224,7 @@ const AboutUs = () => {
                     </div>
                 </div>
             </section>
+            */}
 
             {/* ===== NEWSLETTER ===== */}
             <NewsletterSubscribe variant='premium' source='about-us' />

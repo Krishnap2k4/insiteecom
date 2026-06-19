@@ -1,7 +1,7 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
-import React, { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { Eye, EyeOff, MailCheck } from 'lucide-react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { zSchema } from '@/lib/zodSchema'
 import {
@@ -17,13 +17,19 @@ import { useForm } from 'react-hook-form'
 import ButtonLoading from '@/components/Application/ButtonLoading'
 import { z } from 'zod'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { WEBSITE_LOGIN } from '@/routes/WebsiteRoute'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
 import AuthBrand from '@/components/Application/Website/AuthBrand'
 const RegisterPage = () => {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [isTypePassword, setIsTypePassword] = useState(true)
+    // After a successful register, show a "check your email" success
+    // screen and auto-bounce to the login page after a few seconds so
+    // the user has a clear next step.
+    const [registeredEmail, setRegisteredEmail] = useState('')
     const formSchema = zSchema.pick({
         name: true, email: true, password: true
     }).extend({
@@ -51,14 +57,52 @@ const RegisterPage = () => {
                 throw new Error(registerResponse.message)
             }
 
-            form.reset()
             showToast('success', registerResponse.message)
-
+            // Switch the page into success mode. The form is cleared,
+            // a "check your email" panel shows, and a timer below
+            // auto-redirects to the login page.
+            setRegisteredEmail(values.email)
+            form.reset()
         } catch (error) {
             showToast('error', error.message)
         } finally {
             setLoading(false)
         }
+    }
+
+    // Auto-redirect to the login page 4s after a successful registration.
+    useEffect(() => {
+        if (!registeredEmail) return
+        const t = setTimeout(() => router.push(WEBSITE_LOGIN), 4000)
+        return () => clearTimeout(t)
+    }, [registeredEmail, router])
+
+    if (registeredEmail) {
+        return (
+            <Card className="w-[400px] shadow-2xl shadow-[#C9A24B]/10">
+                <CardContent className="pt-8 text-center">
+                    <AuthBrand />
+                    <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-[#C9A24B] to-[#F0D77C] shadow-xl shadow-[#C9A24B]/30 mb-4 mx-auto'>
+                        <MailCheck size={28} className='text-[#1a1208]' />
+                    </div>
+                    <h1 className='text-2xl font-serif-display text-white mb-2'>Check your email</h1>
+                    <p className='text-white/65 text-sm leading-relaxed'>
+                        We&apos;ve sent a verification link to{' '}
+                        <strong className='text-[#F0D77C] break-all'>{registeredEmail}</strong>.
+                        Click the link in the email to verify your account, then sign in.
+                    </p>
+                    <Link
+                        href={WEBSITE_LOGIN}
+                        className='btn-dark-gold inline-block w-full text-center py-3 uppercase tracking-widest text-xs font-semibold mt-6'
+                    >
+                        Continue to sign in
+                    </Link>
+                    <p className='text-white/40 text-[11px] mt-4'>
+                        Redirecting to sign in shortly…
+                    </p>
+                </CardContent>
+            </Card>
+        )
     }
 
     return (

@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
             <WebsiteBreadcrumb props={breadcrumb} />
             <div className='lg:px-40 px-5 py-20 text-white/70'>
                 <h1 className='text-3xl font-serif-display text-[#F0D77C] mb-2'>Privacy Policy</h1>
-                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2025</p>
+                <p className='text-white/40 text-xs mb-6'>Last Updated: June 2026</p>
 
                 <p>At ELOIR, we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, store, and safeguard your information when you visit our website or purchase our products. By using our website, you consent to the practices described in this policy.</p>
 

@@ -12,7 +12,7 @@ import { WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import { getSiteSettings } from '@/lib/settings'
 import { connectDB } from '@/lib/databaseConnection'
 import ProductModel from '@/models/Product.model'
-import { ChevronRight, ShieldCheck, Heart, Leaf, Sparkles, Award, Star, Crown, Droplets, Flame, Gem } from 'lucide-react'
+import { ChevronRight, Heart, Leaf, Sparkles, Award, Star, Crown, Droplets, Flame, Gem } from 'lucide-react'
 
 /**
  * Fetch the products referenced by hero slides in a single batch query
@@ -216,9 +216,8 @@ const Home = async () => {
                         <h2 className='font-serif-display text-5xl md:text-6xl mt-3 text-[#1a1208] font-semibold drop-shadow-sm'>Why Choose ELOIR</h2>
                     </AnimateIn>
 
-                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-4'>
+                    <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-4'>
                         {[
-                            { icon: ShieldCheck, title: 'IFRA Certified', sub: 'Premium Standards' },
                             { icon: Heart,       title: 'Made in India',  sub: 'Crafted with Pride' },
                             { icon: Leaf,        title: 'Vegan Friendly', sub: 'Plant Based' },
                             { icon: Sparkles,    title: 'Cruelty Free',   sub: 'No Animal Testing' },

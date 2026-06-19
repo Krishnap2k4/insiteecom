@@ -54,8 +54,7 @@ const CartBar = () => {
                             : <>
                                 Add {remaining.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
                                 <span className='hidden md:inline'> more</span>
-                                <span className='hidden md:inline'> for free delivery</span>
-                                <span className='inline md:hidden'> for free</span>
+                                <span> for free delivery</span>
                             </>}
                     </span>
                 </div>
