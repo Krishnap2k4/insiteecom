@@ -1,7 +1,6 @@
 import ProductBox from '@/components/Application/Website/ProductBox'
 import { Button } from '@/components/ui/button'
-import axios from '@/lib/apiClient'
-import { getApiBaseUrl } from '@/lib/serverApiUrl'
+import { getBrandBySlug } from '@/lib/data/brandBySlug'
 import { WEBSITE_HOME, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -32,21 +31,10 @@ const BrandNotFound = ({ slug }) => (
 const BrandPage = async ({ params }) => {
     const { slug } = await params
 
-    let res = null
-    try {
-        const baseUrl = await getApiBaseUrl()
-        if (!baseUrl) throw new Error('API base URL unavailable')
-        const url = `${baseUrl}/brand/by-slug/${encodeURIComponent(slug)}`
-        const { data } = await axios.get(url)
-        res = data
-    } catch (err) {
-        console.error('[b/[slug]] fetch failed:', err?.message || err)
-        return <BrandNotFound slug={slug} />
-    }
+    const result = await getBrandBySlug(slug)
+    if (!result.ok) return <BrandNotFound slug={slug} />
 
-    if (!res?.success) return <BrandNotFound slug={slug} />
-
-    const { brand, products = [] } = res.data
+    const { brand, products = [] } = result.data
     const logoUrl = brand.logo?.secure_url
 
     return (

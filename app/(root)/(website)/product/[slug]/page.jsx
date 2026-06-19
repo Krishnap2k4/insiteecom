@@ -1,83 +1,62 @@
-import axios from '@/lib/apiClient'
 import { permanentRedirect } from 'next/navigation'
 import React from 'react'
 import ProductDetails from './ProductDetails'
-import { getApiBaseUrl } from '@/lib/serverApiUrl'
+import { getProductDetails } from '@/lib/data/productDetails'
 
-/**
- * Product detail page.
- *
- * The URL shape is `/product/<slug>-<publicId>` (new) or `/product/<slug>`
- * (legacy, still resolved by the API). The API returns `canonicalUrl`
- * — when it differs from the requested path the page issues a 301 to
- * the canonical URL so search engines and shared links stay clean as
- * admins rename products.
- *
- * Any axis selection — color, size, or a custom attribute code — is
- * forwarded as a query parameter so the API can pick the matching
- * variant.
- */
 const ProductNotFound = ({ slug }) => (
     <div className='flex justify-center items-center py-10 min-h-[400px] bg-dark-gold pt-[120px]'>
         <div className='text-center px-5'>
             <h1 className='font-serif-display text-4xl gold-shine'>Product Not Found</h1>
             <p className='text-white/50 mt-3 text-sm'>
-                The fragrance you&apos;re looking for doesn&apos;t exist or has been removed{slug ? <> — <span className='font-mono text-[#F0D77C]'>{slug}</span></> : null}.
+                The product you&apos;re looking for doesn&apos;t exist or has been removed{slug ? <> — <span className='font-mono text-[#F0D77C]'>{slug}</span></> : null}.
             </p>
         </div>
     </div>
 )
 
+/**
+ * Product detail page — calls the data layer DIRECTLY (no HTTP loopback
+ * to /api/product/details). That eliminates a whole class of
+ * production-only failure modes (env-var dependent URL construction,
+ * cookie forwarding, internal/public host mismatches).
+ */
 const ProductPage = async ({ params, searchParams }) => {
     const { slug } = await params
     const sp = await searchParams
 
-    const search = new URLSearchParams()
-    for (const [key, value] of Object.entries(sp || {})) {
-        if (value !== undefined && value !== null && value !== '') {
-            search.set(key, String(value))
+    // Flatten searchParams (which may contain arrays) into a plain
+    // string-keyed object — the data helper accepts that shape.
+    const queryParams = {}
+    for (const [k, v] of Object.entries(sp || {})) {
+        if (v !== undefined && v !== null && v !== '') {
+            queryParams[k] = Array.isArray(v) ? v[0] : String(v)
         }
     }
-    const qs = search.toString()
 
-    // Defensive: if the API URL can't be resolved or the fetch fails,
-    // render a graceful "not found" page instead of letting the error
-    // bubble up to the storefront error boundary.
-    let getProduct = null
-    try {
-        const baseUrl = await getApiBaseUrl()
-        if (!baseUrl) throw new Error('API base URL unavailable')
-        const url = `${baseUrl}/product/details/${slug}${qs ? `?${qs}` : ''}`
-        const { data } = await axios.get(url)
-        getProduct = data
-    } catch (err) {
-        console.error('[product/[slug]] fetch failed:', err?.message || err)
+    const result = await getProductDetails(slug, queryParams)
+    if (!result.ok) {
         return <ProductNotFound slug={slug} />
     }
 
-    if (!getProduct?.success) {
-        return <ProductNotFound slug={slug} />
-    }
+    const data = result.data
 
-    if (getProduct?.data?.slugMismatch && getProduct?.data?.canonicalUrl) {
-        const target = qs
-            ? `${getProduct.data.canonicalUrl}?${qs}`
-            : getProduct.data.canonicalUrl
-        permanentRedirect(target)
+    if (data.slugMismatch && data.canonicalUrl) {
+        const qs = new URLSearchParams(queryParams).toString()
+        permanentRedirect(qs ? `${data.canonicalUrl}?${qs}` : data.canonicalUrl)
     }
 
     return (
         <ProductDetails
-            product={getProduct?.data?.product}
-            variant={getProduct?.data?.variant}
-            options={getProduct?.data?.options}
-            selectionValues={getProduct?.data?.selectionValues}
-            specifications={getProduct?.data?.specifications}
-            axes={getProduct?.data?.axes}
-            colors={getProduct?.data?.colors}
-            sizes={getProduct?.data?.sizes}
+            product={data.product}
+            variant={data.variant}
+            options={data.options}
+            selectionValues={data.selectionValues}
+            specifications={data.specifications}
+            axes={data.axes}
+            colors={data.colors}
+            sizes={data.sizes}
             selection={sp || {}}
-            reviewCount={getProduct?.data?.reviewCount}
+            reviewCount={data.reviewCount}
         />
     )
 }

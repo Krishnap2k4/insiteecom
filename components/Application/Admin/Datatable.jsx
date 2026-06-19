@@ -109,7 +109,14 @@ const Datatable = ({
     } = useQuery({
         queryKey: [queryKey, { columnFilters, globalFilter, pagination, sorting }],
         queryFn: async () => {
-            const url = new URL(fetchUrl, process.env.NEXT_PUBLIC_BASE_URL)
+            // Use the current origin instead of `process.env.NEXT_PUBLIC_BASE_URL`
+            // so this works regardless of whether the env var is set in
+            // the deployment. In dev `window.location.origin` is the dev
+            // server, in prod it's the deployment URL — always correct.
+            const base = typeof window !== 'undefined'
+                ? window.location.origin
+                : 'http://localhost'
+            const url = new URL(fetchUrl, base)
             url.searchParams.set(
                 'start',
                 `${pagination.pageIndex * pagination.pageSize}`,

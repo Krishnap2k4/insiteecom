@@ -1,7 +1,6 @@
 import ProductBox from '@/components/Application/Website/ProductBox'
 import { Button } from '@/components/ui/button'
-import axios from '@/lib/apiClient'
-import { getApiBaseUrl } from '@/lib/serverApiUrl'
+import { getCategoryByPath } from '@/lib/data/categoryByPath'
 import { WEBSITE_CATEGORY, WEBSITE_HOME, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -36,21 +35,10 @@ const CategoryPage = async ({ params }) => {
     const { slug } = await params
     const path = Array.isArray(slug) ? slug.join('/') : slug
 
-    let res = null
-    try {
-        const baseUrl = await getApiBaseUrl()
-        if (!baseUrl) throw new Error('API base URL unavailable')
-        const url = `${baseUrl}/category/by-path?path=${encodeURIComponent(path)}`
-        const { data } = await axios.get(url)
-        res = data
-    } catch (err) {
-        console.error('[c/[...slug]] fetch failed:', err?.message || err)
-        return <CategoryNotFound path={path} />
-    }
+    const result = await getCategoryByPath(path)
+    if (!result.ok) return <CategoryNotFound path={path} />
 
-    if (!res?.success) return <CategoryNotFound path={path} />
-
-    const { category, ancestors = [], children = [], products = [], meta } = res.data
+    const { category, ancestors = [], children = [], products = [], meta } = result.data
 
     return (
         <div className="bg-dark-gold min-h-screen pt-[120px]">
