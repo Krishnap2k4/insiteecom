@@ -100,7 +100,10 @@ const Shop = () => {
                                     <SheetTitle className="text-white font-serif-display text-xl">Refine By</SheetTitle>
                                     <SheetDescription className="text-white/50 text-xs">Filter products to find your perfect scent</SheetDescription>
                                 </SheetHeader>
-                                <div className='p-4 overflow-auto h-[calc(100vh-80px)]'>
+                                {/* `100dvh` matches the iOS Safari visible
+                                    viewport so the filter scroll area
+                                    doesn't extend behind the bottom bar. */}
+                                <div className='p-4 overflow-auto h-[calc(100dvh-80px)]'>
                                     <Filter />
                                 </div>
                             </SheetContent>

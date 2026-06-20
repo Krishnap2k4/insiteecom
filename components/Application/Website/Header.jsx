@@ -184,7 +184,12 @@ const Header = () => {
                             </li>
                         ))}
                     </ul>
-                    <div className="p-5 mt-4">
+                    <div
+                        className="p-5 mt-4"
+                        // iOS-safe bottom padding so the Sign In / My Account
+                        // CTA isn't tucked under the browser bottom bar.
+                        style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+                    >
                         {!auth ? (
                             <Link href={WEBSITE_LOGIN}
                                   className="btn-gold block text-center uppercase text-[11px] tracking-[0.3em] font-semibold px-6 py-3"

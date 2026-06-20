@@ -133,8 +133,8 @@ const WishlistIcon = () => {
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className='h-[calc(100vh-80px)]'>
-                    <div className='h-[calc(100%-90px)] overflow-auto px-5 py-4'>
+                <div className='flex flex-col h-[calc(100dvh-80px)]'>
+                    <div className='flex-1 overflow-auto px-5 py-4'>
                         {!isLoggedIn && (
                             <div className='h-full flex flex-col justify-center items-center text-center px-6'>
                                 <Heart size={48} className='text-[#C9A24B]/30 mb-4' />
@@ -242,7 +242,13 @@ const WishlistIcon = () => {
                         })}
                     </div>
 
-                    <div className='h-[90px] border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
+                    <div
+                        className='shrink-0 border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'
+                        // Bottom padding scales with iOS safe-area-inset
+                        // so the "Move all to cart" CTA never sits
+                        // behind the browser bottom bar / home indicator.
+                        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+                    >
                         <Link href={USER_WISHLIST}
                               onClick={() => setOpen(false)}
                               className='block w-full text-center btn-dark-gold uppercase text-[10px] tracking-[0.25em] font-semibold py-3'>

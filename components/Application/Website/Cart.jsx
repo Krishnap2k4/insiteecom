@@ -56,7 +56,12 @@ const Cart = () => {
                     </SheetDescription>
                 </SheetHeader>
 
-                <div className='flex flex-col h-[calc(100vh-80px)]'>
+                {/* `100dvh` (dynamic viewport height) shrinks when iOS Safari's
+                    bottom bar appears, so the drawer's footer (View Cart /
+                    Checkout buttons) never gets hidden behind it. Old
+                    browsers ignore `dvh`; the parent Sheet gives us a sane
+                    fallback height in that case. */}
+                <div className='flex flex-col h-[calc(100dvh-80px)]'>
                     <div className='flex-1 overflow-auto px-5 py-4'>
                         {cart.count === 0 && (
                             <div className='h-full flex flex-col justify-center items-center text-center'>
@@ -124,7 +129,13 @@ const Cart = () => {
                         ))}
                     </div>
 
-                    <div className='shrink-0 border-t border-[#C9A24B]/30 px-5 pt-4 pb-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'>
+                    <div
+                        className='shrink-0 border-t border-[#C9A24B]/30 px-5 pt-4 bg-gradient-to-t from-[#0d0a04] to-[#0a0805]'
+                        // Extra bottom padding for iOS' home indicator —
+                        // ensures the View Cart / Checkout buttons are
+                        // never tucked under the browser chrome.
+                        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+                    >
                         {cart.count > 0 && (
                             <>
                                 <div className='flex justify-between items-center text-sm'>

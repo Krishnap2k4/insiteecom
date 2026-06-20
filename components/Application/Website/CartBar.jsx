@@ -37,6 +37,12 @@ const CartBar = () => {
     return (
         <div
             className={`fixed bottom-0 left-0 right-0 z-[49] transition-transform duration-300 ease-out ${visible ? 'translate-y-0' : 'translate-y-full'}`}
+            // iOS Safari shows a bottom address bar / home-indicator that
+            // would otherwise hide the Checkout button. `safe-area-inset-bottom`
+            // is exposed by iOS as the height of that chrome; we pad by it
+            // so the content stays above. The background still extends to
+            // the bottom edge of the viewport so there's no visual gap.
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
         >
             {/* Free delivery progress strip */}
             <div className={`${hasFreeDelivery ? 'bg-[#0d2b18]' : 'bg-[#110e05]'} px-4 py-1.5 border-t border-[#C9A24B]/20`}>
