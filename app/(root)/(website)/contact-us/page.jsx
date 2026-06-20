@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
-import { Mail, Phone, Send, Clock, MessageCircle } from 'lucide-react'
+import { Send, Clock, MessageCircle } from 'lucide-react'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
 import { useSiteSettings } from '@/hooks/useSiteSettings'
 import {
@@ -64,46 +64,6 @@ const ContactUs = () => {
                     <p className='font-serif-display italic text-white/80 text-lg md:text-xl mt-6 max-w-2xl mx-auto'>
                         We&apos;d love to hear from you. Our team is here to help.
                     </p>
-                </div>
-            </section>
-
-            {/* ===== CONTACT INFO CARDS ===== */}
-            <section className='relative bg-gradient-to-r from-[#0a0805] via-[#1a1208] to-[#0a0805] border-y border-[#C9A24B]/30 py-16 overflow-hidden'>
-                <div className='absolute inset-0 diamond-pattern opacity-30'></div>
-                <div className='relative max-w-5xl mx-auto px-6'>
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto'>
-                        {[
-                            social?.email && {
-                                icon: Mail,
-                                title: 'Email Us',
-                                primary: social.email,
-                                secondary: 'Mon-Sat, 10AM-7PM IST',
-                                href: `mailto:${social.email}`,
-                            },
-                            social?.whatsapp && {
-                                icon: MessageCircle,
-                                title: 'WhatsApp',
-                                primary: social.phone || `+${social.whatsapp}`,
-                                secondary: 'Mon-Sat, 10AM-7PM IST',
-                                href: `https://wa.me/${social.whatsapp}`,
-                            },
-                        ].filter(Boolean).map((item) => (
-                            <div key={item.title} className='group relative bg-gradient-to-br from-black/60 to-[#1a1208]/60 backdrop-blur-sm border border-[#C9A24B]/25 p-7 hover:border-[#F0D77C]/70 transition card-glow text-center'>
-                                <div className='w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-[#C9A24B] to-[#F0D77C] flex items-center justify-center mb-4 shadow-lg shadow-[#C9A24B]/30 group-hover:scale-110 transition'>
-                                    <item.icon size={24} className='text-[#1a1208]' />
-                                </div>
-                                <h3 className='font-serif-display text-xl text-white'>{item.title}</h3>
-                                {item.href ? (
-                                    <a href={item.href} className='block text-[#F0D77C] text-sm mt-2 hover:text-[#E5C76B] transition-colors'>
-                                        {item.primary}
-                                    </a>
-                                ) : (
-                                    <p className='text-[#F0D77C] text-sm mt-2'>{item.primary}</p>
-                                )}
-                                <p className='text-white/50 text-xs mt-1'>{item.secondary}</p>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
