@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import axios from '@/lib/apiClient'
 import { showToast } from '@/lib/showToast'
-import { Send, Clock, MessageCircle } from 'lucide-react'
+import { Send, Phone, Mail } from 'lucide-react'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
 import { useSiteSettings } from '@/hooks/useSiteSettings'
 import {
@@ -95,20 +95,20 @@ const ContactUs = () => {
                         <div className='mt-10 space-y-5'>
                             <div className='flex items-start gap-4'>
                                 <div className='w-10 h-10 shrink-0 rounded-full bg-[#C9A24B]/15 border border-[#C9A24B]/30 flex items-center justify-center'>
-                                    <Clock size={16} className='text-[#F0D77C]' />
+                                    <Phone size={16} className='text-[#F0D77C]' />
                                 </div>
                                 <div>
-                                    <div className='text-white text-sm font-medium'>Quick Response</div>
-                                    <div className='text-white/50 text-xs mt-0.5'>Our team replies within 24 hours</div>
+                                    <div className='text-white text-sm font-medium'>Phone</div>
+                                    <a href='tel:+918007900071' className='text-white/50 text-xs mt-0.5 hover:text-[#F0D77C] transition-colors'>+91 8007900071</a>
                                 </div>
                             </div>
                             <div className='flex items-start gap-4'>
                                 <div className='w-10 h-10 shrink-0 rounded-full bg-[#C9A24B]/15 border border-[#C9A24B]/30 flex items-center justify-center'>
-                                    <MessageCircle size={16} className='text-[#F0D77C]' />
+                                    <Mail size={16} className='text-[#F0D77C]' />
                                 </div>
                                 <div>
-                                    <div className='text-white text-sm font-medium'>Personalized Help</div>
-                                    <div className='text-white/50 text-xs mt-0.5'>Scent recommendations, gifting advice & more</div>
+                                    <div className='text-white text-sm font-medium'>Email</div>
+                                    <a href='mailto:eloir.perfumes@gmail.com' className='text-white/50 text-xs mt-0.5 hover:text-[#F0D77C] transition-colors'>eloir.perfumes@gmail.com</a>
                                 </div>
                             </div>
                         </div>

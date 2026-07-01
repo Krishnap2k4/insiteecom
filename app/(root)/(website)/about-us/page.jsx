@@ -176,7 +176,7 @@ const AboutUs = () => {
                         </p>
                         <div className='grid grid-cols-3 gap-4 mt-8'>
                             {[
-                                { icon: ShieldCheck, label: 'IFRA Certified' },
+                                // { icon: ShieldCheck, label: 'IFRA Certified' },
                                 { icon: Heart, label: 'Cruelty Free' },
                                 { icon: Award, label: 'Premium Quality' },
                             ].map((item) => (
