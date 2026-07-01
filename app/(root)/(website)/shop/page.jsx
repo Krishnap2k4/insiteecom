@@ -16,6 +16,8 @@ import { useSearchParams } from 'next/navigation'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import ProductBox from '@/components/Application/Website/ProductBox'
 import { Loader2, PackageOpen } from 'lucide-react'
+import img4 from '@/public/assets/images/4img.jpeg'
+
 
 const PAGE_SIZE = 12
 
@@ -54,7 +56,7 @@ const Shop = () => {
         <>
             {/* Hero */}
             <section className='relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0' style={{ backgroundImage: "url('https://images.unsplash.com/photo-1544006593-1a0b9255782d?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className='absolute inset-0' style={{ backgroundImage: `url('${img4.src}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className='absolute inset-0 bg-black/65'></div>
                     <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-[#1a1208]/40 to-[#070707]'></div>
                     <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.12),transparent_70%)]'></div>

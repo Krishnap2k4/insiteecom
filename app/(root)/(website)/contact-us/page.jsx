@@ -11,6 +11,8 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
+import img10 from '@/public/assets/images/10img.jpeg'
+
 
 const ContactUs = () => {
     const { social, sections } = useSiteSettings()
@@ -113,7 +115,7 @@ const ContactUs = () => {
                         {/* Decorative image */}
                         <div
                             className='hidden lg:block mt-10 aspect-[3/2] overflow-hidden border border-[#C9A24B]/30'
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1622618991746-fe6004db3a47?crop=entropy&cs=srgb&fm=jpg&q=85&w=900')", backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7 }}
+                            style={{ backgroundImage: `url('${img10.src}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7 }}
                         />
                     </div>
 

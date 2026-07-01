@@ -34,14 +34,26 @@ const HeroCarousel = ({ slides = [], autoplayMs = 5000 }) => {
     // `entered` toggles false → true on each slide change so the
     // product card transitions in. CSS-transition-based so it works
     // regardless of how react-slick mounts/unmounts internally.
-    const [entered, setEntered] = useState(false)
+    //
+    // Starts `true` so the product card is visible on the very first
+    // paint (SSR/ISR hydration). The reset-then-animate cycle only
+    // runs on *subsequent* slide changes.
+    const [entered, setEntered] = useState(true)
+    const isFirstMount = useRef(true)
 
     // On every active-slide change, snap back to the "from" state, wait
     // for two animation frames so the browser actually paints that state,
     // then flip on the entered class to trigger the CSS transition.
     // Single rAF is sometimes coalesced with the same paint as the state
     // update; double rAF guarantees a separate frame.
+    //
+    // On first mount we skip this entirely — the card should appear
+    // immediately without any entrance delay.
     useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false
+            return
+        }
         setEntered(false)
         let raf2 = 0
         const raf1 = requestAnimationFrame(() => {

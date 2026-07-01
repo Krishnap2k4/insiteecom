@@ -3,6 +3,10 @@ import Link from 'next/link'
 import { WEBSITE_SHOP } from '@/routes/WebsiteRoute'
 import { ChevronRight, Crown, Droplets, Flame, Gem, Heart, ShieldCheck, Award } from 'lucide-react'
 import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubscribe'
+import img6 from '@/public/assets/images/6img.jpeg'
+import img7 from '@/public/assets/images/7img.jpeg'
+import img8 from '@/public/assets/images/8img.jpeg'
+
 
 export const metadata = {
     title: 'Our Story',
@@ -62,7 +66,7 @@ const AboutUs = () => {
                     <div className='relative'>
                         <div className='aspect-[4/5] overflow-hidden border-2 border-[#C9A24B]/40 shadow-2xl shadow-[#C9A24B]/10'>
                             <img
-                                src='https://images.unsplash.com/photo-1541643600914-78b084683601?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200'
+                                src={img6.src}
                                 alt='ELOIR craftsmanship'
                                 className='w-full h-full object-cover'
                             />
@@ -85,7 +89,7 @@ const AboutUs = () => {
                     <div className='relative order-2 md:order-1'>
                         <div className='aspect-[4/5] overflow-hidden shadow-2xl shadow-[#1a1208]/20 border-4 border-white'>
                             <img
-                                src='https://images.unsplash.com/photo-1594035910387-fbd1a485b12e?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200'
+                                src={img7.src}
                                 alt='ELOIR philosophy'
                                 className='w-full h-full object-cover'
                             />
@@ -191,7 +195,7 @@ const AboutUs = () => {
                     <div className='relative'>
                         <div className='aspect-square overflow-hidden border-2 border-[#C9A24B]/40 shadow-2xl shadow-[#C9A24B]/10'>
                             <img
-                                src='https://images.unsplash.com/photo-1585386959984-a4155224a1ad?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200'
+                                src={img8.src}
                                 alt='ELOIR crafted in India'
                                 className='w-full h-full object-cover'
                             />

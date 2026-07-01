@@ -13,6 +13,9 @@ import { getSiteSettings } from '@/lib/settings'
 import { connectDB } from '@/lib/databaseConnection'
 import ProductModel from '@/models/Product.model'
 import { ChevronRight, Heart, Leaf, Sparkles, Award, Star, Crown, Droplets, Flame, Gem } from 'lucide-react'
+import img2 from '@/public/assets/images/2img.jpeg'
+import img3 from '@/public/assets/images/3img.jpeg'
+
 
 /**
  * Fetch the products referenced by hero slides in a single batch query
@@ -168,7 +171,7 @@ const Home = async () => {
                         <div className='relative'>
                             <div className='aspect-[5/4] overflow-hidden shadow-2xl shadow-[#1a1208]/30 border-4 border-white'>
                                 <img
-                                    src="https://images.unsplash.com/photo-1622618991746-fe6004db3a47?crop=entropy&cs=srgb&fm=jpg&q=85&w=1400"
+                                    src={img2.src}
                                     alt="Her Scent"
                                     className='w-full h-full object-cover'
                                 />
@@ -281,7 +284,7 @@ const Home = async () => {
                     <AnimateIn direction="left">
                         <div className='relative aspect-[5/4] overflow-hidden border-2 border-[#C9A24B]/40 shadow-2xl shadow-[#C9A24B]/10'>
                             <img
-                                src="https://images.pexels.com/photos/10924522/pexels-photo-10924522.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=900&w=1400"
+                                src={img3.src}
                                 alt="Craft"
                                 className='w-full h-full object-cover'
                             />
