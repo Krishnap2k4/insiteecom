@@ -31,33 +31,37 @@ const HeroCarousel = ({ slides = [], autoplayMs = 5000 }) => {
     const sliderRef = useRef(null)
     const valid = slides.filter((s) => s && (s.imageUrl || s.mobileImageUrl || s.heading))
     const [activeIdx, setActiveIdx] = useState(0)
-    // `entered` toggles false → true on each slide change so the
-    // product card transitions in. CSS-transition-based so it works
-    // regardless of how react-slick mounts/unmounts internally.
-    //
-    // Starts `true` so the product card is visible on the very first
-    // paint (SSR/ISR hydration). The reset-then-animate cycle only
-    // runs on *subsequent* slide changes.
-    const [entered, setEntered] = useState(true)
-    const isFirstMount = useRef(true)
 
-    // On every active-slide change, snap back to the "from" state, wait
-    // for two animation frames so the browser actually paints that state,
-    // then flip on the entered class to trigger the CSS transition.
-    // Single rAF is sometimes coalesced with the same paint as the state
-    // update; double rAF guarantees a separate frame.
+    // Product card visibility.
     //
-    // On first mount we skip this entirely — the card should appear
-    // immediately without any entrance delay.
+    // `animState` drives the CSS-transition-based slide-in animation
+    // for the featured product card. Three possible values:
+    //   'idle'     → first render; no animation classes applied at all,
+    //                card is visible via its own styles (bulletproof
+    //                SSR / ISR / first-load visibility — no JS needed).
+    //   'exiting'  → slide is changing; card snaps to off-screen pose.
+    //   'entering' → card transitions into view with the slide-in.
+    //
+    // On the very first render (SSR + hydration), `animState` is 'idle'
+    // so NO `.hero-product` class (which sets opacity:0) is applied.
+    // The card is unconditionally visible. Only after the first actual
+    // slide change does the animation system engage.
+    const [animState, setAnimState] = useState('idle')
+    const hasSlideChanged = useRef(false)
+
     useEffect(() => {
-        if (isFirstMount.current) {
-            isFirstMount.current = false
+        // Skip the very first render — card should just be visible.
+        if (!hasSlideChanged.current) {
+            hasSlideChanged.current = true
             return
         }
-        setEntered(false)
+        // Snap to the "from" (off-screen) pose instantly.
+        setAnimState('exiting')
+        // Wait two animation frames so the browser paints the off-screen
+        // state, then transition in. Double rAF avoids frame coalescing.
         let raf2 = 0
         const raf1 = requestAnimationFrame(() => {
-            raf2 = requestAnimationFrame(() => setEntered(true))
+            raf2 = requestAnimationFrame(() => setAnimState('entering'))
         })
         return () => {
             cancelAnimationFrame(raf1)
@@ -103,7 +107,12 @@ const HeroCarousel = ({ slides = [], autoplayMs = 5000 }) => {
                   ≥ md   → slides in from the right */}
             {activeProduct && (
                 <div
-                    className={`absolute z-20 bottom-12 right-4 left-4 sm:left-auto sm:bottom-24 sm:right-6 sm:w-[320px] lg:bottom-20 lg:right-10 lg:w-[360px] hero-product ${entered ? 'hero-product-entered' : ''} pointer-events-none`}
+                    className={`absolute z-20 bottom-12 right-4 left-4 sm:left-auto sm:bottom-24 sm:right-6 sm:w-[320px] lg:bottom-20 lg:right-10 lg:w-[360px] pointer-events-none${
+                        animState === 'idle' ? '' : ` hero-product${animState === 'entering' ? ' hero-product-entered' : ''}`
+                    }`}
+                    // Inline styles guarantee visibility on SSR / first paint.
+                    // Once a slide change fires, the CSS classes take over.
+                    {...(animState === 'idle' ? { style: { opacity: 1, transform: 'none' } } : {})}
                 >
                     <div className='pointer-events-auto'>
                         <FeaturedProductCard product={activeProduct} productUrl={activeProductUrl} />

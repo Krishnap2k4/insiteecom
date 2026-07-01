@@ -12,6 +12,7 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion'
 import img10 from '@/public/assets/images/10img.jpeg'
+import img9 from '@/public/assets/images/9img.jpeg'
 
 
 const ContactUs = () => {
@@ -44,7 +45,7 @@ const ContactUs = () => {
         <>
             {/* ===== HERO BANNER ===== */}
             <section className='relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0' style={{ backgroundImage: "url('https://images.unsplash.com/photo-1583442801251-5ce051ed7cb3?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className='absolute inset-0' style={{ backgroundImage: `url('${img9.src}')` , backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className='absolute inset-0 bg-black/65'></div>
                     <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-[#1a1208]/40 to-[#070707]'></div>
                     <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.12),transparent_70%)]'></div>
@@ -114,7 +115,7 @@ const ContactUs = () => {
 
                         {/* Decorative image */}
                         <div
-                            className='hidden md:block mt-10 aspect-[3/2] overflow-hidden border border-[#C9A24B]/30'
+                            className='mt-10 aspect-[3/2] overflow-hidden border border-[#C9A24B]/30'
                             style={{ backgroundImage: `url('${img10.src}')`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.7 }}
                         />
                     </div>

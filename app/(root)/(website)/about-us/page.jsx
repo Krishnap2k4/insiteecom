@@ -6,6 +6,7 @@ import NewsletterSubscribe from '@/components/Application/Website/NewsletterSubs
 import img6 from '@/public/assets/images/6img.jpeg'
 import img7 from '@/public/assets/images/7img.jpeg'
 import img8 from '@/public/assets/images/8img.jpeg'
+import img5 from '@/public/assets/images/5img.jpeg'
 
 
 export const metadata = {
@@ -18,7 +19,7 @@ const AboutUs = () => {
         <>
             {/* ===== HERO BANNER ===== */}
             <section className='relative min-h-[50vh] flex items-center justify-center overflow-hidden pt-[110px]'>
-                <div className='absolute inset-0' style={{ backgroundImage: "url('https://images.unsplash.com/photo-1615634260167-c8cdede054de?crop=entropy&cs=srgb&fm=jpg&q=85&w=2200')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                <div className='absolute inset-0' style={{ backgroundImage: `url('${img5.src}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                     <div className='absolute inset-0 bg-black/65'></div>
                     <div className='absolute inset-0 bg-gradient-to-b from-black/30 via-[#1a1208]/40 to-[#070707]'></div>
                     <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(240,215,124,0.12),transparent_70%)]'></div>
