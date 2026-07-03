@@ -20,10 +20,11 @@ import { WEBSITE_PRODUCT_DETAILS, WEBSITE_SHOP } from '@/routes/WebsiteRoute'
  * once on initial mount).
  *
  * Image responsiveness:
- *   - Two <img> tags per slide — one shown via `hidden md:block`, the
- *     other via `md:hidden`. CSS picks the right one for each viewport.
- *     We use this instead of <picture> because react-slick's wrappers
- *     occasionally swallow <source> matching.
+ *   - A single `<picture>` element with a `<source media>` for
+ *     desktop and a fallback `<img>` for mobile. The browser itself
+ *     picks the right variant based on viewport width — this is
+ *     immune to react-slick's inline style manipulation that can
+ *     fight with CSS-class-based responsive toggles.
  *
  * Renders `null` when there are no usable slides.
  */
@@ -160,36 +161,32 @@ const HeroSlide = ({ slide }) => {
     // if no mobile variant is set. Either may be empty.
     const desktopSrc = imageUrl       || mobileImageUrl || ''
     const mobileSrc  = mobileImageUrl || imageUrl       || ''
+    const hasBothVariants = desktopSrc && mobileSrc && desktopSrc !== mobileSrc
+    const anySrc = desktopSrc || mobileSrc
 
     return (
         <div className='relative w-full min-h-[max(100vh,680px)] overflow-hidden'>
 
-            {/* Background image — each viewport gets its own absolutely-
-                positioned <img> in its own wrapper, with responsive
-                show/hide on the WRAPPER (not the img itself). This avoids
-                the `display: inline` quirk on bare imgs and guarantees
-                full-bleed sizing in both viewports. */}
-            {mobileSrc && (
-                <div className='absolute inset-0 md:hidden'>
-                    <img
-                        src={mobileSrc}
-                        alt={heading || ''}
-                        className='block w-full h-full object-cover'
-                        loading='eager'
-                    />
+            {/* Background image — uses <picture> + <source media> so the
+                browser itself picks the right variant for the viewport.
+                This is immune to react-slick's inline style manipulation
+                (which previously fought with Tailwind's responsive display
+                classes and caused the wrong image to flash on reload). */}
+            {anySrc ? (
+                <div className='absolute inset-0'>
+                    <picture>
+                        {hasBothVariants && (
+                            <source media='(min-width: 768px)' srcSet={desktopSrc} />
+                        )}
+                        <img
+                            src={hasBothVariants ? mobileSrc : anySrc}
+                            alt={heading || ''}
+                            className='block w-full h-full object-cover'
+                            loading='eager'
+                        />
+                    </picture>
                 </div>
-            )}
-            {desktopSrc && (
-                <div className='absolute inset-0 hidden md:block'>
-                    <img
-                        src={desktopSrc}
-                        alt={heading || ''}
-                        className='block w-full h-full object-cover'
-                        loading='eager'
-                    />
-                </div>
-            )}
-            {!desktopSrc && !mobileSrc && (
+            ) : (
                 <div className='absolute inset-0 bg-gradient-to-br from-[#1a1208] via-[#2a1d0a] to-[#070707]' />
             )}
 
@@ -253,8 +250,8 @@ const FeaturedProductCard = ({ product, productUrl }) => {
             <span className='absolute bottom-2 left-2 w-4 h-4 border-l-2 border-b-2 border-[#C9A24B]/70 z-10 pointer-events-none' />
             <span className='absolute bottom-2 right-2 w-4 h-4 border-r-2 border-b-2 border-[#C9A24B]/70 z-10 pointer-events-none' />
 
-            <div className='flex items-center gap-4 p-4 sm:p-5'>
-                <div className='relative aspect-square w-20 sm:w-24 lg:w-28 shrink-0 border border-[#C9A24B]/30 overflow-hidden bg-black'>
+            <div className='flex items-center gap-3 sm:gap-4 p-3 sm:p-5'>
+                <div className='relative aspect-square w-16 sm:w-24 lg:w-28 shrink-0 border border-[#C9A24B]/30 overflow-hidden bg-black'>
                     <Image
                         src={imageSrc}
                         alt={product.name}
@@ -266,26 +263,26 @@ const FeaturedProductCard = ({ product, productUrl }) => {
                 </div>
                 <div className='min-w-0 flex-1'>
                     {product.card?.badge ? (
-                        <div className='inline-block text-[9px] tracking-[0.25em] uppercase font-bold text-black bg-gradient-to-r from-[#F0D77C] to-[#C9A24B] px-2 py-0.5 mb-2'>
+                        <div className='inline-block text-[8px] sm:text-[9px] tracking-[0.25em] uppercase font-bold text-black bg-gradient-to-r from-[#F0D77C] to-[#C9A24B] px-2 py-0.5 mb-1 sm:mb-2'>
                             {product.card.badge}
                         </div>
                     ) : (
-                        <div className='text-[#F0D77C]/70 text-[10px] tracking-[0.3em] uppercase mb-1.5'>Featured</div>
+                        <div className='text-[#F0D77C]/70 text-[9px] sm:text-[10px] tracking-[0.3em] uppercase mb-1 sm:mb-1.5'>Featured</div>
                     )}
-                    <div className='font-serif-display text-white text-base sm:text-lg lg:text-xl leading-tight truncate'>
+                    <div className='font-serif-display text-white text-sm sm:text-lg lg:text-xl leading-tight truncate'>
                         {product.name}
                     </div>
-                    <div className='flex items-baseline gap-2 mt-2'>
-                        <span className='font-serif-display gold-text text-base sm:text-lg lg:text-xl'>
+                    <div className='flex items-baseline gap-2 mt-1 sm:mt-2'>
+                        <span className='font-serif-display gold-text text-sm sm:text-lg lg:text-xl'>
                             ₹{(Number(product.sellingPrice) || 0).toLocaleString('en-IN')}
                         </span>
                         {discount > 0 && Number(product.mrp) > Number(product.sellingPrice) && (
-                            <span className='text-white/40 text-xs line-through'>
+                            <span className='text-white/40 text-[10px] sm:text-xs line-through'>
                                 ₹{Number(product.mrp).toLocaleString('en-IN')}
                             </span>
                         )}
                     </div>
-                    <div className='mt-2 sm:mt-3 text-[10px] tracking-[0.25em] uppercase text-[#E5C76B] group-hover:text-[#F0D77C] transition-colors'>
+                    <div className='mt-1.5 sm:mt-3 text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#E5C76B] group-hover:text-[#F0D77C] transition-colors'>
                         Shop now →
                     </div>
                 </div>
