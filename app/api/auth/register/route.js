@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/databaseConnection";
 import { catchError, response } from "@/lib/helperFunction";
 import { logger } from "@/lib/logger";
 import { RATE_LIMITS, rateLimit } from "@/lib/rateLimit";
+import { getPublicBaseUrl } from "@/lib/publicUrl";
 import { sendMail } from "@/lib/sendMail";
 import { getSiteSettings } from "@/lib/settings";
 import { zSchema } from "@/lib/zodSchema";
@@ -51,12 +52,14 @@ export async function POST(request) {
             .setProtectedHeader({ alg: 'HS256' })
             .sign(secret)
 
+        const verificationUrl = `${getPublicBaseUrl(request)}/auth/verify-email/${token}`
+
 
         const { branding } = await getSiteSettings()
         const mailResult = await sendMail(
             `Email Verification – ${branding?.siteName || 'Verify your email'}`,
             email,
-            emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`)
+            emailVerificationLink(verificationUrl)
         )
 
         if (!mailResult?.success) {

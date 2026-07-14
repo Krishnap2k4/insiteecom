@@ -2,7 +2,9 @@ import { emailVerificationLink } from "@/email/emailVerificationLink";
 import { otpEmail } from "@/email/otpEmail";
 import { connectDB } from "@/lib/databaseConnection";
 import { catchError, generateOTP, response } from "@/lib/helperFunction";
+import { logger } from "@/lib/logger";
 import { RATE_LIMITS, rateLimit } from "@/lib/rateLimit";
+import { getPublicBaseUrl } from "@/lib/publicUrl";
 import { sendMail } from "@/lib/sendMail";
 import { getSiteSettings } from "@/lib/settings";
 import { zSchema } from "@/lib/zodSchema";
@@ -47,9 +49,24 @@ export async function POST(request) {
                 .setProtectedHeader({ alg: 'HS256' })
                 .sign(secret)
 
+            const verificationUrl = `${getPublicBaseUrl(request)}/auth/verify-email/${token}`
+
 
             const { branding } = await getSiteSettings()
-            await sendMail(`Email Verification – ${branding?.siteName || 'Verify your email'}`, email, emailVerificationLink(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-email/${token}`))
+            const mailResult = await sendMail(
+                `Email Verification – ${branding?.siteName || 'Verify your email'}`,
+                email,
+                emailVerificationLink(verificationUrl)
+            )
+
+            if (!mailResult?.success) {
+                logger.error('verification email resend failed', {
+                    email,
+                    userId: getUser._id.toString(),
+                    reason: mailResult?.message,
+                })
+                return response(false, 500, 'Your email is not verified, and we could not resend the verification email. Please try again or contact support.')
+            }
 
             return response(false, 401, 'Your email is not verified. We have sent a verification link to your registered email address.')
         }
