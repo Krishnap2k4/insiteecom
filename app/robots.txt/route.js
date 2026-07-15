@@ -1,10 +1,11 @@
-const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+import { getPublicBaseUrl } from '@/lib/publicUrl'
 
 /**
  * robots.txt — instructs crawlers to skip admin / API / auth surfaces
  * and points them at the dynamic sitemap.
  */
-export async function GET() {
+export async function GET(request) {
+    const BASE = getPublicBaseUrl(request)
     const body = `User-agent: *
 Disallow: /admin
 Disallow: /api

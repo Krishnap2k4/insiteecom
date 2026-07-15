@@ -1,10 +1,9 @@
 import { connectDB } from '@/lib/databaseConnection'
 import { buildProductSlug } from '@/lib/publicId'
+import { getPublicBaseUrl } from '@/lib/publicUrl'
 import BrandModel from '@/models/Brand.model'
 import CategoryModel from '@/models/Category.model'
 import ProductModel from '@/models/Product.model'
-
-const BASE = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 
 const xmlEscape = (s) =>
     String(s)
@@ -34,7 +33,8 @@ const urlEntry = ({ loc, lastmod, changefreq, priority }) => {
  * Cached via Next response headers for 1 hour — sitemaps don't need
  * to update faster than that and search engines respect Cache-Control.
  */
-export async function GET() {
+export async function GET(request) {
+    const BASE = getPublicBaseUrl(request)
     await connectDB()
 
     const [categories, brands, products] = await Promise.all([

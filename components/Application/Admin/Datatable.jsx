@@ -115,8 +115,8 @@ const Datatable = ({
             // server, in prod it's the deployment URL — always correct.
             const base = typeof window !== 'undefined'
                 ? window.location.origin
-                : 'http://localhost'
-            const url = new URL(fetchUrl, base)
+                : ''
+            const url = new URL(fetchUrl, base || 'https://your-domain.com')
             url.searchParams.set(
                 'start',
                 `${pagination.pageIndex * pagination.pageSize}`,
